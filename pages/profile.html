@@ -1,0 +1,1212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student Profile Setup / Onboarding — CareerSetu AI</title>
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/dashboard.css">
+  <link rel="stylesheet" href="../css/responsive.css">
+
+  <!-- CareerSetu Universal Core (Instant 0ms Load) -->
+  <script src="../js/careersetu-core.js"></script>
+  <!-- Optional Background Firebase SDK -->
+  <script defer src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script defer src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+  <script defer src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+
+  <style>
+    /* Multi-Step Stepper Layout matching Screenshot */
+    .onboarding-card-grid {
+      display: grid;
+      grid-template-columns: 240px 1fr;
+      gap: 2rem;
+      background: #ffffff;
+      border-radius: var(--radius-xl);
+      border: 1px solid var(--border-color);
+      box-shadow: var(--shadow-md);
+      overflow: hidden;
+      min-height: 560px;
+    }
+
+    .onboarding-sidebar {
+      background: #fcfdfe;
+      border-right: 1px solid var(--border-color);
+      padding: 2rem 1.25rem;
+    }
+
+    .step-nav-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .step-nav-item {
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+      padding: 0.75rem 1rem;
+      border-radius: var(--radius-full);
+      font-size: 0.92rem;
+      font-weight: 600;
+      color: #64748b;
+      cursor: pointer;
+      transition: var(--transition);
+      user-select: none;
+    }
+
+    .step-nav-item:hover {
+      background: #f1f5f9;
+      color: #1e293b;
+    }
+
+    .step-nav-item.active {
+      background: #eef2ff;
+      color: #4f46e5;
+      font-weight: 700;
+    }
+
+    .step-nav-item.completed {
+      color: #059669;
+    }
+
+    .step-badge-num {
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: #e2e8f0;
+      color: #475569;
+      font-size: 0.8rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: var(--transition);
+    }
+
+    .step-nav-item.active .step-badge-num {
+      background: #4f46e5;
+      color: #ffffff;
+    }
+
+    .step-nav-item.completed .step-badge-num {
+      background: #10b981;
+      color: #ffffff;
+    }
+
+    .onboarding-content-panel {
+      padding: 2.25rem 2.5rem;
+    }
+
+    .step-pane {
+      display: none;
+      animation: fadeIn 0.15s ease-in-out;
+    }
+
+    .step-pane.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .step-header {
+      margin-bottom: 1.75rem;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 1rem;
+    }
+
+    .step-header h2 {
+      font-size: 1.55rem;
+      font-weight: 800;
+      color: #0f172a;
+      letter-spacing: -0.02em;
+      margin-bottom: 0.35rem;
+    }
+
+    .step-header p {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+    }
+
+    .step-action-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 2rem;
+      padding-top: 1.25rem;
+      border-top: 1px solid var(--border-color);
+    }
+
+    /* Skill & Interest Chips */
+    .chip-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-top: 0.5rem;
+    }
+
+    .skill-chip {
+      padding: 0.4rem 0.85rem;
+      background: #f1f5f9;
+      border: 1px solid #cbd5e1;
+      border-radius: var(--radius-full);
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: #334155;
+      cursor: pointer;
+      transition: var(--transition);
+      user-select: none;
+    }
+
+    .skill-chip:hover {
+      background: #e2e8f0;
+    }
+
+    .skill-chip.selected {
+      background: #4f46e5;
+      color: #ffffff;
+      border-color: #4f46e5;
+    }
+
+    /* Target Career Selection Cards */
+    .target-role-card {
+      background: #f8fafc;
+      border: 1.5px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 1.25rem;
+      cursor: pointer;
+      transition: var(--transition);
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+
+    .target-role-card:hover {
+      border-color: #93c5fd;
+      background: #f0f7ff;
+      transform: translateY(-2px);
+    }
+
+    .target-role-card.selected {
+      border-color: #4f46e5;
+      background: #eef2ff;
+      box-shadow: 0 4px 12px rgba(79, 70, 229, 0.15);
+    }
+
+    .role-card-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: #0f172a;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .role-card-salary {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: #059669;
+    }
+
+    .role-card-desc {
+      font-size: 0.82rem;
+      color: #64748b;
+      line-height: 1.4;
+    }
+
+    /* Resume Preview Card */
+    .resume-preview-sheet {
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
+      border-radius: 12px;
+      padding: 2rem;
+      box-shadow: var(--shadow-sm);
+      font-family: 'Inter', sans-serif;
+      color: #1e293b;
+    }
+
+    .resume-header {
+      border-bottom: 2px solid #3b82f6;
+      padding-bottom: 1rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .resume-name {
+      font-size: 1.6rem;
+      font-weight: 800;
+      color: #0f172a;
+    }
+
+    .resume-contact {
+      font-size: 0.85rem;
+      color: #64748b;
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      margin-top: 0.35rem;
+    }
+
+    .resume-section-title {
+      font-size: 0.95rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: #1e40af;
+      margin-bottom: 0.5rem;
+      border-bottom: 1px solid #e2e8f0;
+      padding-bottom: 0.25rem;
+    }
+
+    /* Rec Hub Cards (Like Internshala/Unstop/Apna) */
+    .rec-item-card {
+      background: #ffffff;
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 1rem;
+      transition: var(--transition);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .rec-item-card:hover {
+      box-shadow: var(--shadow-md);
+      border-color: #bfdbfe;
+    }
+
+    @media (max-width: 860px) {
+      .onboarding-card-grid {
+        grid-template-columns: 1fr;
+      }
+      .onboarding-sidebar {
+        border-right: none;
+        border-bottom: 1px solid var(--border-color);
+        padding: 1.25rem;
+      }
+      .step-nav-list {
+        flex-direction: row;
+        overflow-x: auto;
+      }
+      .onboarding-content-panel {
+        padding: 1.5rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="app-layout">
+    <!-- Dark Navy Sidebar (Poster) -->
+    <aside class="app-sidebar">
+      <div class="sidebar-brand">
+        <a href="../index.html" class="flex-align" style="gap: 0.5rem; text-decoration: none;">
+          <svg width="28" height="28" viewBox="0 0 64 64" fill="none">
+            <rect width="64" height="64" rx="14" fill="#4f46e5" />
+            <path d="M14 44 C22 28, 42 28, 50 44" stroke="#ffffff" stroke-width="4" stroke-linecap="round" />
+            <path d="M20 44 L20 35 M32 44 L32 30 M44 44 L44 35" stroke="#ffffff" stroke-width="3" stroke-linecap="round" />
+            <circle cx="32" cy="20" r="5" fill="#38bdf8" />
+          </svg>
+          <span class="brand-title">CareerSetu <span class="brand-badge">AI</span></span>
+        </a>
+      </div>
+
+      <nav class="sidebar-nav">
+        <a href="dashboard.html" class="nav-item"><span class="nav-icon">📊</span> Dashboard</a>
+        <a href="profile.html" class="nav-item active"><span class="nav-icon">👤</span> My Profile</a>
+        <a href="career.html" class="nav-item"><span class="nav-icon">🧭</span> My Career</a>
+        <a href="skill-gap.html" class="nav-item"><span class="nav-icon">📈</span> Skill Gap</a>
+        <a href="roadmap.html" class="nav-item"><span class="nav-icon">🗺️</span> Roadmap</a>
+        <a href="opportunities.html" class="nav-item"><span class="nav-icon">💼</span> Opportunities</a>
+        <a href="resume.html" class="nav-item"><span class="nav-icon">📄</span> Resume AI</a>
+        <a href="interview.html" class="nav-item"><span class="nav-icon">🎙️</span> Mock Interview</a>
+        <a href="progress.html" class="nav-item"><span class="nav-icon">🎯</span> Progress</a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="user-profile-summary">
+          <div class="user-avatar" id="sidebar-user-avatar">H</div>
+          <div class="user-info-text">
+            <p class="user-name-label" id="sidebar-user-name">Himanshu Sahani</p>
+            <p class="user-role-label" id="sidebar-user-email">himanshu@gmail.com</p>
+          </div>
+          <button id="logout-btn" class="btn btn-sm btn-secondary" title="Log Out" style="padding: 0.25rem 0.5rem; font-size: 0.75rem;">⏻</button>
+        </div>
+      </div>
+    </aside>
+
+    <div class="app-main">
+      <header class="app-topbar">
+        <div class="flex-align">
+          <button class="mobile-menu-btn" id="mobile-menu-toggle">☰</button>
+          <div class="topbar-breadcrumbs">
+            <span>Student Profile Setup</span>
+            <span>/</span>
+            <span class="text-primary" style="font-weight: 600;">Onboarding</span>
+          </div>
+        </div>
+
+        <div class="topbar-actions">
+          <button class="btn btn-secondary btn-sm" id="prefill-demo-btn">
+            ⚡ Quick-Fill Profile (Himanshu Sahani)
+          </button>
+        </div>
+      </header>
+
+      <main class="page-content">
+        <div class="container" style="max-width: 1060px;">
+          
+          <div id="alert-container"></div>
+
+          <!-- Multi-Step Onboarding Wizard Container -->
+          <div class="onboarding-card-grid">
+            
+            <!-- Left Stepper List (Steps 1 to 6) -->
+            <div class="onboarding-sidebar">
+              <ul class="step-nav-list" id="step-nav-list">
+                <li class="step-nav-item active" data-step="1">
+                  <span class="step-badge-num">1</span>
+                  <span>Basic Info</span>
+                </li>
+                <li class="step-nav-item" data-step="2">
+                  <span class="step-badge-num">2</span>
+                  <span>Academics</span>
+                </li>
+                <li class="step-nav-item" data-step="3">
+                  <span class="step-badge-num">3</span>
+                  <span>Skills</span>
+                </li>
+                <li class="step-nav-item" data-step="4">
+                  <span class="step-badge-num">4</span>
+                  <span>Interests</span>
+                </li>
+                <li class="step-nav-item" data-step="5">
+                  <span class="step-badge-num">5</span>
+                  <span>Target Career</span>
+                </li>
+                <li class="step-nav-item" data-step="6">
+                  <span class="step-badge-num">6</span>
+                  <span>Resume & Hub</span>
+                </li>
+              </ul>
+            </div>
+
+            <!-- Right Content Form Panels -->
+            <div class="onboarding-content-panel">
+
+              <!-- ==============================================
+                   STEP 1: BASIC INFORMATION
+                   ============================================== -->
+              <div class="step-pane active" id="pane-step-1">
+                <div class="step-header">
+                  <h2>Basic Information</h2>
+                  <p>Enter your personal contact details to start your career readiness journey.</p>
+                </div>
+
+                <!-- Instagram-style Profile Avatar Uploader Card -->
+                <div class="insta-avatar-uploader">
+                  <div class="insta-avatar-ring" id="insta-ring" title="Click to Change Profile Photo" onclick="document.getElementById('avatarFileInput').click()">
+                    <div class="insta-avatar-inner" id="insta-avatar-container">
+                      <div class="insta-avatar-fallback" id="insta-avatar-fallback">H</div>
+                    </div>
+                    <div class="insta-camera-badge">📷</div>
+                  </div>
+                  <input type="file" id="avatarFileInput" accept="image/*" style="display: none;">
+
+                  <div class="insta-avatar-controls">
+                    <div class="insta-avatar-title">Profile Photo</div>
+                    <p class="insta-avatar-desc">
+                      Upload your real photo or pick a quick avatar. It saves permanently and syncs across your sidebar, dashboard & generated resume!
+                    </p>
+                    <div class="insta-btn-group">
+                      <button type="button" class="btn btn-sm btn-primary btn-pill" onclick="document.getElementById('avatarFileInput').click()">
+                        📷 Upload Photo
+                      </button>
+                      <button type="button" class="btn btn-sm btn-secondary btn-pill" id="remove-photo-btn">
+                        ✕ Remove
+                      </button>
+                    </div>
+
+                    <!-- Quick Preset Avatars -->
+                    <div class="insta-preset-container">
+                      <span style="font-size: 0.75rem; color: #64748b; font-weight: 600;">Quick Presets:</span>
+                      <button type="button" class="insta-preset-chip" onclick="applyPresetAvatar('coder')">
+                        👨‍💻 Coder
+                      </button>
+                      <button type="button" class="insta-preset-chip" onclick="applyPresetAvatar('engineer')">
+                        🚀 Techie
+                      </button>
+                      <button type="button" class="insta-preset-chip" onclick="applyPresetAvatar('ai')">
+                        🤖 AI Bot
+                      </button>
+                      <button type="button" class="insta-preset-chip" onclick="applyPresetAvatar('scholar')">
+                        🎓 Scholar
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="grid-2">
+                  <div class="form-group">
+                    <label class="form-label" for="fullName">Full Name</label>
+                    <input type="text" id="fullName" class="form-control" placeholder="Himanshu Sahani" required>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label" for="email">Email Address</label>
+                    <input type="email" id="email" class="form-control" placeholder="himanshu@gmail.com" required>
+                  </div>
+                </div>
+
+                <div class="grid-2">
+                  <div class="form-group">
+                    <label class="form-label" for="phone">Phone Number</label>
+                    <input type="tel" id="phone" class="form-control" placeholder="+91 98765 43210">
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label" for="location">Current City / Location</label>
+                    <input type="text" id="location" class="form-control" placeholder="Bhopal, Madhya Pradesh">
+                  </div>
+                </div>
+
+                <div class="grid-2">
+                  <div class="form-group">
+                    <label class="form-label" for="linkedinUrl">LinkedIn Profile URL</label>
+                    <input type="url" id="linkedinUrl" class="form-control" placeholder="https://linkedin.com/in/himanshu-sahani">
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label" for="githubUrl">GitHub / Portfolio URL</label>
+                    <input type="url" id="githubUrl" class="form-control" placeholder="https://github.com/himanshusahani">
+                  </div>
+                </div>
+
+                <div class="step-action-bar">
+                  <div></div>
+                  <button type="button" class="btn btn-primary btn-pill" onclick="goToStep(2)">
+                    Next: Academics →
+                  </button>
+                </div>
+              </div>
+
+              <!-- ==============================================
+                   STEP 2: ACADEMICS & EDUCATION
+                   ============================================== -->
+              <div class="step-pane" id="pane-step-2">
+                <div class="step-header">
+                  <h2>Academic Details</h2>
+                  <p>Provide your university, graduation stream, semester, and academic scoring.</p>
+                </div>
+
+                <div class="grid-2">
+                  <div class="form-group">
+                    <label class="form-label" for="college">College / University Name</label>
+                    <input type="text" id="college" class="form-control" placeholder="RGPV Bhopal" value="RGPV Bhopal" required>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label" for="educationLevel">Degree / Program</label>
+                    <select id="educationLevel" class="form-control">
+                      <option value="B.Tech">B.Tech / B.E (Engineering)</option>
+                      <option value="BCA">BCA (Computer Applications)</option>
+                      <option value="MCA">MCA (Master of Computer Apps)</option>
+                      <option value="B.Sc">B.Sc / M.Sc (Computer Science / IT)</option>
+                      <option value="Diploma">Polytechnic / Diploma</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="grid-3">
+                  <div class="form-group">
+                    <label class="form-label" for="branch">Specialization / Branch</label>
+                    <input type="text" id="branch" class="form-control" placeholder="Computer Science & Engineering" value="Computer Science & Engineering">
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label" for="gradYear">Graduation Year</label>
+                    <input type="number" id="gradYear" class="form-control" placeholder="2027" value="2027">
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label" for="cgpa">CGPA / Percentage</label>
+                    <input type="text" id="cgpa" class="form-control" placeholder="8.5 / 10" value="8.5">
+                  </div>
+                </div>
+
+                <div class="grid-2">
+                  <div class="form-group">
+                    <label class="form-label" for="currentSemester">Current Semester / Year</label>
+                    <select id="currentSemester" class="form-control">
+                      <option value="6th Semester (3rd Year)">6th Semester (3rd Year)</option>
+                      <option value="7th / 8th Semester (Final Year)">7th / 8th Semester (Final Year)</option>
+                      <option value="4th Semester (2nd Year)">4th Semester (2nd Year)</option>
+                      <option value="Recent Graduate">Recent Graduate (2025/2026)</option>
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label" for="higherSecondary">Class 12th / Diploma %</label>
+                    <input type="text" id="higherSecondary" class="form-control" placeholder="88.4%" value="88.4%">
+                  </div>
+                </div>
+
+                <div class="step-action-bar">
+                  <button type="button" class="btn btn-secondary btn-pill" onclick="goToStep(1)">
+                    ← Back
+                  </button>
+                  <button type="button" class="btn btn-primary btn-pill" onclick="goToStep(3)">
+                    Next: Skills & Projects →
+                  </button>
+                </div>
+              </div>
+
+              <!-- ==============================================
+                   STEP 3: SKILLS & FEATURED PROJECTS
+                   ============================================== -->
+              <div class="step-pane" id="pane-step-3">
+                <div class="step-header">
+                  <h2>Skills & Projects</h2>
+                  <p>Add technical and soft skills, plus your highlight project.</p>
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label" for="technicalSkills">Technical Skills (Type or click quick-add chips)</label>
+                  <input type="text" id="technicalSkills" class="form-control" placeholder="Python, SQL, React, HTML5, CSS3, JavaScript" value="Python, SQL, React, HTML5, CSS3, JavaScript">
+                  
+                  <div class="chip-container" id="tech-chips">
+                    <span class="skill-chip selected" onclick="toggleSkillChip(this, 'Python')">+ Python</span>
+                    <span class="skill-chip selected" onclick="toggleSkillChip(this, 'React')">+ React</span>
+                    <span class="skill-chip selected" onclick="toggleSkillChip(this, 'SQL')">+ SQL</span>
+                    <span class="skill-chip selected" onclick="toggleSkillChip(this, 'JavaScript')">+ JavaScript</span>
+                    <span class="skill-chip" onclick="toggleSkillChip(this, 'Node.js')">+ Node.js</span>
+                    <span class="skill-chip" onclick="toggleSkillChip(this, 'FastAPI')">+ FastAPI</span>
+                    <span class="skill-chip" onclick="toggleSkillChip(this, 'Machine Learning')">+ Machine Learning</span>
+                    <span class="skill-chip" onclick="toggleSkillChip(this, 'Docker')">+ Docker</span>
+                    <span class="skill-chip" onclick="toggleSkillChip(this, 'Git')">+ Git</span>
+                    <span class="skill-chip" onclick="toggleSkillChip(this, 'Cloud / AWS')">+ Cloud / AWS</span>
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label" for="softSkills">Soft Skills</label>
+                  <input type="text" id="softSkills" class="form-control" placeholder="Problem Solving, Analytical Thinking, Team Collaboration" value="Problem Solving, Analytical Thinking, Team Collaboration">
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label" for="projectName">Featured Project Title</label>
+                  <input type="text" id="projectName" class="form-control" placeholder="Kisan Saathi Agricultural Advisory Portal" value="Kisan Saathi Agricultural Advisory Portal">
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label" for="projectDesc">Project Description & Impact</label>
+                  <textarea id="projectDesc" class="form-control" rows="3" placeholder="Engineered Kisan Saathi crop disease detection and farmer market advisory platform utilizing Python, modern JavaScript, and Cloud Firestore.">Engineered Kisan Saathi crop disease detection and farmer market advisory platform utilizing Python, modern JavaScript, and Cloud Firestore.</textarea>
+                </div>
+
+                <div class="step-action-bar">
+                  <button type="button" class="btn btn-secondary btn-pill" onclick="goToStep(2)">
+                    ← Back
+                  </button>
+                  <button type="button" class="btn btn-primary btn-pill" onclick="goToStep(4)">
+                    Next: Interests & Preferences →
+                  </button>
+                </div>
+              </div>
+
+              <!-- ==============================================
+                   STEP 4: INTERESTS & WORK PREFERENCES
+                   ============================================== -->
+              <div class="step-pane" id="pane-step-4">
+                <div class="step-header">
+                  <h2>Interests & Work Preferences</h2>
+                  <p>Tell us what types of technology domains and work environments excite you.</p>
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label">Primary Technology Domains of Interest</label>
+                  <div class="grid-2" style="gap: 0.6rem;">
+                    <label class="flex-align" style="background: #f8fafc; padding: 0.65rem 0.85rem; border-radius: 8px; cursor: pointer;">
+                      <input type="checkbox" name="interest_domain" value="ai_ml" checked style="accent-color: #4f46e5;">
+                      <span style="font-size: 0.88rem; font-weight: 600;">🤖 Artificial Intelligence & Machine Learning</span>
+                    </label>
+                    <label class="flex-align" style="background: #f8fafc; padding: 0.65rem 0.85rem; border-radius: 8px; cursor: pointer;">
+                      <input type="checkbox" name="interest_domain" value="fullstack" checked style="accent-color: #4f46e5;">
+                      <span style="font-size: 0.88rem; font-weight: 600;">🌐 Full Stack Web Development</span>
+                    </label>
+                    <label class="flex-align" style="background: #f8fafc; padding: 0.65rem 0.85rem; border-radius: 8px; cursor: pointer;">
+                      <input type="checkbox" name="interest_domain" value="data_science" checked style="accent-color: #4f46e5;">
+                      <span style="font-size: 0.88rem; font-weight: 600;">📊 Data Science & Business Analytics</span>
+                    </label>
+                    <label class="flex-align" style="background: #f8fafc; padding: 0.65rem 0.85rem; border-radius: 8px; cursor: pointer;">
+                      <input type="checkbox" name="interest_domain" value="gov_psu" checked style="accent-color: #4f46e5;">
+                      <span style="font-size: 0.88rem; font-weight: 600;">🏛️ Government & PSU Engineering (ISRO, CDAC, NIC)</span>
+                    </label>
+                  </div>
+                </div>
+
+                <div class="grid-2">
+                  <div class="form-group">
+                    <label class="form-label" for="preferredJobType">Preferred Opportunity Type</label>
+                    <select id="preferredJobType" class="form-control">
+                      <option value="Internship leading to PPO">Internship leading to PPO</option>
+                      <option value="Full-time Fresher Role">Full-time Fresher Role</option>
+                      <option value="Remote Project Fellowship">Remote Project Fellowship</option>
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label" for="weeklyHours">Dedicated Weekly Hours for Prep</label>
+                    <select id="weeklyHours" class="form-control">
+                      <option value="15-20 hrs/week (Recommended)">15 - 20 hrs/week (Fast Track)</option>
+                      <option value="10-15 hrs/week">10 - 15 hrs/week (Regular)</option>
+                      <option value="25+ hrs/week">25+ hrs/week (Intensive Bootcamp)</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label" for="preferredLocations">Preferred Work Locations</label>
+                  <input type="text" id="preferredLocations" class="form-control" placeholder="Bhopal, Remote, Bengaluru, Pune" value="Bhopal, Remote, Bengaluru, Pune">
+                </div>
+
+                <div class="step-action-bar">
+                  <button type="button" class="btn btn-secondary btn-pill" onclick="goToStep(3)">
+                    ← Back
+                  </button>
+                  <button type="button" class="btn btn-primary btn-pill" onclick="goToStep(5)">
+                    Next: Choose Target Career →
+                  </button>
+                </div>
+              </div>
+
+              <!-- ==============================================
+                   STEP 5: TARGET CAREER TRACK SELECTION
+                   ============================================== -->
+              <div class="step-pane" id="pane-step-5">
+                <div class="step-header">
+                  <h2>Choose Target Career Track</h2>
+                  <p>Manually select your primary career goal. AI will customize all certifications, jobs, mock tests, and roadmaps for this choice.</p>
+                </div>
+
+                <input type="hidden" id="targetCareer" value="AI / ML Engineer">
+
+                <div class="grid-2" style="gap: 1rem; margin-bottom: 1.5rem;" id="target-roles-grid">
+                  
+                  <div class="target-role-card selected" onclick="selectTargetRole(this, 'AI / ML Engineer')">
+                    <div class="role-card-title">
+                      <span>🤖</span> AI / Machine Learning Engineer
+                    </div>
+                    <div class="role-card-salary">Avg. Fresher Package: ₹8 - 18 LPA</div>
+                    <p class="role-card-desc">Model architecture, Python PyTorch, RAG Pipelines, Vector DBs and intelligent agents.</p>
+                  </div>
+
+                  <div class="target-role-card" onclick="selectTargetRole(this, 'Full Stack Web Developer')">
+                    <div class="role-card-title">
+                      <span>🌐</span> Full Stack Developer (React/Node)
+                    </div>
+                    <div class="role-card-salary">Avg. Fresher Package: ₹6 - 15 LPA</div>
+                    <p class="role-card-desc">Modern frontend UI, RESTful APIs, database indexing, and cloud deployment.</p>
+                  </div>
+
+                  <div class="target-role-card" onclick="selectTargetRole(this, 'Data Analyst & BI Specialist')">
+                    <div class="role-card-title">
+                      <span>📊</span> Data Analyst & BI Specialist
+                    </div>
+                    <div class="role-card-salary">Avg. Fresher Package: ₹5 - 12 LPA</div>
+                    <p class="role-card-desc">Advanced SQL window functions, statistical analytics, PowerBI/Tableau dashboards.</p>
+                  </div>
+
+                  <div class="target-role-card" onclick="selectTargetRole(this, 'PSU & Govt Junior Engineer')">
+                    <div class="role-card-title">
+                      <span>🏛️</span> PSU & Govt Engineer (ISRO/NIC/CDAC)
+                    </div>
+                    <div class="role-card-salary">Govt Pay Scale: Level 7 - 10 (Gazetted)</div>
+                    <p class="role-card-desc">Scientific computing, state infrastructure networks, NIC/CDAC screening exams.</p>
+                  </div>
+
+                </div>
+
+                <div class="step-action-bar">
+                  <button type="button" class="btn btn-secondary btn-pill" onclick="goToStep(4)">
+                    ← Back
+                  </button>
+                  <button type="button" class="btn btn-primary btn-pill" onclick="generateResumeAndHub()">
+                    ✨ Generate AI Resume & Recommendations →
+                  </button>
+                </div>
+              </div>
+
+              <!-- ==============================================
+                   STEP 6: AI-GENERATED RESUME & TAILORED HUB
+                   ============================================== -->
+              <div class="step-pane" id="pane-step-6">
+                <div class="step-header">
+                  <h2>AI Optimized Resume & Readiness Hub</h2>
+                  <p>Your profile data is saved. Below is your tailored resume & AI-matched recommendations (like Internshala, Unstop & Apna).</p>
+                </div>
+
+                <!-- ATS Live Resume Preview Card -->
+                <div class="resume-preview-sheet mb-2" id="resume-sheet">
+                  <div class="resume-header flex-between">
+                    <div class="flex-align" style="gap: 1.25rem;">
+                      <div id="res-avatar-preview" style="display: none;"></div>
+                      <div>
+                        <h3 class="resume-name" id="res-name">Himanshu Sahani</h3>
+                        <p style="color: #4f46e5; font-weight: 700; font-size: 0.95rem;" id="res-target-title">Target: AI / ML Engineer</p>
+                        <div class="resume-contact" id="res-contact">
+                          <span>📧 himanshu@gmail.com</span>
+                          <span>📱 +91 98765 43210</span>
+                          <span>📍 Bhopal, India</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div style="text-align: right;">
+                      <span class="badge badge-emerald" style="font-size: 0.85rem; padding: 0.4rem 0.8rem;">
+                        ATS Match: 88%
+                      </span>
+                    </div>
+                  </div>
+
+                  <!-- Professional Summary -->
+                  <div style="margin-bottom: 1rem;">
+                    <div class="resume-section-title">Professional Summary</div>
+                    <p style="font-size: 0.88rem; line-height: 1.5;" id="res-summary">
+                      Passionate Computer Science undergraduate at RGPV Bhopal aiming for high-impact AI/ML engineering roles. Strong foundation in Python, SQL, React and Cloud Firestore with hands-on experience building production web applications.
+                    </p>
+                  </div>
+
+                  <!-- Education -->
+                  <div style="margin-bottom: 1rem;">
+                    <div class="resume-section-title">Education</div>
+                    <div class="flex-between">
+                      <strong style="font-size: 0.9rem;" id="res-college">RGPV Bhopal — B.Tech in CSE</strong>
+                      <span style="font-size: 0.85rem; color: #64748b;" id="res-year">Graduating 2027 | CGPA: 8.5</span>
+                    </div>
+                  </div>
+
+                  <!-- Technical Skills -->
+                  <div style="margin-bottom: 1rem;">
+                    <div class="resume-section-title">Technical Competencies</div>
+                    <p style="font-size: 0.88rem;" id="res-skills">
+                      <strong>Languages & Frameworks:</strong> Python, SQL, React, HTML5, CSS3, JavaScript, Node.js<br>
+                      <strong>Soft Skills:</strong> Problem Solving, Analytical Thinking, Team Collaboration
+                    </p>
+                  </div>
+
+                  <!-- Featured Project -->
+                  <div>
+                    <div class="resume-section-title">Academic & Portfolio Projects</div>
+                    <strong style="font-size: 0.9rem;" id="res-project-title">Kisan Saathi Agricultural Advisory Portal</strong>
+                    <p style="font-size: 0.85rem; color: #475569; margin-top: 0.2rem;" id="res-project-desc">
+                      Engineered Kisan Saathi crop disease detection and farmer market advisory platform utilizing Python, modern JavaScript, and Cloud Firestore.
+                    </p>
+                  </div>
+                </div>
+
+                <!-- AI Recommendations Section (Internships, Jobs, Certifications, Mock Tests) -->
+                <div style="margin-top: 2rem;">
+                  <h3 style="font-size: 1.25rem; font-weight: 800; color: #0f172a; margin-bottom: 0.5rem;">
+                    🎯 AI Matched Opportunities & Certifications For You
+                  </h3>
+                  <p class="text-muted" style="font-size: 0.85rem; margin-bottom: 1.25rem;">
+                    Curated live from portals like Internshala, Unstop, Apna and Official PSU Boards based on your target track.
+                  </p>
+
+                  <div style="display: flex; flex-direction: column; gap: 0.85rem;" id="recommendations-list">
+                    
+                    <!-- Item 1: Recommended Internship -->
+                    <div class="rec-item-card">
+                      <div class="flex-align" style="gap: 0.85rem;">
+                        <span style="font-size: 1.6rem; background: #eef2ff; padding: 0.5rem; border-radius: 10px;">💼</span>
+                        <div>
+                          <strong style="font-size: 0.95rem; color: #0f172a;">AI Engineering Trainee Intern</strong>
+                          <p style="font-size: 0.8rem; color: #64748b;">TechVentures Labs • Remote • Stipend: ₹25,000/month</p>
+                          <span class="badge badge-emerald" style="font-size: 0.72rem;">94% Skill Match</span>
+                        </div>
+                      </div>
+                      <a href="opportunities.html" class="btn btn-sm btn-primary btn-pill">Apply Now →</a>
+                    </div>
+
+                    <!-- Item 2: Recommended Govt Job Alert -->
+                    <div class="rec-item-card">
+                      <div class="flex-align" style="gap: 0.85rem;">
+                        <span style="font-size: 1.6rem; background: #f0fdf4; padding: 0.5rem; border-radius: 10px;">🏛️</span>
+                        <div>
+                          <strong style="font-size: 0.95rem; color: #0f172a;">NIC / CDAC Junior Scientific Officer</strong>
+                          <p style="font-size: 0.8rem; color: #64748b;">Ministry of Electronics & IT • Level 7 Pay Scale</p>
+                          <span class="badge badge-cyan" style="font-size: 0.72rem;">Govt PSU Alert</span>
+                        </div>
+                      </div>
+                      <a href="opportunities.html" class="btn btn-sm btn-outline btn-pill">View Eligibility →</a>
+                    </div>
+
+                    <!-- Item 3: Recommended Certification -->
+                    <div class="rec-item-card">
+                      <div class="flex-align" style="gap: 0.85rem;">
+                        <span style="font-size: 1.6rem; background: #fff7ed; padding: 0.5rem; border-radius: 10px;">🏆</span>
+                        <div>
+                          <strong style="font-size: 0.95rem; color: #0f172a;">DeepLearning.AI: Production Machine Learning Specialization</strong>
+                          <p style="font-size: 0.8rem; color: #64748b;">Boosts your ATS Resume score by +14% for your target career.</p>
+                          <span class="badge badge-amber" style="font-size: 0.72rem;">Top Rated Course</span>
+                        </div>
+                      </div>
+                      <a href="roadmap.html" class="btn btn-sm btn-secondary btn-pill">Add to Roadmap</a>
+                    </div>
+
+                    <!-- Item 4: AI Mock Test -->
+                    <div class="rec-item-card">
+                      <div class="flex-align" style="gap: 0.85rem;">
+                        <span style="font-size: 1.6rem; background: #fff1f2; padding: 0.5rem; border-radius: 10px;">🎙️</span>
+                        <div>
+                          <strong style="font-size: 0.95rem; color: #0f172a;">Live AI Technical Mock Interview Test</strong>
+                          <p style="font-size: 0.8rem; color: #64748b;">Practice 5 tailored questions with real-time feedback.</p>
+                        </div>
+                      </div>
+                      <a href="interview.html" class="btn btn-sm btn-primary btn-pill">Start Mock Test 🎙️</a>
+                    </div>
+
+                  </div>
+                </div>
+
+                <div class="step-action-bar" style="margin-top: 2rem;">
+                  <button type="button" class="btn btn-secondary btn-pill" onclick="goToStep(5)">
+                    ← Back to Target Career
+                  </button>
+                  <a href="dashboard.html" class="btn btn-primary btn-lg btn-pill">
+                    🚀 Go To Dashboard & Track Progress →
+                  </a>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <script>
+    var currentStep = 1;
+
+    document.addEventListener('DOMContentLoaded', async function () {
+      if (!window.CareerSetu || !CareerSetu.checkAuthGuard()) return;
+      CareerSetu.renderUserProfileWidget();
+
+      var user = CareerSetu.getCurrentUser();
+      var alertContainer = document.getElementById('alert-container');
+      var prefillBtn = document.getElementById('prefill-demo-btn');
+      var avatarInput = document.getElementById('avatarFileInput');
+      var removePhotoBtn = document.getElementById('remove-photo-btn');
+
+      // Hydrate from existing profile cache instantly
+      try {
+        var existing = await CareerSetu.getUserData('profiles');
+        if (existing) {
+          populateFields(existing);
+        } else if (user) {
+          if (document.getElementById('fullName') && user.displayName) {
+            document.getElementById('fullName').value = user.displayName;
+          }
+          if (document.getElementById('email') && user.email) {
+            document.getElementById('email').value = user.email;
+          }
+        }
+
+        // Initialize Avatar Preview
+        var currentPhoto = (existing && existing.photoURL) || (user && user.photoURL) || '';
+        updateAvatarUI(currentPhoto);
+      } catch (e) {}
+
+      // Avatar File Upload Handler
+      if (avatarInput) {
+        avatarInput.addEventListener('change', function (e) {
+          if (e.target.files && e.target.files[0]) {
+            handleAvatarFileUpload(e.target.files[0]);
+          }
+        });
+      }
+
+      // Avatar Remove Button Handler
+      if (removePhotoBtn) {
+        removePhotoBtn.addEventListener('click', async function () {
+          await CareerSetu.removeUserAvatar();
+          updateAvatarUI('');
+          showAlert('Profile photo removed. Showing letter avatar.', 'info');
+        });
+      }
+
+      // Clickable Step Navigation on Sidebar
+      var stepItems = document.querySelectorAll('.step-nav-item');
+      stepItems.forEach(function (item) {
+        item.addEventListener('click', function () {
+          var targetStep = parseInt(this.getAttribute('data-step'));
+          goToStep(targetStep);
+        });
+      });
+
+      // Quick-Fill Demo Button
+      if (prefillBtn) {
+        prefillBtn.addEventListener('click', function () {
+          var demoData = {
+            fullName: user && user.displayName ? user.displayName : 'Himanshu Sahani',
+            email: user && user.email ? user.email : 'himanshu@gmail.com',
+            phone: '+91 98765 43210',
+            location: 'Bhopal, Madhya Pradesh',
+            linkedinUrl: 'https://linkedin.com/in/himanshu-sahani',
+            githubUrl: 'https://github.com/himanshusahani',
+            college: 'RGPV Bhopal',
+            educationLevel: 'B.Tech',
+            branch: 'Computer Science & Engineering',
+            gradYear: '2027',
+            cgpa: '8.5',
+            technicalSkills: 'Python, SQL, React, HTML5, CSS3, JavaScript',
+            softSkills: 'Problem Solving, Analytical Thinking, Team Collaboration',
+            projectName: 'Kisan Saathi Agricultural Advisory Portal',
+            projectDesc: 'Engineered Kisan Saathi crop disease detection and farmer market advisory platform utilizing Python, modern JavaScript, and Cloud Firestore.',
+            targetCareer: 'AI / ML Engineer',
+            preferredLocations: 'Bhopal, Remote, Bengaluru, Pune'
+          };
+          populateFields(demoData);
+          saveCurrentDataSilently();
+          showAlert('Demo profile loaded! You can click through steps or generate resume.', 'info');
+        });
+      }
+    });
+
+    // Handle Image Upload & Canvas Compression (Fast & Permanent)
+    function handleAvatarFileUpload(file) {
+      if (!file || !file.type.startsWith('image/')) {
+        showAlert('Please choose a valid image file (JPG, PNG, WebP).', 'error');
+        return;
+      }
+
+      var reader = new FileReader();
+      reader.onload = function (e) {
+        var img = new Image();
+        img.onload = function () {
+          var canvas = document.createElement('canvas');
+          var maxDim = 256;
+          var width = img.width;
+          var height = img.height;
+
+          if (width > height) {
+            if (width > maxDim) {
+              height = Math.round((height * maxDim) / width);
+              width = maxDim;
+            }
+          } else {
+            if (height > maxDim) {
+              width = Math.round((width * maxDim) / height);
+              height = maxDim;
+            }
+          }
+
+          canvas.width = width;
+          canvas.height = height;
+          var ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, width, height);
+
+          var compressedDataUrl = canvas.toDataURL('image/jpeg', 0.88);
+          updateAvatarUI(compressedDataUrl);
+          CareerSetu.saveUserAvatar(compressedDataUrl);
+          showAlert('📸 Profile photo successfully updated and saved!', 'success');
+        };
+        img.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+
+    // Apply Quick Preset Avatar
+    function applyPresetAvatar(type) {
+      var svgMap = {
+        coder: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><linearGradient id="g1" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#4f46e5"/><stop offset="100%" stop-color="#06b6d4"/></linearGradient></defs><circle cx="50" cy="50" r="50" fill="url(#g1)"/><circle cx="50" cy="38" r="18" fill="#ffffff"/><path d="M22 84 C22 66, 36 60, 50 60 C64 60, 78 66, 78 84 Z" fill="#ffffff"/><text x="50" y="44" font-size="18" text-anchor="middle" fill="#4f46e5" font-family="sans-serif">💻</text></svg>',
+        engineer: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><linearGradient id="g2" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#f59e0b"/><stop offset="100%" stop-color="#ef4444"/></linearGradient></defs><circle cx="50" cy="50" r="50" fill="url(#g2)"/><circle cx="50" cy="38" r="18" fill="#ffffff"/><path d="M22 84 C22 66, 36 60, 50 60 C64 60, 78 66, 78 84 Z" fill="#ffffff"/><text x="50" y="44" font-size="18" text-anchor="middle" fill="#f59e0b" font-family="sans-serif">🚀</text></svg>',
+        ai: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><linearGradient id="g3" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#8b5cf6"/><stop offset="100%" stop-color="#ec4899"/></linearGradient></defs><circle cx="50" cy="50" r="50" fill="url(#g3)"/><circle cx="50" cy="38" r="18" fill="#ffffff"/><path d="M22 84 C22 66, 36 60, 50 60 C64 60, 78 66, 78 84 Z" fill="#ffffff"/><text x="50" y="44" font-size="18" text-anchor="middle" fill="#8b5cf6" font-family="sans-serif">🤖</text></svg>',
+        scholar: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><linearGradient id="g4" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#10b981"/><stop offset="100%" stop-color="#0284c7"/></linearGradient></defs><circle cx="50" cy="50" r="50" fill="url(#g4)"/><circle cx="50" cy="38" r="18" fill="#ffffff"/><path d="M22 84 C22 66, 36 60, 50 60 C64 60, 78 66, 78 84 Z" fill="#ffffff"/><text x="50" y="44" font-size="18" text-anchor="middle" fill="#10b981" font-family="sans-serif">🎓</text></svg>'
+      };
+
+      var svg = svgMap[type] || svgMap.coder;
+      var dataUrl = 'data:image/svg+xml;utf8,' + encodeURIComponent(svg);
+      
+      updateAvatarUI(dataUrl);
+      CareerSetu.saveUserAvatar(dataUrl);
+      showAlert('✨ Preset avatar selected and saved!', 'success');
+    }
+
+    // Update Avatar UI
+    function updateAvatarUI(photoURL) {
+      var container = document.getElementById('insta-avatar-container');
+      var name = (document.getElementById('fullName')?.value || 'Himanshu Sahani').trim();
+      var initial = name.charAt(0).toUpperCase() || 'H';
+
+      if (container) {
+        if (photoURL) {
+          container.innerHTML = '<img class="insta-avatar-img" src="' + photoURL + '" alt="Avatar">';
+        } else {
+          container.innerHTML = '<div class="insta-avatar-fallback">' + initial + '</div>';
+        }
+      }
+
+      var resAvatar = document.getElementById('res-avatar-preview');
+      if (resAvatar) {
+        if (photoURL) {
+          resAvatar.style.display = 'block';
+          resAvatar.innerHTML = '<img src="' + photoURL + '" style="width: 54px; height: 54px; border-radius: 50%; object-fit: cover; border: 2px solid #4f46e5; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">';
+        } else {
+          resAvatar.style.display = 'none';
+        }
+      }
+    }
+
+    // Step Transition Function
+    function goToStep(stepNumber) {
+      // Save data from current step before leaving
+      saveCurrentDataSilently();
+
+      currentStep = stepNumber;
+
+      // Update Stepper Active State
+      var navItems = document.querySelectorAll('.step-nav-item');
+      navItems.forEach(function (item) {
+        var s = parseInt(item.getAttribute('data-step'));
+        item.classList.remove('active');
+        if (s < currentStep) {
+          item.classList.add('completed');
+        } else if (s === currentStep) {
+          item.classList.add('active');
+        } else {
+          item.classList.remove('completed');
+        }
+      });
+
+      // Show Active Pane
+      var panes = document.querySelectorAll('.step-pane');
+      panes.forEach(function (pane) {
+        pane.classList.remove('active');
+      });
+      var activePane = document.getElementById('pane-step-' + stepNumber);
+      if (activePane) {
+        activePane.classList.add('active');
+      }
+
+      // If Step 6, update live preview values
+      if (stepNumber === 6) {
+        renderLiveResumeAndRecs();
+      }
+
+      window.scrollTo({ top: 120, behavior: 'smooth' });
+    }
+
+    // Toggle Technical Skill Chip
+    function toggleSkillChip(el, skillName) {
+      el.classList.toggle('selected');
+      var skillsInput = document.getElementById('technicalSkills');
+      var current = skillsInput.value.split(',').map(function (s) { return s.trim(); }).filter(Boolean);
+
+      if (el.classList.contains('selected')) {
+        if (current.indexOf(skillName) === -1) current.push(skillName);
+      } else {
+        current = current.filter(function (s) { return s !== skillName; });
+      }
+      skillsInput.value = current.join(', ');
+      saveCurrentDataSilently();
+    }
+
+    // Select Target Role
+    function selectTargetRole(cardEl, roleTitle) {
+      var allCards = document.querySelectorAll('.target-role-card');
+      allCards.forEach(function (c) { c.classList.remove('selected'); });
+      cardEl.classList.add('selected');
+      document.getElementById('targetCareer').value = roleTitle;
+      saveCurrentDataSilently();
+    }
+
+    // Generate Resume & Hub (Step 5 to 6)
+    function generateResumeAndHub() {
+      saveCurrentDataSilently();
+      goToStep(6);
+    }
+
+    // Render Live Resume and Dynamic Opportunity Cards
+    function renderLiveResumeAndRecs() {
+      var name = document.getElementById('fullName').value || 'Student Candidate';
+      var email = document.getElementById('email').value || 'student@domain.com';
+      var phone = document.getElementById('phone').value || '+91 98765 43210';
+      var location = document.getElementById('location').value || 'India';
+      var college = document.getElementById('college').value || 'RGPV Bhopal';
+      var degree = document.getElementById('educationLevel').value || 'B.Tech';
+      var branch = document.getElementById('branch').value || 'CSE';
+      var year = document.getElementById('gradYear').value || '2027';
+      var cgpa = document.getElementById('cgpa').value || '8.5';
+      var skills = document.getElementById('technicalSkills').value || 'Python, SQL, React, JavaScript';
+      var target = document.getElementById('targetCareer').value || 'AI / ML Engineer';
+      var projTitle = document.getElementById('projectName').value || 'Kisan Saathi Agricultural Advisory Portal';
+      var projDesc = document.getElementById('projectDesc').value || 'Engineered scalable web applications and AI tools.';
+
+      document.getElementById('res-name').textContent = name;
+      document.getElementById('res-target-title').textContent = 'Target Track: ' + target;
+      document.getElementById('res-contact').innerHTML = '<span>📧 ' + email + '</span><span>📱 ' + phone + '</span><span>📍 ' + location + '</span>';
+      document.getElementById('res-summary').textContent = 'Passionate ' + degree + ' (' + branch + ') undergraduate at ' + college + ' aiming for high-growth ' + target + ' opportunities. Proficient in ' + skills + ' with hands-on project implementation.';
+      document.getElementById('res-college').textContent = college + ' — ' + degree + ' in ' + branch;
+      document.getElementById('res-year').textContent = 'Graduating ' + year + ' | CGPA: ' + cgpa;
+      document.getElementById('res-skills').innerHTML = '<strong>Core Technical Skills:</strong> ' + skills + '<br><strong>Soft Skills:</strong> Problem Solving, Analytical Thinking, Team Leadership';
+      document.getElementById('res-project-title').textContent = projTitle;
+      document.getElementById('res-project-desc').textContent = projDesc;
+    }
+
+    // Silent Auto-Save to Firestore + LocalStorage on every step transition
+    function saveCurrentDataSilently() {
+      if (!window.CareerSetu) return;
+
+      var formData = {
+        fullName: document.getElementById('fullName')?.value?.trim() || '',
+        email: document.getElementById('email')?.value?.trim() || '',
+        phone: document.getElementById('phone')?.value?.trim() || '',
+        location: document.getElementById('location')?.value?.trim() || '',
+        linkedinUrl: document.getElementById('linkedinUrl')?.value?.trim() || '',
+        githubUrl: document.getElementById('githubUrl')?.value?.trim() || '',
+        college: document.getElementById('college')?.value?.trim() || '',
+        educationLevel: document.getElementById('educationLevel')?.value || 'B.Tech',
+        branch: document.getElementById('branch')?.value?.trim() || '',
+        gradYear: document.getElementById('gradYear')?.value?.trim() || '',
+        cgpa: document.getElementById('cgpa')?.value?.trim() || '',
+        currentSemester: document.getElementById('currentSemester')?.value || '',
+        technicalSkills: document.getElementById('technicalSkills')?.value?.trim() || '',
+        softSkills: document.getElementById('softSkills')?.value?.trim() || '',
+        projectName: document.getElementById('projectName')?.value?.trim() || '',
+        projectDesc: document.getElementById('projectDesc')?.value?.trim() || '',
+        targetCareer: document.getElementById('targetCareer')?.value || 'AI / ML Engineer',
+        preferredLocations: document.getElementById('preferredLocations')?.value?.trim() || '',
+        preferredJobType: document.getElementById('preferredJobType')?.value || '',
+        weeklyHours: document.getElementById('weeklyHours')?.value || '',
+        lastUpdated: new Date().toISOString()
+      };
+
+      CareerSetu.saveUserData('profiles', formData);
+    }
+
+    // Populate Fields Helper
+    function populateFields(data) {
+      for (var key in data) {
+        var el = document.getElementById(key);
+        if (el) {
+          el.value = data[key];
+        }
+      }
+      if (data.targetCareer) {
+        var cards = document.querySelectorAll('.target-role-card');
+        cards.forEach(function (c) {
+          if (c.textContent.indexOf(data.targetCareer) !== -1) {
+            c.classList.add('selected');
+          } else {
+            c.classList.remove('selected');
+          }
+        });
+      }
+    }
+
+    function showAlert(message, type) {
+      var alertContainer = document.getElementById('alert-container');
+      if (!alertContainer) return;
+      var alertClass = type === 'success' ? 'alert-emerald' : (type === 'error' ? 'alert-rose' : 'alert-primary');
+      alertContainer.innerHTML = '<div class="alert ' + alertClass + '" style="margin-bottom: 1.25rem; padding: 0.75rem 1rem; border-radius: 8px; font-size: 0.88rem; background: ' + (type === 'success' ? '#ecfdf5' : (type === 'error' ? '#fff1f2' : '#eff6ff')) + '; color: ' + (type === 'success' ? '#047857' : (type === 'error' ? '#b91c1c' : '#1e40af')) + '; border: 1px solid ' + (type === 'success' ? '#a7f3d0' : (type === 'error' ? '#fecdd3' : '#bfdbfe')) + ';">' + message + '</div>';
+    }
+  </script>
+</body>
+</html>

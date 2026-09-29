@@ -1,0 +1,1102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CareerSetu AI — Your Career. Your Roadmap. Your Next Opportunity.</title>
+  <meta name="description" content="CareerSetu AI analyzes your academic profile, skills, projects and resume to build a personalized career roadmap.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/responsive.css">
+  <script src="js/careersetu-core.js"></script>
+  <style>
+    :root {
+      --primary-color: #5542f6;
+      --primary-hover: #4333d9;
+      --primary-light: #eef0ff;
+      --navy-dark: #111827;
+      --slate-text: #4b5563;
+      --slate-light: #f8fafc;
+      --border-subtle: #e5e7eb;
+      --card-radius: 20px;
+      --pill-radius: 9999px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Plus Jakarta Sans', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
+    body {
+      background-color: #f0f4f9;
+      background-image: 
+        radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.08) 0px, transparent 50%),
+        radial-gradient(at 100% 0%, rgba(59, 130, 246, 0.08) 0px, transparent 50%),
+        radial-gradient(at 50% 100%, rgba(244, 247, 254, 0.8) 0px, transparent 50%);
+      color: #1f2937;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 1.5rem 1rem 3rem;
+    }
+
+    /* Outer Mockup Card Frame matching Reference UI */
+    .mockup-wrapper {
+      width: 100%;
+      max-width: 1120px;
+      margin: 0 auto;
+    }
+
+    .mockup-header-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 0.85rem;
+      padding-left: 0.25rem;
+    }
+
+    .number-badge {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #3b82f6 0%, #6366f1 100%);
+      color: #ffffff;
+      font-weight: 700;
+      font-size: 0.95rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 10px rgba(79, 70, 229, 0.3);
+    }
+
+    .mockup-title {
+      font-size: 1.35rem;
+      font-weight: 800;
+      color: #0f172a;
+      letter-spacing: -0.01em;
+    }
+
+    .mockup-card {
+      background: #ffffff;
+      border-radius: 28px;
+      box-shadow: 
+        0 20px 45px -10px rgba(15, 23, 42, 0.08),
+        0 0 0 1px rgba(226, 232, 240, 0.9),
+        0 1px 3px rgba(0, 0, 0, 0.02);
+      overflow: hidden;
+      border: 1px solid rgba(226, 232, 240, 0.8);
+      position: relative;
+    }
+
+    /* Navbar inside Card */
+    .app-navbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.25rem 2.5rem;
+      background: #ffffff;
+      border-bottom: 1px solid #f1f5f9;
+    }
+
+    .brand-logo {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+      text-decoration: none;
+      user-select: none;
+    }
+
+    .logo-icon-box {
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, #eef2ff 0%, #e0e7ff 100%);
+      border: 1.5px solid #c7d2fe;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #4f46e5;
+      font-size: 1.25rem;
+      box-shadow: 0 2px 6px rgba(79, 70, 229, 0.12);
+    }
+
+    .brand-text {
+      font-size: 1.35rem;
+      font-weight: 800;
+      color: #0f172a;
+      letter-spacing: -0.02em;
+    }
+
+    .brand-text span {
+      background: linear-gradient(135deg, #4f46e5 0%, #3b82f6 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 2.25rem;
+      list-style: none;
+    }
+
+    .nav-links a {
+      text-decoration: none;
+      color: #475569;
+      font-weight: 600;
+      font-size: 0.92rem;
+      transition: color 0.15s ease;
+    }
+
+    .nav-links a:hover,
+    .nav-links a.active {
+      color: #4f46e5;
+    }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 1.25rem;
+    }
+
+    .btn-login {
+      text-decoration: none;
+      color: #0f172a;
+      font-weight: 700;
+      font-size: 0.9rem;
+      padding: 0.55rem 1rem;
+      border-radius: var(--pill-radius);
+      transition: background 0.15s ease, color 0.15s ease;
+    }
+
+    .btn-login:hover {
+      background: #f1f5f9;
+      color: #4f46e5;
+    }
+
+    .btn-get-started {
+      text-decoration: none;
+      background: #5b4bf3;
+      background: linear-gradient(135deg, #5b4bf3 0%, #4f46e5 100%);
+      color: #ffffff;
+      font-weight: 700;
+      font-size: 0.88rem;
+      padding: 0.6rem 1.35rem;
+      border-radius: var(--pill-radius);
+      box-shadow: 0 4px 12px rgba(91, 75, 243, 0.28);
+      transition: transform 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .btn-get-started:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 18px rgba(91, 75, 243, 0.38);
+      opacity: 0.96;
+    }
+
+    /* Hero Section */
+    .hero-container {
+      padding: 3.5rem 3rem 2.5rem;
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      align-items: center;
+      gap: 2.5rem;
+      position: relative;
+    }
+
+    .hero-content {
+      max-width: 520px;
+    }
+
+    .hero-headline {
+      font-size: 2.75rem;
+      font-weight: 800;
+      line-height: 1.18;
+      color: #0f172a;
+      letter-spacing: -0.03em;
+      margin-bottom: 1.35rem;
+    }
+
+    .hero-headline span.highlight {
+      color: #0f172a;
+    }
+
+    .hero-description {
+      font-size: 1.05rem;
+      color: #64748b;
+      line-height: 1.6;
+      margin-bottom: 2.25rem;
+      font-weight: 450;
+    }
+
+    .hero-cta-group {
+      display: flex;
+      align-items: center;
+      gap: 1.25rem;
+      flex-wrap: wrap;
+    }
+
+    .btn-profile-primary {
+      text-decoration: none;
+      background: #5b4bf3;
+      background: linear-gradient(135deg, #5b4bf3 0%, #4839d3 100%);
+      color: #ffffff;
+      font-weight: 700;
+      font-size: 0.95rem;
+      padding: 0.85rem 1.85rem;
+      border-radius: var(--pill-radius);
+      box-shadow: 0 8px 20px -3px rgba(91, 75, 243, 0.35);
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .btn-profile-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 24px -4px rgba(91, 75, 243, 0.45);
+    }
+
+    .btn-demo-secondary {
+      text-decoration: none;
+      background: #ffffff;
+      color: #1e293b;
+      font-weight: 700;
+      font-size: 0.95rem;
+      padding: 0.82rem 1.75rem;
+      border-radius: var(--pill-radius);
+      border: 1.5px solid #e2e8f0;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+    }
+
+    .btn-demo-secondary:hover {
+      background: #f8fafc;
+      border-color: #cbd5e1;
+      color: #4f46e5;
+      transform: translateY(-1px);
+    }
+
+    /* Hero Illustration Canvas */
+    .hero-visual-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 320px;
+    }
+
+    .vector-illustration {
+      width: 100%;
+      max-width: 420px;
+      height: auto;
+      filter: drop-shadow(0 15px 25px rgba(59, 130, 246, 0.08));
+    }
+
+    /* Feature Pills Horizontal Ribbon (Exact 6 Cards) */
+    .features-ribbon {
+      padding: 1.25rem 2.5rem 2.75rem;
+      border-top: 1px solid #f1f5f9;
+      background: #ffffff;
+    }
+
+    .feature-cards-grid {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 1rem;
+    }
+
+    .feature-pill-card {
+      background: #f8fafc;
+      border-radius: 18px;
+      padding: 1.25rem 0.75rem 1rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-decoration: none;
+      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      border: 1px solid #f1f5f9;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .feature-pill-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 10px 20px -5px rgba(15, 23, 42, 0.08);
+      border-color: #e2e8f0;
+      background: #ffffff;
+    }
+
+    .pill-icon-container {
+      width: 48px;
+      height: 48px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 0.75rem;
+      transition: transform 0.2s ease;
+    }
+
+    .feature-pill-card:hover .pill-icon-container {
+      transform: scale(1.08);
+    }
+
+    .pill-icon-container svg {
+      width: 24px;
+      height: 24px;
+    }
+
+    .pill-label {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: #334155;
+      text-align: center;
+      transition: color 0.2s ease;
+    }
+
+    .feature-pill-card:hover .pill-label {
+      color: #0f172a;
+    }
+
+    /* Individual Color Themes for the 6 Cards (matching reference image) */
+    /* 1. AI Analysis - Light Blue */
+    .card-ai { background: #f0f7ff; }
+    .card-ai .pill-icon-container { background: #3b82f6; color: #ffffff; box-shadow: 0 4px 10px rgba(59, 130, 246, 0.3); }
+    
+    /* 2. Skill Gap - Soft Cyan/Sky */
+    .card-skill { background: #eef8ff; }
+    .card-skill .pill-icon-container { background: #0284c7; color: #ffffff; box-shadow: 0 4px 10px rgba(2, 132, 199, 0.3); }
+
+    /* 3. Roadmap - Soft Orange/Amber */
+    .card-roadmap { background: #fff8f0; }
+    .card-roadmap .pill-icon-container { background: #ea580c; color: #ffffff; box-shadow: 0 4px 10px rgba(234, 88, 12, 0.3); }
+
+    /* 4. Opportunities - Soft Green/Mint */
+    .card-opportunities { background: #f0fdf4; }
+    .card-opportunities .pill-icon-container { background: #16a34a; color: #ffffff; box-shadow: 0 4px 10px rgba(22, 163, 74, 0.3); }
+
+    /* 5. Resume - Soft Lavender/Purple */
+    .card-resume { background: #f5f3ff; }
+    .card-resume .pill-icon-container { background: #7c3aed; color: #ffffff; box-shadow: 0 4px 10px rgba(124, 58, 237, 0.3); }
+
+    /* 6. Interview - Soft Rose/Pink */
+    .card-interview { background: #fff1f2; }
+    .card-interview .pill-icon-container { background: #e11d48; color: #ffffff; box-shadow: 0 4px 10px rgba(225, 29, 72, 0.3); }
+
+    /* Interactive Live Demo Section below Mockup */
+    .live-demo-section {
+      width: 100%;
+      max-width: 1120px;
+      margin: 2.5rem auto 0;
+      background: #ffffff;
+      border-radius: 24px;
+      padding: 2.5rem;
+      border: 1px solid #e2e8f0;
+      box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.04);
+    }
+
+    .demo-header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .demo-badge {
+      display: inline-block;
+      padding: 0.35rem 0.85rem;
+      background: #eef2ff;
+      color: #4f46e5;
+      font-weight: 700;
+      font-size: 0.78rem;
+      border-radius: var(--pill-radius);
+      margin-bottom: 0.65rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .demo-title {
+      font-size: 1.85rem;
+      font-weight: 800;
+      color: #0f172a;
+      letter-spacing: -0.02em;
+    }
+
+    .interactive-simulator-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+      align-items: start;
+    }
+
+    .sim-card {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 16px;
+      padding: 1.75rem;
+    }
+
+    .sim-card-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #0f172a;
+      margin-bottom: 1.25rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .form-group {
+      margin-bottom: 1.25rem;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #475569;
+      margin-bottom: 0.4rem;
+    }
+
+    .sim-select, .sim-input {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      border-radius: 10px;
+      border: 1.5px solid #cbd5e1;
+      font-size: 0.92rem;
+      font-weight: 500;
+      color: #1e293b;
+      background: #ffffff;
+      transition: border-color 0.15s ease;
+      outline: none;
+    }
+
+    .sim-select:focus, .sim-input:focus {
+      border-color: #4f46e5;
+      box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.12);
+    }
+
+    .sim-results {
+      background: #ffffff;
+      border: 1.5px solid #e0e7ff;
+      border-radius: 16px;
+      padding: 1.75rem;
+      box-shadow: 0 4px 15px rgba(79, 70, 229, 0.05);
+    }
+
+    .score-circle-wrap {
+      display: flex;
+      align-items: center;
+      gap: 1.25rem;
+      margin-bottom: 1.5rem;
+      padding-bottom: 1.25rem;
+      border-bottom: 1px solid #f1f5f9;
+    }
+
+    .score-ring {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      background: conic-gradient(#4f46e5 0% 88%, #e2e8f0 88% 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    .score-ring::after {
+      content: '88%';
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      background: #ffffff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.95rem;
+      font-weight: 800;
+      color: #4f46e5;
+    }
+
+    .roadmap-preview-steps {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .step-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.65rem 0.85rem;
+      background: #f8fafc;
+      border-radius: 10px;
+      font-size: 0.88rem;
+    }
+
+    .step-name {
+      font-weight: 600;
+      color: #1e293b;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .step-status {
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 0.2rem 0.5rem;
+      border-radius: 6px;
+    }
+
+    .status-done { background: #dcfce7; color: #15803d; }
+    .status-next { background: #e0e7ff; color: #4338ca; }
+    .status-lock { background: #f1f5f9; color: #64748b; }
+
+    /* Footer */
+    .landing-footer {
+      width: 100%;
+      max-width: 1120px;
+      margin-top: 3rem;
+      text-align: center;
+      color: #64748b;
+      font-size: 0.88rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+      padding: 0 0.5rem;
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 1.5rem;
+    }
+
+    .footer-links a {
+      color: #64748b;
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .footer-links a:hover {
+      color: #4f46e5;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 900px) {
+      .hero-container {
+        grid-template-columns: 1fr;
+        padding: 2.5rem 1.5rem;
+        text-align: center;
+      }
+
+      .hero-content {
+        max-width: 100%;
+      }
+
+      .hero-cta-group {
+        justify-content: center;
+      }
+
+      .feature-cards-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 0.75rem;
+      }
+
+      .interactive-simulator-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .app-navbar {
+        padding: 1rem 1.5rem;
+      }
+
+      .nav-links {
+        display: none;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .hero-headline {
+        font-size: 2.1rem;
+      }
+
+      .feature-cards-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .features-ribbon {
+        padding: 1rem 1.25rem 2rem;
+      }
+
+      .btn-profile-primary, .btn-demo-secondary {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="mockup-wrapper">
+    
+    <!-- Top indicator header matching the reference image badge -->
+    <div class="mockup-header-tag">
+      <div class="number-badge">1</div>
+      <h2 class="mockup-title">Landing Page : /</h2>
+    </div>
+
+    <!-- Main Card Mockup -->
+    <div class="mockup-card">
+      
+      <!-- Top Navigation Bar -->
+      <header class="app-navbar">
+        <a href="index.html" class="brand-logo">
+          <div class="logo-icon-box">
+            <!-- Graduation Cap + AI Spark SVG -->
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M22 10v6M2 10l10-5 10 5-10 5z"/>
+              <path d="M6 12v5c3 3 9 3 12 0v-5"/>
+            </svg>
+          </div>
+          <span class="brand-text">CareerSetu <span>AI</span></span>
+        </a>
+
+        <nav>
+          <ul class="nav-links">
+            <li><a href="index.html" class="active">Home</a></li>
+            <li><a href="#features">Features</a></li>
+            <li><a href="#about">About</a></li>
+            <li><a href="pages/opportunities.html">Opportunities</a></li>
+          </ul>
+        </nav>
+
+        <div class="nav-actions">
+          <a href="pages/login.html" class="btn-login">Login</a>
+          <a href="pages/signup.html" class="btn-get-started">Get Started</a>
+        </div>
+      </header>
+
+      <!-- Hero Section -->
+      <section class="hero-container">
+        <div class="hero-content">
+          <h1 class="hero-headline">
+            Your Career. Your Roadmap,<br>
+            <span class="highlight">Your Next Opportunity.</span>
+          </h1>
+          <p class="hero-description">
+            CareerSetu AI analyzes your academic profile, skills, projects and resume to build a personalized career roadmap.
+          </p>
+          <div class="hero-cta-group">
+            <a href="pages/profile.html" class="btn-profile-primary">Build My Career Profile</a>
+            <a href="pages/dashboard.html" class="btn-demo-secondary">Explore Demo</a>
+          </div>
+        </div>
+
+        <!-- Custom Scalable Vector Art (Person climbing stairs towards target with arrow & plant) -->
+        <div class="hero-visual-wrapper">
+          <svg class="vector-illustration" viewBox="0 0 460 360" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <!-- Gradients for steps -->
+              <linearGradient id="step1Grad" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#93c5fd" stop-opacity="0.9"/>
+                <stop offset="100%" stop-color="#60a5fa" stop-opacity="0.95"/>
+              </linearGradient>
+              <linearGradient id="step2Grad" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#60a5fa" stop-opacity="0.9"/>
+                <stop offset="100%" stop-color="#3b82f6" stop-opacity="0.95"/>
+              </linearGradient>
+              <linearGradient id="step3Grad" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#3b82f6" stop-opacity="0.9"/>
+                <stop offset="100%" stop-color="#2563eb" stop-opacity="0.95"/>
+              </linearGradient>
+              <linearGradient id="step4Grad" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#6366f1" stop-opacity="0.9"/>
+                <stop offset="100%" stop-color="#4f46e5" stop-opacity="0.95"/>
+              </linearGradient>
+              <!-- Target Gradient -->
+              <linearGradient id="targetGrad" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%" stop-color="#f43f5e"/>
+                <stop offset="100%" stop-color="#e11d48"/>
+              </linearGradient>
+              <!-- Arrow Gradient -->
+              <linearGradient id="arrowGrad" x1="0" y1="1" x2="1" y2="0">
+                <stop offset="0%" stop-color="#38bdf8"/>
+                <stop offset="100%" stop-color="#2563eb"/>
+              </linearGradient>
+              <!-- Soft Glow Filter -->
+              <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+                <feGaussianBlur stdDeviation="6" result="blur" />
+                <feComposite in="SourceGraphic" in2="blur" operator="over" />
+              </filter>
+            </defs>
+
+            <!-- Background subtle ambient glow circles -->
+            <circle cx="390" cy="120" r="85" fill="#fee2e2" opacity="0.45" />
+            <circle cx="280" cy="240" r="110" fill="#eff6ff" opacity="0.7" />
+
+            <!-- STAIRS / 3D STEPS (Rising Step Bars) -->
+            <!-- Step 1 -->
+            <path d="M 230 290 L 265 272 L 265 330 L 230 348 Z" fill="#93c5fd" opacity="0.8"/>
+            <path d="M 200 272 L 235 254 L 270 272 L 235 290 Z" fill="#bfdbfe"/>
+            <rect x="235" y="272" width="30" height="60" rx="4" fill="url(#step1Grad)" />
+
+            <!-- Step 2 -->
+            <rect x="270" y="235" width="32" height="100" rx="6" fill="url(#step2Grad)" />
+            <path d="M 270 235 L 290 224 L 322 224 L 302 235 Z" fill="#93c5fd"/>
+            <path d="M 302 235 L 322 224 L 322 335 L 302 335 Z" fill="#1d4ed8" opacity="0.4"/>
+
+            <!-- Step 3 -->
+            <rect x="310" y="190" width="32" height="145" rx="6" fill="url(#step3Grad)" />
+            <path d="M 310 190 L 330 179 L 362 179 L 342 190 Z" fill="#60a5fa"/>
+            <path d="M 342 190 L 362 179 L 362 335 L 342 335 Z" fill="#1e40af" opacity="0.5"/>
+
+            <!-- Step 4 (Highest Step leading to goal) -->
+            <rect x="350" y="145" width="34" height="190" rx="6" fill="url(#step4Grad)" />
+            <path d="M 350 145 L 370 134 L 404 134 L 384 145 Z" fill="#818cf8"/>
+            <path d="M 384 145 L 404 134 L 404 335 L 384 335 Z" fill="#3730a3" opacity="0.6"/>
+
+            <!-- Potted Plant on the bottom left of stairs -->
+            <ellipse cx="195" cy="335" rx="20" ry="6" fill="#cbd5e1" opacity="0.6"/>
+            <!-- Plant pot -->
+            <path d="M 182 320 L 208 320 L 204 336 L 186 336 Z" fill="#047857"/>
+            <!-- Plant Leaves -->
+            <path d="M 195 320 C 180 300, 165 285, 172 260 C 185 280, 192 305, 195 320 Z" fill="#10b981"/>
+            <path d="M 195 320 C 190 295, 190 270, 198 245 C 205 270, 202 295, 195 320 Z" fill="#059669"/>
+            <path d="M 195 320 C 205 300, 220 288, 225 265 C 215 285, 205 305, 195 320 Z" fill="#34d399"/>
+            <path d="M 195 320 C 175 315, 160 310, 168 290 C 180 302, 188 312, 195 320 Z" fill="#047857"/>
+
+            <!-- TARGET BULLSEYE (Concentric Red/White Circles) -->
+            <g transform="translate(390, 120)">
+              <!-- Outer Red Ring -->
+              <circle cx="0" cy="0" r="38" fill="url(#targetGrad)" filter="url(#glow)"/>
+              <!-- White Ring -->
+              <circle cx="0" cy="0" r="28" fill="#ffffff" />
+              <!-- Middle Red Ring -->
+              <circle cx="0" cy="0" r="20" fill="#f43f5e" />
+              <!-- Inner White Ring -->
+              <circle cx="0" cy="0" r="12" fill="#ffffff" />
+              <!-- Bullseye Red Center -->
+              <circle cx="0" cy="0" r="6" fill="#e11d48" />
+            </g>
+
+            <!-- DYNAMIC UPWARD ARROW (Launching into target) -->
+            <g>
+              <path d="M 330 200 Q 345 165 375 135" stroke="url(#arrowGrad)" stroke-width="4" stroke-linecap="round" stroke-dasharray="4 3" />
+              <!-- Arrow head -->
+              <path d="M 358 132 L 378 132 L 378 152 Z" fill="#2563eb"/>
+            </g>
+
+            <!-- CHARACTER: Young Student/Professional climbing the stairs -->
+            <g transform="translate(20, 5)">
+              <!-- Head -->
+              <circle cx="295" cy="165" r="14" fill="#fed7aa" />
+              <!-- Dark Hair -->
+              <path d="M 285 165 C 285 152, 305 150, 308 160 C 308 163, 300 160, 290 164 Z" fill="#1e293b" />
+              <!-- Face feature subtle -->
+              <circle cx="302" cy="164" r="1.5" fill="#334155" />
+
+              <!-- Upper Body (Blue collared shirt) -->
+              <path d="M 288 180 L 308 180 L 312 225 L 282 225 Z" fill="#2563eb" rx="4"/>
+              <!-- White collar detail -->
+              <path d="M 295 180 L 298 188 L 301 180 Z" fill="#ffffff" />
+
+              <!-- Left Arm (Reaching forward/upward) -->
+              <path d="M 305 186 Q 320 180 328 170" stroke="#fed7aa" stroke-width="6" stroke-linecap="round" fill="none"/>
+              <path d="M 305 186 Q 315 182 320 178" stroke="#2563eb" stroke-width="7" stroke-linecap="round" fill="none"/>
+
+              <!-- Right Arm (Balance on side) -->
+              <path d="M 288 186 Q 278 198 282 208" stroke="#fed7aa" stroke-width="5" stroke-linecap="round" fill="none"/>
+              <path d="M 288 186 Q 282 194 284 198" stroke="#1d4ed8" stroke-width="6" stroke-linecap="round" fill="none"/>
+
+              <!-- Legs (Dark navy pants, climbing motion) -->
+              <!-- Front Leg (Stepping up on Step 2) -->
+              <path d="M 305 225 L 312 250 L 318 250" stroke="#0f172a" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+              <!-- Front Shoe -->
+              <rect x="312" y="248" width="14" height="6" rx="3" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+
+              <!-- Back Leg (Pushing off lower step) -->
+              <path d="M 288 225 L 282 260 L 276 270" stroke="#1e293b" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+              <!-- Back Shoe -->
+              <rect x="268" y="268" width="14" height="6" rx="3" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+            </g>
+
+            <!-- Sparkle accents -->
+            <path d="M 390 70 L 392 76 L 398 78 L 392 80 L 390 86 L 388 80 L 382 78 L 388 76 Z" fill="#fbbf24"/>
+            <path d="M 240 180 L 241 184 L 245 185 L 241 186 L 240 190 L 239 186 L 235 185 L 239 184 Z" fill="#60a5fa"/>
+          </svg>
+        </div>
+      </section>
+
+      <!-- 6 Feature Cards Ribbon (Exact replica of bottom section) -->
+      <section class="features-ribbon" id="features">
+        <div class="feature-cards-grid">
+          
+          <!-- Card 1: AI Analysis -->
+          <a href="pages/career.html" class="feature-pill-card card-ai">
+            <div class="pill-icon-container">
+              <!-- AI Spark / Brain icon -->
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/>
+                <circle cx="12" cy="12" r="4"/>
+              </svg>
+            </div>
+            <span class="pill-label">AI Analysis</span>
+          </a>
+
+          <!-- Card 2: Skill Gap -->
+          <a href="pages/skill-gap.html" class="feature-pill-card card-skill">
+            <div class="pill-icon-container">
+              <!-- Target & Gap Icon -->
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M18 10h-1.26A8 8 0 1 0 9 20h9a3 3 0 0 0 0-6h-.5A4.5 4.5 0 0 0 18 10z"/>
+                <circle cx="12" cy="13" r="2"/>
+              </svg>
+            </div>
+            <span class="pill-label">Skill Gap</span>
+          </a>
+
+          <!-- Card 3: Roadmap -->
+          <a href="pages/roadmap.html" class="feature-pill-card card-roadmap">
+            <div class="pill-icon-container">
+              <!-- Map & Path Icon -->
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                <polyline points="14 2 14 8 20 8"/>
+                <path d="M10 13l2 2 4-4"/>
+              </svg>
+            </div>
+            <span class="pill-label">Roadmap</span>
+          </a>
+
+          <!-- Card 4: Opportunities -->
+          <a href="pages/opportunities.html" class="feature-pill-card card-opportunities">
+            <div class="pill-icon-container">
+              <!-- Compass / Opportunities Icon -->
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21"/>
+                <line x1="9" y1="3" x2="9" y2="18"/>
+                <line x1="15" y1="6" x2="15" y2="21"/>
+              </svg>
+            </div>
+            <span class="pill-label">Opportunities</span>
+          </a>
+
+          <!-- Card 5: Resume -->
+          <a href="pages/resume.html" class="feature-pill-card card-resume">
+            <div class="pill-icon-container">
+              <!-- Document / Resume Icon -->
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                <circle cx="10" cy="13" r="2"/>
+                <line x1="14" y1="13" x2="16" y2="13"/>
+                <line x1="10" y1="17" x2="16" y2="17"/>
+              </svg>
+            </div>
+            <span class="pill-label">Resume</span>
+          </a>
+
+          <!-- Card 6: Interview -->
+          <a href="pages/interview.html" class="feature-pill-card card-interview">
+            <div class="pill-icon-container">
+              <!-- Microphone Icon -->
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
+                <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+                <line x1="12" y1="19" x2="12" y2="23"/>
+                <line x1="8" y1="23" x2="16" y2="23"/>
+              </svg>
+            </div>
+            <span class="pill-label">Interview</span>
+          </a>
+
+        </div>
+      </section>
+    </div>
+
+    <!-- Interactive Live Career Roadmap Preview Simulator -->
+    <section class="live-demo-section" id="about">
+      <div class="demo-header">
+        <span class="demo-badge">✨ Try Live AI Simulator</span>
+        <h3 class="demo-title">Experience Personalized Readiness In Seconds</h3>
+      </div>
+
+      <div class="interactive-simulator-grid">
+        <!-- Input Form -->
+        <div class="sim-card">
+          <h4 class="sim-card-title">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#4f46e5" stroke-width="2">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+              <circle cx="12" cy="7" r="4"/>
+            </svg>
+            Student Profile Simulator
+          </h4>
+
+          <div class="form-group">
+            <label>Target Dream Role</label>
+            <select class="sim-select" id="targetRoleSelect" onchange="updateSimResults()">
+              <option value="frontend">Full Stack Web Developer (React + Node.js)</option>
+              <option value="ai">AI / Machine Learning Engineer</option>
+              <option value="data">Data Analyst & BI Specialist</option>
+              <option value="cyber">Cybersecurity Associate (Govt / PSU)</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Current Education Level</label>
+            <select class="sim-select" id="eduLevelSelect" onchange="updateSimResults()">
+              <option value="btech">B.Tech / B.E. (Computer Science / IT)</option>
+              <option value="bca">BCA / MCA</option>
+              <option value="diploma">Polytechnic / Diploma</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Current Known Skills</label>
+            <input type="text" class="sim-input" id="skillsInput" value="JavaScript, Python, HTML/CSS, Git" onkeyup="updateSimResults()">
+          </div>
+        </div>
+
+        <!-- Dynamic Output -->
+        <div class="sim-results">
+          <div class="score-circle-wrap">
+            <div class="score-ring" id="readinessScoreRing"></div>
+            <div>
+              <h4 style="font-size: 1.1rem; color: #0f172a; margin-bottom: 0.2rem;" id="matchRoleTitle">Full Stack Developer Match</h4>
+              <p style="font-size: 0.85rem; color: #64748b;" id="matchDescription">3 high-impact skill gaps detected to reach 95%+ offer readiness.</p>
+            </div>
+          </div>
+
+          <h5 style="font-size: 0.88rem; font-weight: 700; color: #475569; margin-bottom: 0.75rem;">AI GENERATED 60-DAY ROADMAP MILESTONES</h5>
+          <div class="roadmap-preview-steps" id="roadmapStepsList">
+            <div class="step-item">
+              <span class="step-name">🔹 Week 1-2: Advanced State & API Integration</span>
+              <span class="step-status status-done">Ready</span>
+            </div>
+            <div class="step-item">
+              <span class="step-name">⚡ Week 3-4: Node.js Microservices & DB Indexing</span>
+              <span class="step-status status-next">Up Next</span>
+            </div>
+            <div class="step-item">
+              <span class="step-name">🔒 Week 5-6: System Design & Live Mock Interview</span>
+              <span class="step-status status-lock">Milestone</span>
+            </div>
+          </div>
+
+          <div style="margin-top: 1.5rem; text-align: center;">
+            <a href="pages/profile.html" class="btn-get-started" style="width: 100%; text-align: center; padding: 0.75rem 1rem;">
+              Generate Full Personalized Plan →
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="landing-footer">
+      <div>
+        <strong>CareerSetu AI</strong> © 2026. Empowering Students from Classroom to Career.
+      </div>
+      <div class="footer-links">
+        <a href="pages/career.html">AI Analysis</a>
+        <a href="pages/skill-gap.html">Skill Gap</a>
+        <a href="pages/roadmap.html">Roadmap</a>
+        <a href="pages/opportunities.html">Opportunities</a>
+        <a href="pages/resume.html">Resume</a>
+        <a href="pages/interview.html">Interview</a>
+      </div>
+    </footer>
+
+  </div>
+
+  <script>
+    const simData = {
+      frontend: {
+        title: 'Full Stack Web Developer Match',
+        score: '88%',
+        percent: 88,
+        desc: '3 high-impact gaps (Docker, Redis, Cloud Deployment) to reach 95%+ readiness.',
+        steps: [
+          { name: '🔹 Week 1-2: React Hooks & State Management', status: 'Ready', class: 'status-done' },
+          { name: '⚡ Week 3-4: REST APIs & PostgreSQL Modeling', status: 'Up Next', class: 'status-next' },
+          { name: '🔒 Week 5-6: Dockerize & Mock Technical Round', status: 'Milestone', class: 'status-lock' }
+        ]
+      },
+      ai: {
+        title: 'AI / ML Engineer Match',
+        score: '82%',
+        percent: 82,
+        desc: 'Identified PyTorch model fine-tuning & Vector DB integration for high match.',
+        steps: [
+          { name: '🔹 Week 1-2: PyTorch & Transformer Architectures', status: 'Ready', class: 'status-done' },
+          { name: '⚡ Week 3-4: LangChain, RAG & Embedding Search', status: 'Up Next', class: 'status-next' },
+          { name: '🔒 Week 5-6: Model Serving with FastAPI & GPU Deploy', status: 'Milestone', class: 'status-lock' }
+        ]
+      },
+      data: {
+        title: 'Data Analyst & BI Match',
+        score: '91%',
+        percent: 91,
+        desc: 'Strong SQL and Python foundation. PowerBI DAX will complete the profile.',
+        steps: [
+          { name: '🔹 Week 1-2: Advanced SQL Window Functions', status: 'Ready', class: 'status-done' },
+          { name: '⚡ Week 3-4: Tableau & Interactive Dashboards', status: 'Up Next', class: 'status-next' },
+          { name: '🔒 Week 5-6: Business Case Study Presentation', status: 'Milestone', class: 'status-lock' }
+        ]
+      },
+      cyber: {
+        title: 'Cybersecurity Associate Match',
+        score: '85%',
+        percent: 85,
+        desc: 'Eligible for PSU/Govt C-DAC & NIC cyber analyst screening tests.',
+        steps: [
+          { name: '🔹 Week 1-2: Network Protocols & Wireshark Labs', status: 'Ready', class: 'status-done' },
+          { name: '⚡ Week 3-4: Vulnerability Scanning & OWASP Top 10', status: 'Up Next', class: 'status-next' },
+          { name: '🔒 Week 5-6: SIEM Log Analysis & Incident Handling', status: 'Milestone', class: 'status-lock' }
+        ]
+      }
+    };
+
+    function updateSimResults() {
+      const role = document.getElementById('targetRoleSelect').value;
+      const data = simData[role] || simData.frontend;
+
+      document.getElementById('matchRoleTitle').textContent = data.title;
+      document.getElementById('matchDescription').textContent = data.desc;
+
+      const ring = document.getElementById('readinessScoreRing');
+      ring.style.background = `conic-gradient(#4f46e5 0% ${data.percent}%, #e2e8f0 ${data.percent}% 100%)`;
+      
+      // Update dynamic style element for the pseudo ::after content text
+      let styleSheet = document.getElementById('dynamic-ring-style');
+      if (!styleSheet) {
+        styleSheet = document.createElement('style');
+        styleSheet.id = 'dynamic-ring-style';
+        document.head.appendChild(styleSheet);
+      }
+      styleSheet.textContent = `.score-ring::after { content: '${data.score}'; }`;
+
+      const stepsContainer = document.getElementById('roadmapStepsList');
+      stepsContainer.innerHTML = data.steps.map(s => `
+        <div class="step-item">
+          <span class="step-name">${s.name}</span>
+          <span class="step-status ${s.class}">${s.status}</span>
+        </div>
+      `).join('');
+    }
+  </script>
+
+</body>
+</html>

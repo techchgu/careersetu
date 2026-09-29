@@ -1,0 +1,82 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Helper function to check if the user is authenticated
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    // Helper function to check if the user is owner of the document
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    // User authentication profile
+    match /users/{userId} {
+      allow read, write: if isOwner(userId);
+    }
+
+    // User career profile & academic records
+    match /profiles/{userId} {
+      allow read, write: if isOwner(userId);
+    }
+    
+    match /academicRecords/{userId} {
+      allow read, write: if isOwner(userId);
+    }
+
+    // Career assessments
+    match /assessments/{userId} {
+      allow read, write: if isOwner(userId);
+    }
+
+    // AI Career Recommendations & Skill Gaps
+    match /careerRecommendations/{userId} {
+      allow read, write: if isOwner(userId);
+    }
+
+    match /skillGaps/{userId} {
+      allow read, write: if isOwner(userId);
+    }
+
+    // AI Resumes & Mock Interviews
+    match /resumes/{userId} {
+      allow read, write: if isOwner(userId);
+    }
+
+    match /interviews/{userId} {
+      allow read, write: if isOwner(userId);
+    }
+
+    // Roadmaps & Progress tracking
+    match /roadmaps/{userId} {
+      allow read, write: if isOwner(userId);
+    }
+
+    match /progress/{userId} {
+      allow read, write: if isOwner(userId);
+    }
+
+    // Public / Directory collections (Read-only for all, write restricted)
+    match /courses/{courseId} {
+      allow read: if true;
+      allow write: if false; // Managed by administrators
+    }
+
+    match /certifications/{certId} {
+      allow read: if true;
+      allow write: if false;
+    }
+
+    match /opportunities/{opportunityId} {
+      allow read: if true;
+      allow write: if false;
+    }
+
+    match /government/{govId} {
+      allow read: if true;
+      allow write: if false;
+    }
+  }
+}

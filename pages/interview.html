@@ -1,0 +1,1000 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Mock Interview &amp; Skill Quiz — CareerSetu AI</title>
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/dashboard.css">
+  <link rel="stylesheet" href="../css/responsive.css">
+
+  <!-- CareerSetu Universal Core (Instant 0ms Load) -->
+  <script src="../js/careersetu-core.js"></script>
+  <!-- Optional Background Firebase SDK -->
+  <script defer src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script defer src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+  <script defer src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+
+  <style>
+    /* ===== QUIZ MODAL STYLES ===== */
+    .quiz-modal-backdrop {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(15, 23, 42, 0.75);
+      backdrop-filter: blur(5px);
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+    }
+    .quiz-modal-card {
+      background: #ffffff;
+      width: 100%;
+      max-width: 640px;
+      border-radius: 16px;
+      box-shadow: 0 20px 45px rgba(0, 0, 0, 0.25);
+      padding: 1.75rem;
+      max-height: 90vh;
+      overflow-y: auto;
+      position: relative;
+      border: 1px solid #e2e8f0;
+      animation: quizSlideIn 0.25s ease-out;
+    }
+    @keyframes quizSlideIn {
+      from { opacity: 0; transform: translateY(20px) scale(0.97); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+    .quiz-modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      border-bottom: 1.5px solid #f1f5f9;
+      padding-bottom: 0.85rem;
+    }
+    .quiz-close-btn {
+      background: #f1f5f9;
+      border: none;
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      font-size: 1.25rem;
+      font-weight: bold;
+      color: #64748b;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.15s;
+    }
+    .quiz-close-btn:hover {
+      background: #fee2e2;
+      color: #ef4444;
+    }
+
+    /* Option buttons */
+    .quiz-option-btn {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      padding: 0.85rem 1.15rem;
+      background: #f8fafc;
+      border: 1.5px solid #e2e8f0;
+      border-radius: 10px;
+      font-size: 0.92rem;
+      font-weight: 500;
+      color: #1e293b;
+      cursor: pointer;
+      text-align: left;
+      transition: all 0.18s ease;
+      line-height: 1.4;
+    }
+    .quiz-option-btn:hover:not(:disabled) {
+      background: #f1f5f9;
+      border-color: #4f46e5;
+      color: #4f46e5;
+      transform: translateX(4px);
+    }
+    /* Correct option selected by user */
+    .quiz-option-btn.selected-correct {
+      background: #ecfdf5 !important;
+      border: 2px solid #10b981 !important;
+      color: #065f46 !important;
+      font-weight: 700 !important;
+      box-shadow: 0 2px 12px rgba(16, 185, 129, 0.22);
+    }
+    /* Wrong option selected by user */
+    .quiz-option-btn.selected-wrong {
+      background: #fef2f2 !important;
+      border: 2px solid #ef4444 !important;
+      color: #991b1b !important;
+      font-weight: 700 !important;
+      box-shadow: 0 2px 12px rgba(239, 68, 68, 0.22);
+    }
+    /* Correct option revealed when user answered wrongly */
+    .quiz-option-btn.reveal-correct {
+      background: #ecfdf5 !important;
+      border: 2px dashed #10b981 !important;
+      color: #065f46 !important;
+      font-weight: 700 !important;
+    }
+    .quiz-option-btn:disabled {
+      cursor: default;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="app-layout">
+    <!-- Dark Navy Sidebar (Poster) -->
+    <aside class="app-sidebar">
+      <div class="sidebar-brand">
+        <a href="../index.html" class="flex-align" style="gap: 0.5rem; text-decoration: none;">
+          <svg width="28" height="28" viewBox="0 0 64 64" fill="none">
+            <rect width="64" height="64" rx="14" fill="#4f46e5" />
+            <path d="M14 44 C22 28, 42 28, 50 44" stroke="#ffffff" stroke-width="4" stroke-linecap="round" />
+            <path d="M20 44 L20 35 M32 44 L32 30 M44 44 L44 35" stroke="#ffffff" stroke-width="3" stroke-linecap="round" />
+            <circle cx="32" cy="20" r="5" fill="#38bdf8" />
+          </svg>
+          <span class="brand-title">CareerSetu <span class="brand-badge">AI</span></span>
+        </a>
+      </div>
+
+      <nav class="sidebar-nav">
+        <a href="dashboard.html" class="nav-item"><span class="nav-icon">📊</span> Dashboard</a>
+        <a href="profile.html" class="nav-item"><span class="nav-icon">👤</span> My Profile</a>
+        <a href="career.html" class="nav-item"><span class="nav-icon">🧭</span> My Career</a>
+        <a href="skill-gap.html" class="nav-item"><span class="nav-icon">📈</span> Skill Gap</a>
+        <a href="roadmap.html" class="nav-item"><span class="nav-icon">🗺️</span> Roadmap</a>
+        <a href="opportunities.html" class="nav-item"><span class="nav-icon">💼</span> Opportunities</a>
+        <a href="resume.html" class="nav-item"><span class="nav-icon">📄</span> Resume AI</a>
+        <a href="interview.html" class="nav-item active"><span class="nav-icon">🎙️</span> Mock Interview</a>
+        <a href="progress.html" class="nav-item"><span class="nav-icon">🎯</span> Progress</a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="user-profile-summary">
+          <div class="user-avatar" id="sidebar-user-avatar">H</div>
+          <div class="user-info-text">
+            <p class="user-name-label" id="sidebar-user-name">Himanshu Sahani</p>
+            <p class="user-role-label" id="sidebar-user-email">himanshu@gmail.com</p>
+          </div>
+          <button id="logout-btn" class="btn btn-sm btn-secondary" title="Log Out" style="padding: 0.25rem 0.5rem; font-size: 0.75rem;">⏻</button>
+        </div>
+      </div>
+    </aside>
+
+    <div class="app-main">
+      <header class="app-topbar">
+        <div class="flex-align">
+          <button class="mobile-menu-btn" id="mobile-menu-toggle">☰</button>
+          <div class="topbar-breadcrumbs">
+            <span>Mock Interview</span>
+            <span>/</span>
+            <span class="text-primary" style="font-weight: 600;">Interview</span>
+          </div>
+        </div>
+
+        <!-- Career Quiz Trigger Button (Replaces Check Readiness Index) -->
+        <button class="btn btn-sm btn-primary" id="open-quiz-btn" style="background: linear-gradient(135deg, #4f46e5, #7c3aed); border: none; font-weight: 700; padding: 0.55rem 1.15rem; border-radius: 8px; cursor: pointer; display: flex; align-items: center; gap: 0.45rem; box-shadow: 0 4px 14px rgba(79,70,229,0.3); color: #fff;">
+          <span>🎯</span>
+          <span>Career Skill Quiz (10 Qs) →</span>
+        </button>
+      </header>
+
+      <main class="page-content">
+        <div class="page-header flex-between">
+          <div>
+            <h1 class="page-title">AI Mock Interview</h1>
+            <p class="page-description">
+              Target: <strong class="text-primary" id="target-role-label">AI / ML Engineer</strong> | Difficulty: <strong class="text-primary">Intermediate</strong>
+            </p>
+          </div>
+          <span class="badge badge-emerald">Live AI Evaluator Active</span>
+        </div>
+
+        <div id="quiz-alert-toast" style="display: none; margin-bottom: 1.25rem; padding: 0.85rem 1.15rem; border-radius: 10px; background: #ecfdf5; border: 1px solid #a7f3d0; color: #047857; font-size: 0.9rem; font-weight: 600;"></div>
+
+        <div class="grid-2 mb-2" style="grid-template-columns: 1.25fr 0.75fr; gap: 1.5rem;">
+          
+          <!-- Robot Interviewer Box (Exact Poster Screen 9) -->
+          <div class="interview-bot-box">
+            <div class="bot-avatar-circle">🤖</div>
+            <p class="text-dim" style="text-align: center; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.35rem;">
+              AI Technical Interviewer
+            </p>
+            <h3 class="bot-speech-text" id="interviewer-prompt">
+              "Let's begin! Tell me about your Kisan Saathi project and your role in it."
+            </h3>
+
+            <!-- User Response Box -->
+            <div style="background: rgba(255, 255, 255, 0.05); padding: 1rem; border-radius: var(--radius-md); margin-bottom: 1.25rem;">
+              <textarea id="interview-user-answer" class="form-control" style="background: rgba(15, 23, 42, 0.8); color: #fff; border-color: #334155; min-height: 90px;" placeholder="Click 'Quick-Fill Answer' or type your response here..."></textarea>
+            </div>
+
+            <div style="display: flex; gap: 0.75rem; justify-content: center;">
+              <button type="button" class="btn btn-primary" id="start-answer-btn" style="background: #ef4444; border-color: #ef4444; box-shadow: 0 4px 14px rgba(239, 68, 68, 0.35);">
+                🎙️ Submit Answer &amp; Evaluate
+              </button>
+              <button type="button" class="btn btn-secondary btn-sm" id="prefill-sample-answer-btn" style="color: #fff; border-color: #475569; background: #1e293b;">
+                ⚡ Quick-Fill Answer
+              </button>
+            </div>
+          </div>
+
+          <!-- Overall Score & Breakdown Card (Exact Poster Screen 9 Right) -->
+          <div class="card" style="padding: 1.5rem; display: flex; flex-direction: column; justify-content: space-between;">
+            <div>
+              <div class="flex-between mb-1">
+                <span class="text-muted" style="font-size: 0.85rem; font-weight: 700;">Performance Score</span>
+                <span class="badge badge-emerald" id="performance-badge">Passed Bar</span>
+              </div>
+
+              <!-- Circular Gauge: Overall Score -->
+              <div style="text-align: center; margin: 1rem 0;">
+                <div class="gauge-container" style="width: 130px; height: 130px;">
+                  <svg class="gauge-svg" width="130" height="130" viewBox="0 0 130 130">
+                    <circle class="gauge-circle-bg" cx="65" cy="65" r="54" stroke-width="8"></circle>
+                    <circle class="gauge-circle-progress" id="gauge-progress-circle" cx="65" cy="65" r="54" stroke="#10b981" stroke-width="8"
+                      stroke-dasharray="339.3" stroke-dashoffset="78.0"></circle>
+                  </svg>
+                  <div class="gauge-center-text">
+                    <span class="gauge-value" style="font-size: 1.7rem; color: #0f172a;" id="interview-gauge-val">77<span style="font-size: 0.8rem; color: #64748b;">/100</span></span>
+                    <span class="gauge-label" style="font-size: 0.7rem;">Overall Score</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Score Breakdown (Poster Screen 9) -->
+              <div style="display: flex; flex-direction: column; gap: 0.6rem;">
+                <div class="flex-between" style="font-size: 0.85rem;">
+                  <span class="text-muted">Technical Accuracy</span>
+                  <span class="text-emerald" style="font-weight: 700;" id="score-accuracy">84</span>
+                </div>
+                <div class="flex-between" style="font-size: 0.85rem;">
+                  <span class="text-muted">Relevance</span>
+                  <span class="text-primary" style="font-weight: 700;" id="score-relevance">76</span>
+                </div>
+                <div class="flex-between" style="font-size: 0.85rem;">
+                  <span class="text-muted">Structure</span>
+                  <span class="text-primary" style="font-weight: 700;" id="score-structure">72</span>
+                </div>
+                <div class="flex-between" style="font-size: 0.85rem;">
+                  <span class="text-muted">Confidence</span>
+                  <span class="text-emerald" style="font-weight: 700;" id="score-confidence">75</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Feedback Card (Exact Poster Screen 9 Bottom) -->
+        <div class="card" style="background: #fffbeb; border: 1px solid #fde68a; padding: 1.25rem 1.5rem;">
+          <div class="flex-align" style="margin-bottom: 0.35rem;">
+            <span style="font-size: 1.25rem;">💡</span>
+            <strong style="color: #b45309; font-size: 0.95rem;">Feedback</strong>
+          </div>
+          <p style="color: #92400e; font-size: 0.9rem; line-height: 1.6;" id="feedback-text">
+            "Great explanation of the technology. Try to highlight your specific contribution and the quantified impact of your work (e.g. users served, load times reduced)."
+          </p>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <!-- ==================== CAREER SKILL QUIZ MODAL ==================== -->
+  <div id="quiz-modal" class="quiz-modal-backdrop" style="display: none;">
+    <div class="quiz-modal-card">
+      
+      <!-- Modal Header -->
+      <div class="quiz-modal-header">
+        <div>
+          <span class="badge badge-primary" id="quiz-track-badge" style="font-size: 0.8rem; margin-bottom: 0.25rem;">AI / ML Engineer</span>
+          <h3 style="font-size: 1.25rem; font-weight: 800; color: #0f172a; margin: 0;">10-Question Career Skill Quiz</h3>
+        </div>
+        <button id="close-quiz-btn" class="quiz-close-btn" title="Close Quiz">&times;</button>
+      </div>
+
+      <!-- Quiz Body: Active Question View -->
+      <div id="quiz-active-view">
+        <!-- Progress Bar and Counter -->
+        <div style="margin: 1.15rem 0 1rem;">
+          <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.85rem; color: #64748b; font-weight: 600; margin-bottom: 0.45rem;">
+            <span id="quiz-progress-text">Question 1 of 10</span>
+            <span id="quiz-live-score" style="color: #4f46e5; font-weight: 700;">Score: 0 / 10</span>
+          </div>
+          <div style="height: 8px; background: #e2e8f0; border-radius: 999px; overflow: hidden;">
+            <div id="quiz-progress-fill" style="height: 100%; width: 10%; background: linear-gradient(90deg, #4f46e5, #06b6d4); transition: width 0.3s ease;"></div>
+          </div>
+        </div>
+
+        <!-- Question Box -->
+        <div class="quiz-question-box" style="margin-top: 1rem;">
+          <h4 id="quiz-question-text" style="font-size: 1.05rem; font-weight: 700; color: #0f172a; line-height: 1.5; margin-bottom: 1.15rem;">
+            Loading question...
+          </h4>
+
+          <!-- 4 Options Container -->
+          <div id="quiz-options-container" style="display: flex; flex-direction: column; gap: 0.75rem;">
+            <!-- Rendered via JS -->
+          </div>
+        </div>
+
+        <!-- Instant Feedback Banner (Green for Correct, Red for Wrong) -->
+        <div id="quiz-feedback-banner" style="display: none; margin-top: 1.15rem; padding: 0.75rem 1rem; border-radius: 8px; font-size: 0.88rem; font-weight: 600;">
+        </div>
+
+        <!-- Footer / Next Button -->
+        <div style="margin-top: 1.25rem; display: flex; justify-content: flex-end;">
+          <button id="quiz-next-btn" class="btn btn-primary" style="display: none; padding: 0.6rem 1.5rem; font-weight: 700; border-radius: 8px;">
+            Next Question →
+          </button>
+        </div>
+      </div>
+
+      <!-- Quiz Results View (Shown after 10 questions) -->
+      <div id="quiz-result-view" style="display: none; text-align: center; padding: 1.5rem 0.5rem 0.5rem;">
+        <div id="quiz-result-emoji" style="font-size: 3.2rem; margin-bottom: 0.5rem;">🎉</div>
+        <h3 id="quiz-result-title" style="font-size: 1.5rem; font-weight: 800; color: #0f172a; margin-bottom: 0.4rem;">
+          Assessment Completed!
+        </h3>
+        <p id="quiz-result-subtitle" style="font-size: 0.92rem; color: #64748b; margin-bottom: 1.5rem; max-width: 480px; margin-left: auto; margin-right: auto; line-height: 1.5;">
+          Here is your technical readiness performance.
+        </p>
+
+        <!-- Big Score Circle -->
+        <div id="quiz-score-circle" style="display: inline-flex; flex-direction: column; align-items: center; justify-content: center; width: 140px; height: 140px; border-radius: 50%; border: 6px solid #10b981; margin-bottom: 1.25rem; background: #ecfdf5;">
+          <span id="quiz-final-score-text" style="font-size: 2.2rem; font-weight: 800; color: #065f46; line-height: 1;">8/10</span>
+          <span style="font-size: 0.8rem; font-weight: 700; color: #047857; margin-top: 0.25rem;">Final Score</span>
+        </div>
+
+        <!-- 8+ Benchmark Status Banner -->
+        <div id="quiz-benchmark-alert" style="margin-bottom: 1.5rem; padding: 0.9rem 1.25rem; border-radius: 10px; font-size: 0.92rem; text-align: left; max-width: 520px; margin-left: auto; margin-right: auto; line-height: 1.5;">
+        </div>
+
+        <div style="display: flex; gap: 0.75rem; justify-content: center; flex-wrap: wrap;">
+          <button id="quiz-retake-btn" class="btn btn-secondary" style="font-weight: 600; padding: 0.6rem 1.25rem;">
+            🔄 Retake Quiz
+          </button>
+          <button id="quiz-save-btn" class="btn btn-primary" style="font-weight: 700; background: #10b981; border-color: #10b981; padding: 0.6rem 1.4rem;">
+            💾 Save Score to Dashboard
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    // ==================== 10-QUESTION QUIZ DATASETS PER CAREER TRACK ====================
+    var CAREER_QUIZ_DATA = {
+      // 1. Full Stack Web Developer
+      'Full Stack Web Developer': [
+        {
+          q: "1. In React, which hook is used to handle side-effects such as API data fetching or DOM subscriptions?",
+          options: ["useState", "useEffect", "useMemo", "useContext"],
+          correct: 1,
+          hint: "useEffect runs side-effects after the component renders."
+        },
+        {
+          q: "2. What is the standard HTTP status code returned for a successfully created resource in a REST API?",
+          options: ["200 OK", "201 Created", "204 No Content", "301 Moved Permanently"],
+          correct: 1,
+          hint: "HTTP 201 indicates a resource was successfully created."
+        },
+        {
+          q: "3. In the CSS Box Model, which property adds space INSIDE the border around the content?",
+          options: ["margin", "padding", "border-spacing", "outline"],
+          correct: 1,
+          hint: "Padding creates inner space between content and border."
+        },
+        {
+          q: "4. Which JavaScript keyword defines a block-scoped variable that cannot be re-assigned?",
+          options: ["var", "let", "const", "static"],
+          correct: 2,
+          hint: "const prevents reassignment and adheres to block scoping."
+        },
+        {
+          q: "5. What does the 'S' stand for in HTTPS?",
+          options: ["Server", "Speed", "Secure", "Socket"],
+          correct: 2,
+          hint: "HTTPS stands for HyperText Transfer Protocol Secure."
+        },
+        {
+          q: "6. In Node.js, what is the default package manager bundled with the runtime?",
+          options: ["pip", "npm", "cargo", "composer"],
+          correct: 1,
+          hint: "npm (Node Package Manager) is the default package ecosystem for Node."
+        },
+        {
+          q: "7. Which SQL clause is used to eliminate duplicate rows from a query result?",
+          options: ["SELECT DISTINCT", "SELECT UNIQUE", "GROUP ROWS", "FILTER DUPLICATES"],
+          correct: 0,
+          hint: "SELECT DISTINCT returns only unique values in the specified columns."
+        },
+        {
+          q: "8. In MongoDB (NoSQL), documents are stored and represented internally in which format?",
+          options: ["XML", "CSV", "BSON / JSON", "YAML"],
+          correct: 2,
+          hint: "MongoDB uses BSON (Binary JSON) to store flexible documents."
+        },
+        {
+          q: "9. What is the average time complexity of key lookup in a standard JavaScript Map or Hash Table?",
+          options: ["O(n)", "O(log n)", "O(1)", "O(n^2)"],
+          correct: 2,
+          hint: "Hash maps achieve constant average lookup time O(1)."
+        },
+        {
+          q: "10. Which Git command is used to integrate commits from another branch into your current active branch?",
+          options: ["git push", "git merge", "git fork", "git clone"],
+          correct: 1,
+          hint: "git merge joins two or more development histories together."
+        }
+      ],
+
+      // 2. AI / ML Engineer
+      'AI / ML Engineer': [
+        {
+          q: "1. Which machine learning algorithm is best suited for binary classification problems?",
+          options: ["Logistic Regression", "K-Means Clustering", "Linear Regression", "PCA"],
+          correct: 0,
+          hint: "Logistic Regression estimates probabilities using the sigmoid function for binary classes."
+        },
+        {
+          q: "2. What is a primary symptom of 'Overfitting' in a machine learning model?",
+          options: ["High training loss and high test loss", "High training accuracy but poor validation/test accuracy", "Model parameters converge to zero", "Test accuracy is higher than training accuracy"],
+          correct: 1,
+          hint: "Overfitting memorizes training noise rather than generalizing to unseen test data."
+        },
+        {
+          q: "3. Which activation function maps real-valued inputs strictly to the range (0, 1)?",
+          options: ["ReLU", "Sigmoid", "Tanh", "Leaky ReLU"],
+          correct: 1,
+          hint: "Sigmoid S(x) = 1 / (1 + e^-x) produces probability-like outputs between 0 and 1."
+        },
+        {
+          q: "4. What mathematical rule forms the computational backbone of the Backpropagation algorithm?",
+          options: ["Chain Rule of Calculus", "Bayes Theorem", "Newton-Raphson Method", "Fourier Transform"],
+          correct: 0,
+          hint: "Backpropagation applies the Chain Rule recursively across network layers."
+        },
+        {
+          q: "5. In PyTorch, which method must be called to reset accumulated gradients before the backward pass?",
+          options: ["optimizer.step()", "loss.backward()", "optimizer.zero_grad()", "model.eval()"],
+          correct: 2,
+          hint: "zero_grad() clears accumulated gradients from preceding training iterations."
+        },
+        {
+          q: "6. Which metric is most reliable when evaluating classification models on heavily imbalanced datasets?",
+          options: ["Accuracy", "F1-Score / PR-AUC", "Mean Absolute Error", "R-squared"],
+          correct: 1,
+          hint: "F1-Score balances Precision and Recall, avoiding accuracy paradox on imbalanced classes."
+        },
+        {
+          q: "7. What is the primary purpose of applying Dropout regularization during neural network training?",
+          options: ["Speed up training time", "Prevent co-adaptation and overfitting", "Increase model parameter capacity", "Handle missing values in inputs"],
+          correct: 1,
+          hint: "Dropout randomly zeroes neuron activations, forcing redundant and generalized representations."
+        },
+        {
+          q: "8. Which unsupervised technique performs dimensionality reduction while retaining maximum dataset variance?",
+          options: ["PCA (Principal Component Analysis)", "KNN", "DBSCAN", "Random Forest"],
+          correct: 0,
+          hint: "PCA projects high-dimensional data onto orthogonal axes of maximum variance."
+        },
+        {
+          q: "9. In modern Natural Language Processing, which mechanism is the foundation of Transformer architectures?",
+          options: ["Recurrent Feedback Loops", "Self-Attention Mechanism", "Pure Convolutional Kernels", "Markov Decision Processes"],
+          correct: 1,
+          hint: "Self-Attention computes context vectors considering all token pairs simultaneously."
+        },
+        {
+          q: "10. In Gradient Descent optimization, what does the Learning Rate parameter control?",
+          options: ["The number of hidden layers", "The step size taken towards the minimum of the loss function", "The batch size of the dataset", "The ratio of train to validation split"],
+          correct: 1,
+          hint: "Learning rate scales the gradient step at each iteration."
+        }
+      ],
+
+      // 3. Data Analyst
+      'Data Analyst': [
+        {
+          q: "1. Which SQL clause is used to filter aggregated rows produced by the GROUP BY statement?",
+          options: ["WHERE", "HAVING", "ORDER BY", "LIMIT"],
+          correct: 1,
+          hint: "HAVING filters aggregated groups, whereas WHERE filters individual rows before aggregation."
+        },
+        {
+          q: "2. In Python Pandas, which function is used to load data from a CSV file into a DataFrame?",
+          options: ["pd.read_csv()", "pd.load_csv()", "pd.open()", "pd.to_csv()"],
+          correct: 0,
+          hint: "pd.read_csv() parses a comma-separated values file into a DataFrame."
+        },
+        {
+          q: "3. Which measure of central tendency is LEAST sensitive to extreme outliers in skewed distributions?",
+          options: ["Mean", "Median", "Standard Deviation", "Variance"],
+          correct: 1,
+          hint: "The Median represents the 50th percentile and is robust against extreme outliers."
+        },
+        {
+          q: "4. Which chart type is best suited to inspect the distribution and spread of continuous numerical data?",
+          options: ["Pie Chart", "Histogram / Box Plot", "Donut Chart", "Spider Radar Chart"],
+          correct: 1,
+          hint: "Histograms and Box Plots display frequency distributions, quartiles, and outliers clearly."
+        },
+        {
+          q: "5. What type of SQL JOIN returns all rows from the left table, along with matching rows from the right table?",
+          options: ["INNER JOIN", "LEFT JOIN", "RIGHT JOIN", "FULL OUTER JOIN"],
+          correct: 1,
+          hint: "LEFT JOIN preserves every record from the left table regardless of right-table match."
+        },
+        {
+          q: "6. In Microsoft Power BI and Excel data models, what does the formula language DAX stand for?",
+          options: ["Data Analytics eXchange", "Data Analysis Expressions", "Dynamic Array XML", "Database Access X"],
+          correct: 1,
+          hint: "DAX (Data Analysis Expressions) is the formula language used in Power BI and Analysis Services."
+        },
+        {
+          q: "7. What does a Pearson Correlation Coefficient of -0.92 signify between two variables?",
+          options: ["No relationship", "Strong negative linear relationship", "Strong positive linear relationship", "Weak inverse relationship"],
+          correct: 1,
+          hint: "Coefficients close to -1 indicate that as one variable rises, the other predictably falls."
+        },
+        {
+          q: "8. In Pandas, which method removes duplicate rows from an existing DataFrame?",
+          options: ["df.drop_duplicates()", "df.remove_duplicates()", "df.clean_copies()", "df.purge_rows()"],
+          correct: 0,
+          hint: "df.drop_duplicates() returns a DataFrame with redundant identical rows removed."
+        },
+        {
+          q: "9. In relational database normalization, 1NF (First Normal Form) requires that:",
+          options: ["Each column must contain atomic (indivisible) values", "Foreign keys cannot have NULL values", "All columns depend directly on candidate keys", "Tables cannot have more than 10 columns"],
+          correct: 0,
+          hint: "1NF enforces atomicity: no repeating groups or composite/array values in a single cell."
+        },
+        {
+          q: "10. In business intelligence, what is an A/B Test primarily designed to accomplish?",
+          options: ["Back up database transactions", "Compare two variants to measure statistically significant performance differences", "Encrypt user credentials", "Compress raw log files"],
+          correct: 1,
+          hint: "A/B testing evaluates user behavior differences between variant A and variant B."
+        }
+      ],
+
+      // 4. Cybersecurity Analyst
+      'Cybersecurity Analyst': [
+        {
+          q: "1. What does the fundamental CIA Triad in information security represent?",
+          options: ["Control, Identity, Authorization", "Confidentiality, Integrity, Availability", "Central Intelligence Architecture", "Cyber, Internet, Authentication"],
+          correct: 1,
+          hint: "Confidentiality, Integrity, and Availability form the pillars of information security."
+        },
+        {
+          q: "2. Which type of cyberattack floods target servers with massive fake traffic to make services unreachable?",
+          options: ["SQL Injection", "DDoS (Distributed Denial of Service)", "Phishing", "Cross-Site Scripting"],
+          correct: 1,
+          hint: "DDoS attacks saturate target bandwidth or processing resources."
+        },
+        {
+          q: "3. What is the standard default TCP port used for secure SSH connections?",
+          options: ["80", "443", "22", "21"],
+          correct: 2,
+          hint: "Port 22 is the standard assignment for the Secure Shell (SSH) protocol."
+        },
+        {
+          q: "4. Which tool is widely considered the industry standard for network packet capture and deep protocol inspection?",
+          options: ["Wireshark", "Metasploit", "Hashcat", "Burp Suite"],
+          correct: 0,
+          hint: "Wireshark captures and interactively inspects live network traffic packet by packet."
+        },
+        {
+          q: "5. Which vulnerability occurs when unsanitized user inputs are executed directly by the database engine?",
+          options: ["Cross-Site Scripting (XSS)", "SQL Injection (SQLi)", "Cross-Site Request Forgery (CSRF)", "Buffer Overflow"],
+          correct: 1,
+          hint: "SQLi manipulates queries through unchecked user parameters."
+        },
+        {
+          q: "6. What is the cryptographic purpose of salted password hashing before database storage?",
+          options: ["Enable reversible recovery of forgotten passwords", "Generate a one-way irreversible digest resistant to rainbow table attacks", "Speed up database index lookups", "Compress long passwords into 16 bits"],
+          correct: 1,
+          hint: "Salted cryptographic hashes cannot be inverted, securing stored passwords."
+        },
+        {
+          q: "7. Which HTTP response header helps mitigate Cross-Site Scripting (XSS) and code injection attacks?",
+          options: ["Content-Security-Policy (CSP)", "User-Agent", "Accept-Encoding", "Cache-Control"],
+          correct: 0,
+          hint: "CSP specifies which dynamic resource sources are authorized to execute."
+        },
+        {
+          q: "8. What does Multi-Factor Authentication (MFA) introduce to the authentication workflow?",
+          options: ["Requires passwords with 24+ characters", "Demands verification from two or more independent credential categories", "Enforces daily password expiration", "Limits logins strictly to corporate IP addresses"],
+          correct: 1,
+          hint: "MFA combines something you know, something you have, or something you are."
+        },
+        {
+          q: "9. Which Linux command is commonly executed to list active network sockets and listening ports?",
+          options: ["netstat / ss", "chmod", "grep", "ping"],
+          correct: 0,
+          hint: "ss and netstat display active network connections, routing tables, and interface statistics."
+        },
+        {
+          q: "10. In modern public-key cryptography, RSA is an example of which family of algorithms?",
+          options: ["Symmetric Key Encryption", "Asymmetric (Public-Key) Encryption", "One-Way Hash Function", "Stream Cipher"],
+          correct: 1,
+          hint: "RSA uses a public key for encryption and a distinct private key for decryption."
+        }
+      ],
+
+      // 5. PSU / Government Technical Exams
+      'PSU / Government Technical Exams': [
+        {
+          q: "1. In the OSI 7-layer reference model, which layer provides transparent, end-to-end reliable data delivery?",
+          options: ["Network Layer", "Transport Layer", "Data Link Layer", "Session Layer"],
+          correct: 1,
+          hint: "The Transport Layer (Layer 4) handles flow control, segmentation, and error checking."
+        },
+        {
+          q: "2. In Operating Systems, which condition is NOT one of the 4 Coffman conditions required for a Deadlock?",
+          options: ["Mutual Exclusion", "Hold and Wait", "Preemption Allowed", "Circular Wait"],
+          correct: 2,
+          hint: "Deadlock requires NO PREEMPTION (resources cannot be forcibly taken)."
+        },
+        {
+          q: "3. In Database Management Systems, what does the ACID transaction property acronym stand for?",
+          options: ["Atomicity, Consistency, Isolation, Durability", "Accuracy, Control, Integrity, Data", "Access, Concurrency, Index, Durability", "Atomicity, Communication, Isolation, Disk"],
+          correct: 0,
+          hint: "ACID guarantees that database transactions are processed reliably."
+        },
+        {
+          q: "4. What is the worst-case time complexity of the standard QuickSort algorithm?",
+          options: ["O(n log n)", "O(n^2)", "O(n)", "O(log n)"],
+          correct: 1,
+          hint: "When the selected pivot is repeatedly the smallest or largest element, QuickSort degrades to O(n^2)."
+        },
+        {
+          q: "5. Which CPU scheduling algorithm can lead to indefinite blocking (Starvation) for longer burst processes?",
+          options: ["Round Robin", "First-Come First-Served (FCFS)", "Shortest Job First (SJF)", "Priority Scheduling with Aging"],
+          correct: 2,
+          hint: "In non-preemptive SJF, continuously incoming shorter jobs starve longer processes."
+        },
+        {
+          q: "6. In Boolean Algebra, what is the dual of the expression: (A + B) · (A + C)?",
+          options: ["(A · B) + (A · C)", "A + (B · C)", "A · (B + C)", "A' + B'"],
+          correct: 0,
+          hint: "To find the dual, replace AND with OR, and OR with AND."
+        },
+        {
+          q: "7. What is the primary operational objective of Cache Memory in computer architecture?",
+          options: ["Provide non-volatile mass secondary storage", "Bridge the operational speed disparity between the fast CPU and slower main RAM", "Render high-resolution graphics textures", "Buffering incoming network ethernet packets"],
+          correct: 1,
+          hint: "Cache provides high-speed access to frequently accessed instructions and data."
+        },
+        {
+          q: "8. In standard C language (ANSI C), what is the guaranteed value of `sizeof(char)`?",
+          options: ["1", "2", "4", "Implementation defined"],
+          correct: 0,
+          hint: "In C, sizeof(char) is defined to be exactly 1 byte by language specification."
+        },
+        {
+          q: "9. Which fundamental abstract data type is utilized to implement Breadth-First Search (BFS) graph traversal?",
+          options: ["Stack", "Queue", "Priority Queue", "Binary Search Tree"],
+          correct: 1,
+          hint: "BFS explores nodes in FIFO (First-In-First-Out) order using a Queue."
+        },
+        {
+          q: "10. In digital logic design, a 2-to-1 Multiplexer (MUX) requires how many binary select lines?",
+          options: ["1", "2", "3", "4"],
+          correct: 0,
+          hint: "A single select line (S=0 or S=1) selects between the two input channels."
+        }
+      ]
+    };
+
+    // ==================== QUIZ STATE & CONTROLLER ====================
+    var currentTrack = 'Full Stack Web Developer';
+    var activeQuizQuestions = [];
+    var currentQuestionIdx = 0;
+    var quizScore = 0;
+    var questionAnswered = false;
+
+    document.addEventListener('DOMContentLoaded', async function () {
+      if (window.CareerSetu) {
+        CareerSetu.checkAuthGuard();
+        CareerSetu.renderUserProfileWidget();
+      }
+
+      var prefillBtn = document.getElementById('prefill-sample-answer-btn');
+      var answerInput = document.getElementById('interview-user-answer');
+      var submitBtn = document.getElementById('start-answer-btn');
+      var feedbackText = document.getElementById('feedback-text');
+      var targetRoleLabel = document.getElementById('target-role-label');
+
+      // Hydrate user target track from saved profile
+      try {
+        var profile = await CareerSetu.getUserData('profiles');
+        if (profile && profile.targetCareer) {
+          currentTrack = profile.targetCareer;
+          if (targetRoleLabel) targetRoleLabel.textContent = currentTrack;
+        }
+      } catch (e) {}
+
+      // Normalize track key to available quiz set
+      function getResolvedQuizSet(track) {
+        if (CAREER_QUIZ_DATA[track]) return CAREER_QUIZ_DATA[track];
+        var tLower = track.toLowerCase();
+        if (tLower.indexOf('ai') !== -1 || tLower.indexOf('machine') !== -1) return CAREER_QUIZ_DATA['AI / ML Engineer'];
+        if (tLower.indexOf('data') !== -1 || tLower.indexOf('analyst') !== -1) return CAREER_QUIZ_DATA['Data Analyst'];
+        if (tLower.indexOf('cyber') !== -1 || tLower.indexOf('security') !== -1) return CAREER_QUIZ_DATA['Cybersecurity Analyst'];
+        if (tLower.indexOf('gov') !== -1 || tLower.indexOf('psu') !== -1) return CAREER_QUIZ_DATA['PSU / Government Technical Exams'];
+        return CAREER_QUIZ_DATA['Full Stack Web Developer'];
+      }
+
+      // Interview bot interactions
+      if (prefillBtn && answerInput) {
+        prefillBtn.addEventListener('click', function () {
+          answerInput.value = "In my project Kisan Saathi, I designed the real-time crop advisory portal using Python and modern JavaScript. I integrated image classification APIs and built an offline-first caching mechanism with Cloud Firestore, which reduced latency by 40% for rural users.";
+        });
+      }
+
+      if (submitBtn) {
+        submitBtn.addEventListener('click', function () {
+          submitBtn.disabled = true;
+          submitBtn.innerHTML = '<span class="loading-spinner"></span> Evaluating...';
+          setTimeout(function () {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = '✓ Answer Evaluated! Next Question →';
+            if (feedbackText) {
+              feedbackText.textContent = "Excellent technical clarity on offline caching and Firestore architecture! Mentioning quantified 40% latency improvements satisfies senior hiring manager expectations.";
+            }
+          }, 400);
+        });
+      }
+
+      // ==================== QUIZ MODAL LOGIC ====================
+      var openQuizBtn = document.getElementById('open-quiz-btn');
+      var closeQuizBtn = document.getElementById('close-quiz-btn');
+      var quizModal = document.getElementById('quiz-modal');
+      var quizNextBtn = document.getElementById('quiz-next-btn');
+      var quizRetakeBtn = document.getElementById('quiz-retake-btn');
+      var quizSaveBtn = document.getElementById('quiz-save-btn');
+
+      if (openQuizBtn) {
+        openQuizBtn.addEventListener('click', function () {
+          startCareerQuiz();
+        });
+      }
+
+      if (closeQuizBtn) {
+        closeQuizBtn.addEventListener('click', function () {
+          quizModal.style.display = 'none';
+        });
+      }
+
+      // Close modal on outside backdrop click
+      window.addEventListener('click', function (e) {
+        if (e.target === quizModal) {
+          quizModal.style.display = 'none';
+        }
+      });
+
+      function startCareerQuiz() {
+        activeQuizQuestions = getResolvedQuizSet(currentTrack);
+        currentQuestionIdx = 0;
+        quizScore = 0;
+
+        document.getElementById('quiz-track-badge').textContent = currentTrack;
+        document.getElementById('quiz-active-view').style.display = 'block';
+        document.getElementById('quiz-result-view').style.display = 'none';
+        quizModal.style.display = 'flex';
+
+        renderQuestion(currentQuestionIdx);
+      }
+
+      function renderQuestion(idx) {
+        questionAnswered = false;
+        var qObj = activeQuizQuestions[idx];
+
+        // Progress bar and counter
+        var qNum = idx + 1;
+        document.getElementById('quiz-progress-text').textContent = 'Question ' + qNum + ' of ' + activeQuizQuestions.length;
+        document.getElementById('quiz-live-score').textContent = 'Score: ' + quizScore + ' / ' + activeQuizQuestions.length;
+        var pct = (qNum / activeQuizQuestions.length) * 100;
+        document.getElementById('quiz-progress-fill').style.width = pct + '%';
+
+        // Set question text
+        document.getElementById('quiz-question-text').textContent = qObj.q;
+
+        // Feedback banner & Next button reset
+        var feedbackBanner = document.getElementById('quiz-feedback-banner');
+        feedbackBanner.style.display = 'none';
+        feedbackBanner.className = '';
+        feedbackBanner.innerHTML = '';
+
+        quizNextBtn.style.display = 'none';
+        quizNextBtn.textContent = (idx === activeQuizQuestions.length - 1) ? 'View Final Results →' : 'Next Question →';
+
+        // Render 4 options
+        var optionsContainer = document.getElementById('quiz-options-container');
+        optionsContainer.innerHTML = '';
+
+        var optionLabels = ['A', 'B', 'C', 'D'];
+        qObj.options.forEach(function (optText, optIdx) {
+          var btn = document.createElement('button');
+          btn.className = 'quiz-option-btn';
+          btn.setAttribute('type', 'button');
+          btn.innerHTML = '<span><strong style="margin-right:0.5rem; color:#6366f1;">' + optionLabels[optIdx] + '.</strong> ' + optText + '</span><span class="opt-status-icon"></span>';
+
+          btn.addEventListener('click', function () {
+            if (questionAnswered) return;
+            handleOptionSelect(optIdx, qObj, optionsContainer);
+          });
+
+          optionsContainer.appendChild(btn);
+        });
+      }
+
+      function handleOptionSelect(chosenIdx, qObj, container) {
+        questionAnswered = true;
+        var buttons = container.querySelectorAll('.quiz-option-btn');
+        var feedbackBanner = document.getElementById('quiz-feedback-banner');
+
+        // Disable all option buttons
+        buttons.forEach(function (b) { b.disabled = true; });
+
+        if (chosenIdx === qObj.correct) {
+          // User chose CORRECT -> Turn selected button GREEN
+          quizScore++;
+          buttons[chosenIdx].classList.add('selected-correct');
+          buttons[chosenIdx].querySelector('.opt-status-icon').innerHTML = '<span style="color:#10b981; font-weight:800; font-size:1.1rem;">✓ Correct</span>';
+
+          feedbackBanner.style.display = 'block';
+          feedbackBanner.style.background = '#ecfdf5';
+          feedbackBanner.style.border = '1px solid #a7f3d0';
+          feedbackBanner.style.color = '#047857';
+          feedbackBanner.innerHTML = '🎉 <strong>Correct!</strong> ' + qObj.hint;
+        } else {
+          // User chose WRONG -> Turn selected button RED
+          buttons[chosenIdx].classList.add('selected-wrong');
+          buttons[chosenIdx].querySelector('.opt-status-icon').innerHTML = '<span style="color:#ef4444; font-weight:800; font-size:1.1rem;">✗ Incorrect</span>';
+
+          // REVEAL the correct option in GREEN
+          buttons[qObj.correct].classList.add('reveal-correct');
+          buttons[qObj.correct].querySelector('.opt-status-icon').innerHTML = '<span style="color:#10b981; font-weight:700; font-size:0.9rem;">✓ Correct Answer</span>';
+
+          feedbackBanner.style.display = 'block';
+          feedbackBanner.style.background = '#fef2f2';
+          feedbackBanner.style.border = '1px solid #fecaca';
+          feedbackBanner.style.color = '#b91c1c';
+          feedbackBanner.innerHTML = '❌ <strong>Incorrect!</strong> The correct answer is <strong>' + qObj.options[qObj.correct] + '</strong>.<br><small style="color:#7f1d1d;">' + qObj.hint + '</small>';
+        }
+
+        // Update live score
+        document.getElementById('quiz-live-score').textContent = 'Score: ' + quizScore + ' / ' + activeQuizQuestions.length;
+
+        // Show Next Button
+        quizNextBtn.style.display = 'inline-block';
+      }
+
+      // Next Question / Finish Button
+      quizNextBtn.addEventListener('click', function () {
+        if (currentQuestionIdx < activeQuizQuestions.length - 1) {
+          currentQuestionIdx++;
+          renderQuestion(currentQuestionIdx);
+        } else {
+          showFinalResults();
+        }
+      });
+
+      // Retake quiz
+      if (quizRetakeBtn) {
+        quizRetakeBtn.addEventListener('click', function () {
+          startCareerQuiz();
+        });
+      }
+
+      // Save score to Dashboard
+      if (quizSaveBtn) {
+        quizSaveBtn.addEventListener('click', async function () {
+          var scorePct = Math.round((quizScore / activeQuizQuestions.length) * 100);
+
+          try {
+            var interviewData = (await CareerSetu.getUserData('interviews')) || {};
+            interviewData.averageScore = (scorePct / 10);
+            interviewData.quizScore = quizScore;
+            interviewData.quizTotal = 10;
+            interviewData.quizPercentage = scorePct;
+            interviewData.lastQuizDate = new Date().toISOString();
+            await CareerSetu.saveUserData('interviews', interviewData);
+
+            // Update UI on current interview page
+            var gaugeValEl = document.getElementById('interview-gauge-val');
+            if (gaugeValEl) gaugeValEl.innerHTML = scorePct + '<span style="font-size:0.8rem; color:#64748b;">/100</span>';
+            
+            var gaugeCircle = document.getElementById('gauge-progress-circle');
+            if (gaugeCircle) {
+              var circumference = 339.3;
+              var offset = circumference - (scorePct / 100) * circumference;
+              gaugeCircle.style.strokeDashoffset = offset;
+            }
+
+            var perfBadge = document.getElementById('performance-badge');
+            if (perfBadge) {
+              if (quizScore >= 8) {
+                perfBadge.className = 'badge badge-emerald';
+                perfBadge.textContent = 'Passed Bar (80%+)';
+              } else {
+                perfBadge.className = 'badge badge-rose';
+                perfBadge.textContent = 'Needs Practice';
+              }
+            }
+
+            // Accuracy & relevance
+            var accEl = document.getElementById('score-accuracy');
+            if (accEl) accEl.textContent = scorePct;
+            var confEl = document.getElementById('score-confidence');
+            if (confEl) confEl.textContent = Math.min(95, scorePct + 4);
+
+            quizModal.style.display = 'none';
+
+            // Show toast on page
+            var alertToast = document.getElementById('quiz-alert-toast');
+            if (alertToast) {
+              alertToast.innerHTML = '🎉 <strong>Success!</strong> Quiz score of <strong>' + quizScore + '/10 (' + scorePct + '%)</strong> saved! Your Technical Readiness index is updated.';
+              alertToast.style.display = 'block';
+              alertToast.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+              setTimeout(function () { alertToast.style.display = 'none'; }, 6000);
+            }
+          } catch (err) {
+            console.warn('Failed saving quiz score:', err);
+            quizModal.style.display = 'none';
+          }
+        });
+      }
+
+      function showFinalResults() {
+        document.getElementById('quiz-active-view').style.display = 'none';
+        document.getElementById('quiz-result-view').style.display = 'block';
+
+        var total = activeQuizQuestions.length;
+        document.getElementById('quiz-final-score-text').textContent = quizScore + ' / ' + total;
+
+        var circle = document.getElementById('quiz-score-circle');
+        var emoji = document.getElementById('quiz-result-emoji');
+        var title = document.getElementById('quiz-result-title');
+        var subtitle = document.getElementById('quiz-result-subtitle');
+        var alertBox = document.getElementById('quiz-benchmark-alert');
+
+        if (quizScore >= 8) {
+          // USER SCORED 8+ (PASSED READINESS BENCHMARK)
+          circle.style.borderColor = '#10b981';
+          circle.style.background = '#ecfdf5';
+          document.getElementById('quiz-final-score-text').style.color = '#065f46';
+          emoji.textContent = '🏆';
+          title.textContent = '🎉 Outstanding! Readiness Benchmark Passed!';
+          title.style.color = '#065f46';
+          subtitle.textContent = 'You answered ' + quizScore + ' out of ' + total + ' questions correctly on the ' + currentTrack + ' assessment.';
+
+          alertBox.style.background = '#ecfdf5';
+          alertBox.style.border = '1.5px solid #a7f3d0';
+          alertBox.style.color = '#047857';
+          alertBox.innerHTML = '<strong>✓ 8/10 Target Met:</strong> Congratulations! You have proven strong domain readiness for <strong>' + currentTrack + '</strong>. Your profile is qualified for top internship & job shortlists.';
+        } else {
+          // USER SCORED BELOW 8
+          circle.style.borderColor = '#f59e0b';
+          circle.style.background = '#fffbeb';
+          document.getElementById('quiz-final-score-text').style.color = '#92400e';
+          emoji.textContent = '📈';
+          title.textContent = 'Good Attempt! Keep Practicing';
+          title.style.color = '#92400e';
+          subtitle.textContent = 'You scored ' + quizScore + ' out of ' + total + '. A minimum of 8/10 is recommended for top tier interview readiness.';
+
+          alertBox.style.background = '#fffbeb';
+          alertBox.style.border = '1.5px solid #fde68a';
+          alertBox.style.color = '#92400e';
+          alertBox.innerHTML = '<strong>⚠️ Next Step:</strong> Review your weak areas in the <strong>Skill Gap Analyzer</strong> and <strong>Roadmap</strong>, then retake the quiz to cross the 8/10 benchmark.';
+        }
+      }
+    });
+  </script>
+</body>
+</html>

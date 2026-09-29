@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Progress + What-If Simulator — CareerSetu AI</title>
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/dashboard.css">
+  <link rel="stylesheet" href="../css/responsive.css">
+
+  <!-- CareerSetu Universal Core (Instant 0ms Load) -->
+  <script src="../js/careersetu-core.js"></script>
+  <!-- Optional Background Firebase SDK -->
+  <script defer src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script defer src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+  <script defer src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+</head>
+<body>
+
+  <div class="app-layout">
+    <!-- Dark Navy Sidebar (Poster) -->
+    <aside class="app-sidebar">
+      <div class="sidebar-brand">
+        <a href="../index.html" class="flex-align" style="gap: 0.5rem; text-decoration: none;">
+          <svg width="28" height="28" viewBox="0 0 64 64" fill="none">
+            <rect width="64" height="64" rx="14" fill="#4f46e5" />
+            <path d="M14 44 C22 28, 42 28, 50 44" stroke="#ffffff" stroke-width="4" stroke-linecap="round" />
+            <path d="M20 44 L20 35 M32 44 L32 30 M44 44 L44 35" stroke="#ffffff" stroke-width="3" stroke-linecap="round" />
+            <circle cx="32" cy="20" r="5" fill="#38bdf8" />
+          </svg>
+          <span class="brand-title">CareerSetu <span class="brand-badge">AI</span></span>
+        </a>
+      </div>
+
+      <nav class="sidebar-nav">
+        <a href="dashboard.html" class="nav-item"><span class="nav-icon">📊</span> Dashboard</a>
+        <a href="profile.html" class="nav-item"><span class="nav-icon">👤</span> My Profile</a>
+        <a href="career.html" class="nav-item"><span class="nav-icon">🧭</span> My Career</a>
+        <a href="skill-gap.html" class="nav-item"><span class="nav-icon">📈</span> Skill Gap</a>
+        <a href="roadmap.html" class="nav-item"><span class="nav-icon">🗺️</span> Roadmap</a>
+        <a href="opportunities.html" class="nav-item"><span class="nav-icon">💼</span> Opportunities</a>
+        <a href="resume.html" class="nav-item"><span class="nav-icon">📄</span> Resume AI</a>
+        <a href="interview.html" class="nav-item"><span class="nav-icon">🎙️</span> Mock Interview</a>
+        <a href="progress.html" class="nav-item active"><span class="nav-icon">🎯</span> Progress</a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="user-profile-summary">
+          <div class="user-avatar" id="sidebar-user-avatar">H</div>
+          <div class="user-info-text">
+            <p class="user-name-label" id="sidebar-user-name">Himanshu Sahani</p>
+            <p class="user-role-label" id="sidebar-user-email">himanshu@gmail.com</p>
+          </div>
+          <button id="logout-btn" class="btn btn-sm btn-secondary" title="Log Out" style="padding: 0.25rem 0.5rem; font-size: 0.75rem;">⏻</button>
+        </div>
+      </div>
+    </aside>
+
+    <div class="app-main">
+      <header class="app-topbar">
+        <div class="flex-align">
+          <button class="mobile-menu-btn" id="mobile-menu-toggle">☰</button>
+          <div class="topbar-breadcrumbs">
+            <span>Progress + What-If</span>
+            <span>/</span>
+            <span class="text-primary" style="font-weight: 600;">Progress</span>
+          </div>
+        </div>
+        <a href="opportunities.html" class="btn btn-sm btn-primary">Find Matching Jobs →</a>
+      </header>
+
+      <main class="page-content">
+        <div class="page-header flex-between">
+          <div>
+            <h1 class="page-title">Career Progress & What-If Simulator</h1>
+            <p class="page-description">Evaluate your current multidimensional readiness score and simulate future milestone impacts.</p>
+          </div>
+        </div>
+
+        <!-- Two Columns: Career Progress & What-If Simulator (Exact Poster Screen 10) -->
+        <div class="grid-2">
+          
+          <!-- Left Card: Career Progress (Poster Screen 10) -->
+          <div class="card" style="padding: 1.75rem;">
+            <h3 style="font-size: 1.2rem; color: #0f172a; margin-bottom: 1.25rem;">Career Progress</h3>
+            
+            <div style="display: grid; grid-template-columns: 140px 1fr; gap: 2rem; align-items: center; margin-bottom: 1.5rem;">
+              <!-- Circular Gauge: 68% Overall -->
+              <div style="text-align: center;">
+                <div class="gauge-container" style="width: 130px; height: 130px;">
+                  <svg class="gauge-svg" width="130" height="130" viewBox="0 0 130 130">
+                    <circle class="gauge-circle-bg" cx="65" cy="65" r="54" stroke-width="8"></circle>
+                    <circle class="gauge-circle-progress" cx="65" cy="65" r="54" stroke="#3b82f6" stroke-width="8"
+                      stroke-dasharray="339.3" stroke-dashoffset="108.5"></circle>
+                  </svg>
+                  <div class="gauge-center-text">
+                    <span class="gauge-value" style="font-size: 1.75rem; color: #0f172a;">68%</span>
+                    <span class="gauge-label">Overall</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Breakdown Bars -->
+              <div style="display: flex; flex-direction: column; gap: 0.65rem;">
+                <div>
+                  <div class="flex-between" style="font-size: 0.825rem; margin-bottom: 0.2rem;">
+                    <span>Profile</span>
+                    <strong class="text-emerald">100%</strong>
+                  </div>
+                  <div class="progress-track" style="height: 6px;">
+                    <div class="progress-fill progress-fill-emerald" style="width: 100%;"></div>
+                  </div>
+                </div>
+
+                <div>
+                  <div class="flex-between" style="font-size: 0.825rem; margin-bottom: 0.2rem;">
+                    <span>Skills</span>
+                    <strong class="text-primary">71%</strong>
+                  </div>
+                  <div class="progress-track" style="height: 6px;">
+                    <div class="progress-fill" style="width: 71%;"></div>
+                  </div>
+                </div>
+
+                <div>
+                  <div class="flex-between" style="font-size: 0.825rem; margin-bottom: 0.2rem;">
+                    <span>Roadmap</span>
+                    <strong class="text-amber">55%</strong>
+                  </div>
+                  <div class="progress-track" style="height: 6px;">
+                    <div class="progress-fill progress-fill-amber" style="width: 55%;"></div>
+                  </div>
+                </div>
+
+                <div>
+                  <div class="flex-between" style="font-size: 0.825rem; margin-bottom: 0.2rem;">
+                    <span>Resume</span>
+                    <strong class="text-primary">72%</strong>
+                  </div>
+                  <div class="progress-track" style="height: 6px;">
+                    <div class="progress-fill" style="width: 72%;"></div>
+                  </div>
+                </div>
+
+                <div>
+                  <div class="flex-between" style="font-size: 0.825rem; margin-bottom: 0.2rem;">
+                    <span>Interview</span>
+                    <strong class="text-primary">63%</strong>
+                  </div>
+                  <div class="progress-track" style="height: 6px;">
+                    <div class="progress-fill" style="width: 63%;"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right Card: What-If Simulator (Poster Screen 10) -->
+          <div class="card simulator-box">
+            <div class="flex-between mb-1">
+              <h3 style="font-size: 1.2rem; color: #0f172a;">What-If Simulator</h3>
+              <span class="badge badge-primary">Interactive Predictor</span>
+            </div>
+            <p class="text-muted" style="font-size: 0.85rem; margin-bottom: 1.25rem;">
+              If you complete the following in next 2 months:
+            </p>
+
+            <div style="display: flex; flex-direction: column; gap: 0.5rem; margin-bottom: 1.25rem;">
+              <label class="simulator-checkbox-row" style="cursor: pointer;">
+                <span class="flex-align" style="gap: 0.5rem;">
+                  <input type="checkbox" id="sim-ml" checked class="sim-check" data-boost="9" style="accent-color: var(--brand-primary);">
+                  <strong>Machine Learning Mastery</strong>
+                </span>
+                <span class="badge badge-emerald">+9% Boost</span>
+              </label>
+
+              <label class="simulator-checkbox-row" style="cursor: pointer;">
+                <span class="flex-align" style="gap: 0.5rem;">
+                  <input type="checkbox" id="sim-projects" checked class="sim-check" data-boost="6" style="accent-color: var(--brand-primary);">
+                  <strong>2 Portfolio Projects</strong>
+                </span>
+                <span class="badge badge-emerald">+6% Boost</span>
+              </label>
+
+              <label class="simulator-checkbox-row" style="cursor: pointer;">
+                <span class="flex-align" style="gap: 0.5rem;">
+                  <input type="checkbox" id="sim-stats" class="sim-check" data-boost="4" style="accent-color: var(--brand-primary);">
+                  <strong>Statistics Foundations</strong>
+                </span>
+                <span class="badge badge-cyan">+4% Boost</span>
+              </label>
+
+              <label class="simulator-checkbox-row" style="cursor: pointer;">
+                <span class="flex-align" style="gap: 0.5rem;">
+                  <input type="checkbox" id="sim-interview" class="sim-check" data-boost="3" style="accent-color: var(--brand-primary);">
+                  <strong>20 Interview Questions Drill</strong>
+                </span>
+                <span class="badge badge-cyan">+3% Boost</span>
+              </label>
+            </div>
+
+            <!-- Expected Improvement Box (Poster Screen 10) -->
+            <div style="background: #f8fafc; border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 1rem; margin-bottom: 1.25rem;">
+              <p class="text-dim" style="font-size: 0.75rem; text-transform: uppercase; font-weight: 700; margin-bottom: 0.4rem;">
+                Expected Improvement
+              </p>
+              <div class="flex-between">
+                <div>
+                  <span class="text-muted" style="font-size: 0.85rem;">Current: 68%</span>
+                  <span style="margin: 0 0.5rem; color: #94a3b8;">→</span>
+                  <span style="font-size: 1.15rem; font-weight: 800; color: #0f172a;">After: <span id="sim-projected-val" class="text-emerald">79%</span></span>
+                </div>
+                <span class="badge badge-emerald" id="sim-boost-badge" style="font-size: 0.85rem; padding: 0.35rem 0.75rem;">
+                  + 11%
+                </span>
+              </div>
+            </div>
+
+            <button type="button" class="btn btn-primary" id="simulate-btn" style="width: 100%;">
+              Simulate Career Trajectory
+            </button>
+          </div>
+
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', async function () {
+      if (window.CareerSetu) {
+        CareerSetu.checkAuthGuard();
+        CareerSetu.renderUserProfileWidget();
+      }
+
+      var checkboxes = document.querySelectorAll('.sim-check');
+      var projectedValEl = document.getElementById('sim-projected-val');
+      var boostBadgeEl = document.getElementById('sim-boost-badge');
+      var simulateBtn = document.getElementById('simulate-btn');
+
+      function calculateSimulation() {
+        var baseScore = 68;
+        var totalBoost = 0;
+        checkboxes.forEach(function (cb) {
+          if (cb.checked) {
+            totalBoost += parseInt(cb.getAttribute('data-boost') || 0, 10);
+          }
+        });
+
+        var newScore = Math.min(100, baseScore + totalBoost);
+        if (projectedValEl) projectedValEl.textContent = newScore + '%';
+        if (boostBadgeEl) boostBadgeEl.textContent = '+ ' + totalBoost + '%';
+      }
+
+      checkboxes.forEach(function (cb) {
+        cb.addEventListener('change', calculateSimulation);
+      });
+
+      if (simulateBtn) {
+        simulateBtn.addEventListener('click', function () {
+          calculateSimulation();
+          simulateBtn.textContent = '✓ Simulated!';
+          setTimeout(function () {
+            simulateBtn.textContent = 'Simulate Career Trajectory';
+          }, 1200);
+        });
+      }
+      calculateSimulation();
+    });
+  </script>
+</body>
+</html>

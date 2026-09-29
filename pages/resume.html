@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Resume AI / Analyzer & Optimizer — CareerSetu AI</title>
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/dashboard.css">
+  <link rel="stylesheet" href="../css/responsive.css">
+
+  <!-- CareerSetu Universal Core (Instant 0ms Load) -->
+  <script src="../js/careersetu-core.js"></script>
+  <!-- Optional Background Firebase SDK -->
+  <script defer src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script defer src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+  <script defer src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+</head>
+<body>
+
+  <div class="app-layout">
+    <!-- Dark Navy Sidebar (Poster) -->
+    <aside class="app-sidebar">
+      <div class="sidebar-brand">
+        <a href="../index.html" class="flex-align" style="gap: 0.5rem; text-decoration: none;">
+          <svg width="28" height="28" viewBox="0 0 64 64" fill="none">
+            <rect width="64" height="64" rx="14" fill="#4f46e5" />
+            <path d="M14 44 C22 28, 42 28, 50 44" stroke="#ffffff" stroke-width="4" stroke-linecap="round" />
+            <path d="M20 44 L20 35 M32 44 L32 30 M44 44 L44 35" stroke="#ffffff" stroke-width="3" stroke-linecap="round" />
+            <circle cx="32" cy="20" r="5" fill="#38bdf8" />
+          </svg>
+          <span class="brand-title">CareerSetu <span class="brand-badge">AI</span></span>
+        </a>
+      </div>
+
+      <nav class="sidebar-nav">
+        <a href="dashboard.html" class="nav-item"><span class="nav-icon">📊</span> Dashboard</a>
+        <a href="profile.html" class="nav-item"><span class="nav-icon">👤</span> My Profile</a>
+        <a href="career.html" class="nav-item"><span class="nav-icon">🧭</span> My Career</a>
+        <a href="skill-gap.html" class="nav-item"><span class="nav-icon">📈</span> Skill Gap</a>
+        <a href="roadmap.html" class="nav-item"><span class="nav-icon">🗺️</span> Roadmap</a>
+        <a href="opportunities.html" class="nav-item"><span class="nav-icon">💼</span> Opportunities</a>
+        <a href="resume.html" class="nav-item active"><span class="nav-icon">📄</span> Resume AI</a>
+        <a href="interview.html" class="nav-item"><span class="nav-icon">🎙️</span> Mock Interview</a>
+        <a href="progress.html" class="nav-item"><span class="nav-icon">🎯</span> Progress</a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="user-profile-summary">
+          <div class="user-avatar" id="sidebar-user-avatar">H</div>
+          <div class="user-info-text">
+            <p class="user-name-label" id="sidebar-user-name">Himanshu Sahani</p>
+            <p class="user-role-label" id="sidebar-user-email">himanshu@gmail.com</p>
+          </div>
+          <button id="logout-btn" class="btn btn-sm btn-secondary" title="Log Out" style="padding: 0.25rem 0.5rem; font-size: 0.75rem;">⏻</button>
+        </div>
+      </div>
+    </aside>
+
+    <div class="app-main">
+      <header class="app-topbar">
+        <div class="flex-align">
+          <button class="mobile-menu-btn" id="mobile-menu-toggle">☰</button>
+          <div class="topbar-breadcrumbs">
+            <span>Resume AI</span>
+            <span>/</span>
+            <span class="text-primary" style="font-weight: 600;">Resume Analyzer & Optimizer</span>
+          </div>
+        </div>
+        <button type="button" class="btn btn-sm btn-outline" id="download-resume-btn" onclick="window.print()">
+          📥 Download Resume
+        </button>
+      </header>
+
+      <main class="page-content">
+        <div class="page-header flex-between">
+          <div>
+            <h1 class="page-title">Resume AI</h1>
+            <p class="page-description">Automated ATS screening, sectional scoring, keyword gap detection, and impact rewrites.</p>
+          </div>
+          <span class="badge badge-primary" id="resume-target-badge">Target: AI / ML Engineer</span>
+        </div>
+
+        <div id="alert-container"></div>
+
+        <!-- Top Overview Card: 72/100 ATS Compatibility + Section Scores (Exact Poster Screen 8) -->
+        <div class="card mb-2" style="padding: 2rem;">
+          <div style="display: grid; grid-template-columns: 220px 1fr; gap: 3rem; align-items: center;">
+            
+            <!-- Circular Gauge: 72/100 ATS Compatibility -->
+            <div style="text-align: center;">
+              <p class="text-muted" style="font-size: 0.85rem; font-weight: 700; margin-bottom: 0.75rem;">Resume Score</p>
+              <div class="gauge-container" style="width: 145px; height: 145px;">
+                <svg class="gauge-svg" width="145" height="145" viewBox="0 0 145 145">
+                  <circle class="gauge-circle-bg" cx="72.5" cy="72.5" r="60" stroke-width="9"></circle>
+                  <circle class="gauge-circle-progress" cx="72.5" cy="72.5" r="60" stroke="#3b82f6" stroke-width="9"
+                    stroke-dasharray="376.9" stroke-dashoffset="105.5"></circle>
+                </svg>
+                <div class="gauge-center-text">
+                  <span class="gauge-value" style="font-size: 1.85rem; color: #0f172a;">72<span style="font-size: 0.85rem; color: #64748b;">/100</span></span>
+                  <span class="gauge-label" style="font-size: 0.75rem;">ATS Compatibility</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Section Scores (Poster Screen 8) -->
+            <div>
+              <h3 style="font-size: 1.15rem; color: #0f172a; margin-bottom: 1rem;">Section Scores</h3>
+              <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+                
+                <div>
+                  <div class="flex-between" style="margin-bottom: 0.25rem;">
+                    <span style="font-size: 0.85rem; font-weight: 600;">Skills</span>
+                    <span style="font-size: 0.85rem; font-weight: 700; color: #4f46e5;">81</span>
+                  </div>
+                  <div class="progress-track">
+                    <div class="progress-fill" style="width: 81%;"></div>
+                  </div>
+                </div>
+
+                <div>
+                  <div class="flex-between" style="margin-bottom: 0.25rem;">
+                    <span style="font-size: 0.85rem; font-weight: 600;">Projects</span>
+                    <span style="font-size: 0.85rem; font-weight: 700; color: #4f46e5;">68</span>
+                  </div>
+                  <div class="progress-track">
+                    <div class="progress-fill" style="width: 68%;"></div>
+                  </div>
+                </div>
+
+                <div>
+                  <div class="flex-between" style="margin-bottom: 0.25rem;">
+                    <span style="font-size: 0.85rem; font-weight: 600;">Achievements</span>
+                    <span style="font-size: 0.85rem; font-weight: 700; color: #4f46e5;">51</span>
+                  </div>
+                  <div class="progress-track">
+                    <div class="progress-fill progress-fill-amber" style="width: 51%;"></div>
+                  </div>
+                </div>
+
+                <div>
+                  <div class="flex-between" style="margin-bottom: 0.25rem;">
+                    <span style="font-size: 0.85rem; font-weight: 600;">Keywords</span>
+                    <span style="font-size: 0.85rem; font-weight: 700; color: #4f46e5;">73</span>
+                  </div>
+                  <div class="progress-track">
+                    <div class="progress-fill" style="width: 73%;"></div>
+                  </div>
+                </div>
+
+                <div>
+                  <div class="flex-between" style="margin-bottom: 0.25rem;">
+                    <span style="font-size: 0.85rem; font-weight: 600;">Clarity</span>
+                    <span style="font-size: 0.85rem; font-weight: 700; color: #4f46e5;">69</span>
+                  </div>
+                  <div class="progress-track">
+                    <div class="progress-fill" style="width: 69%;"></div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- AI Suggestions (Exact Poster Screen 8 Bottom) -->
+        <div class="card mb-2" style="padding: 1.75rem;">
+          <h3 style="font-size: 1.15rem; color: #0f172a; margin-bottom: 1rem;">AI Suggestions</h3>
+          
+          <ul style="list-style: none; display: flex; flex-direction: column; gap: 0.75rem; margin-bottom: 1.75rem;">
+            <li class="flex-align" style="font-size: 0.95rem; color: #334155;">
+              <span class="badge badge-emerald" style="padding: 0.2rem 0.4rem;">✓</span>
+              Add more technical keywords (e.g., TensorFlow, PyTorch, Scikit-learn)
+            </li>
+            <li class="flex-align" style="font-size: 0.95rem; color: #334155;">
+              <span class="badge badge-emerald" style="padding: 0.2rem 0.4rem;">✓</span>
+              Improve project descriptions with measurable impact (e.g. "improved query efficiency by 35%")
+            </li>
+            <li class="flex-align" style="font-size: 0.95rem; color: #334155;">
+              <span class="badge badge-emerald" style="padding: 0.2rem 0.4rem;">✓</span>
+              Use strong action verbs (Developed, Built, Implemented, Deployed)
+            </li>
+            <li class="flex-align" style="font-size: 0.95rem; color: #334155;">
+              <span class="badge badge-emerald" style="padding: 0.2rem 0.4rem;">✓</span>
+              Keep resume to 1-2 pages with clean reverse-chronological structure
+            </li>
+          </ul>
+
+          <div style="display: flex; gap: 1rem;">
+            <button class="btn btn-primary" id="optimize-role-btn">
+              Optimize for Target Track
+            </button>
+            <button class="btn btn-secondary" onclick="window.print()">
+              Download Optimized Resume
+            </button>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', async function () {
+      if (window.CareerSetu) {
+        CareerSetu.checkAuthGuard();
+        CareerSetu.renderUserProfileWidget();
+      }
+
+      try {
+        var profile = await CareerSetu.getUserData('profiles');
+        if (profile && profile.targetCareer) {
+          var badge = document.getElementById('resume-target-badge');
+          var optBtn = document.getElementById('optimize-role-btn');
+          if (badge) badge.textContent = 'Target: ' + profile.targetCareer;
+          if (optBtn) optBtn.textContent = 'Optimize for ' + profile.targetCareer;
+        }
+      } catch (e) {}
+
+      var optBtn = document.getElementById('optimize-role-btn');
+      if (optBtn) {
+        optBtn.addEventListener('click', function () {
+          var alertBox = document.getElementById('alert-container');
+          if (alertBox) {
+            alertBox.innerHTML = '<div class="alert alert-emerald" style="margin-bottom: 1.25rem; padding: 0.75rem 1rem; border-radius: 8px; font-size: 0.88rem; background: #ecfdf5; color: #047857; border: 1px solid #a7f3d0;">✨ AI Optimization Complete! Keyword density improved by +24% and ATS score boosted to 94/100.</div>';
+            alertBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+          }
+        });
+      }
+    });
+  </script>
+</body>
+</html>

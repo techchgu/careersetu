@@ -1,0 +1,763 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Personalized Roadmap — CareerSetu AI</title>
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/dashboard.css">
+  <link rel="stylesheet" href="../css/responsive.css">
+
+  <!-- CareerSetu Universal Core (Instant 0ms Load) -->
+  <script src="../js/careersetu-core.js"></script>
+  <!-- Optional Background Firebase SDK -->
+  <script defer src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script defer src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+  <script defer src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+
+  <style>
+    .track-selector-bar {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      overflow-x: auto;
+      padding: 0.5rem 0 1rem;
+      margin-bottom: 1.5rem;
+      scrollbar-width: thin;
+    }
+
+    .track-pill-btn {
+      padding: 0.55rem 1.15rem;
+      border-radius: var(--radius-full);
+      border: 1.5px solid var(--border-color);
+      background: #ffffff;
+      color: #334155;
+      font-size: 0.88rem;
+      font-weight: 700;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: var(--transition);
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+    }
+
+    .track-pill-btn:hover {
+      background: #f1f5f9;
+      border-color: #cbd5e1;
+    }
+
+    .track-pill-btn.active {
+      background: #4f46e5;
+      color: #ffffff;
+      border-color: #4f46e5;
+      box-shadow: 0 4px 12px rgba(79, 70, 229, 0.25);
+    }
+
+    .progress-banner-card {
+      background: linear-gradient(135deg, #1e1b4b 0%, #312e81 60%, #1e293b 100%);
+      color: #ffffff;
+      padding: 1.75rem 2rem;
+      border-radius: var(--radius-lg);
+      margin-bottom: 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1.5rem;
+    }
+
+    .roadmap-week-item {
+      background: #ffffff;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 1.25rem 1.5rem;
+      display: flex;
+      align-items: flex-start;
+      gap: 1.25rem;
+      transition: var(--transition);
+      box-shadow: var(--shadow-sm);
+      position: relative;
+    }
+
+    .roadmap-week-item:hover {
+      box-shadow: var(--shadow-md);
+      border-color: #bfdbfe;
+    }
+
+    .week-badge-circle {
+      width: 46px;
+      height: 46px;
+      border-radius: 50%;
+      background: #eef2ff;
+      border: 2px solid #c7d2fe;
+      color: #4f46e5;
+      font-weight: 800;
+      font-size: 0.95rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .status-toggle-btn {
+      cursor: pointer;
+      user-select: none;
+      transition: var(--transition);
+    }
+
+    .status-toggle-btn:hover {
+      opacity: 0.85;
+      transform: scale(1.04);
+    }
+
+    .topic-checklist {
+      margin-top: 0.65rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+    }
+
+    .topic-tag {
+      font-size: 0.76rem;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      color: #475569;
+      padding: 0.2rem 0.6rem;
+      border-radius: 6px;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="app-layout">
+    <!-- Dark Navy Sidebar (Poster) -->
+    <aside class="app-sidebar">
+      <div class="sidebar-brand">
+        <a href="../index.html" class="flex-align" style="gap: 0.5rem; text-decoration: none;">
+          <svg width="28" height="28" viewBox="0 0 64 64" fill="none">
+            <rect width="64" height="64" rx="14" fill="#4f46e5" />
+            <path d="M14 44 C22 28, 42 28, 50 44" stroke="#ffffff" stroke-width="4" stroke-linecap="round" />
+            <path d="M20 44 L20 35 M32 44 L32 30 M44 44 L44 35" stroke="#ffffff" stroke-width="3" stroke-linecap="round" />
+            <circle cx="32" cy="20" r="5" fill="#38bdf8" />
+          </svg>
+          <span class="brand-title">CareerSetu <span class="brand-badge">AI</span></span>
+        </a>
+      </div>
+
+      <nav class="sidebar-nav">
+        <a href="dashboard.html" class="nav-item"><span class="nav-icon">📊</span> Dashboard</a>
+        <a href="profile.html" class="nav-item"><span class="nav-icon">👤</span> My Profile</a>
+        <a href="career.html" class="nav-item"><span class="nav-icon">🧭</span> My Career</a>
+        <a href="skill-gap.html" class="nav-item"><span class="nav-icon">📈</span> Skill Gap</a>
+        <a href="roadmap.html" class="nav-item active"><span class="nav-icon">🗺️</span> Roadmap</a>
+        <a href="opportunities.html" class="nav-item"><span class="nav-icon">💼</span> Opportunities</a>
+        <a href="resume.html" class="nav-item"><span class="nav-icon">📄</span> Resume AI</a>
+        <a href="interview.html" class="nav-item"><span class="nav-icon">🎙️</span> Mock Interview</a>
+        <a href="progress.html" class="nav-item"><span class="nav-icon">🎯</span> Progress</a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="user-profile-summary">
+          <div class="user-avatar" id="sidebar-user-avatar">H</div>
+          <div class="user-info-text">
+            <p class="user-name-label" id="sidebar-user-name">Himanshu Sahani</p>
+            <p class="user-role-label" id="sidebar-user-email">himanshu@gmail.com</p>
+          </div>
+          <button id="logout-btn" class="btn btn-sm btn-secondary" title="Log Out" style="padding: 0.25rem 0.5rem; font-size: 0.75rem;">⏻</button>
+        </div>
+      </div>
+    </aside>
+
+    <div class="app-main">
+      <header class="app-topbar">
+        <div class="flex-align">
+          <button class="mobile-menu-btn" id="mobile-menu-toggle">☰</button>
+          <div class="topbar-breadcrumbs">
+            <span>Personalized Roadmap</span>
+            <span>/</span>
+            <span class="text-primary" style="font-weight: 600;" id="topbar-track-label">Full Stack Track</span>
+          </div>
+        </div>
+        <div style="display: flex; gap: 0.5rem;">
+          <a href="interview.html" class="btn btn-sm btn-outline">Practice Mock Test →</a>
+          <button type="button" class="btn btn-sm btn-primary" onclick="window.print()">
+            📥 Download Roadmap PDF
+          </button>
+        </div>
+      </header>
+
+      <main class="page-content">
+        <div class="page-header flex-between mb-1">
+          <div>
+            <h1 class="page-title" style="font-size: 1.7rem; font-weight: 800; color: #0f172a;" id="page-main-title">
+              60-Day Career Roadmap
+            </h1>
+            <p class="page-description" style="color: #64748b; font-size: 0.9rem;" id="page-sub-desc">
+              Week-by-week learning milestones tailored to your selected target track and known skills.
+            </p>
+          </div>
+          <span class="badge badge-emerald" style="font-size: 0.85rem; padding: 0.4rem 0.8rem;" id="active-track-badge">
+            Track: Full Stack Developer
+          </span>
+        </div>
+
+        <!-- Target Track Switcher (Allows instant preview or switching) -->
+        <div class="track-selector-bar" id="track-selector-container">
+          <button class="track-pill-btn active" data-track="fullstack" onclick="switchRoadmapTrack('fullstack')">
+            <span>🌐</span> Full Stack Developer
+          </button>
+          <button class="track-pill-btn" data-track="aiml" onclick="switchRoadmapTrack('aiml')">
+            <span>🤖</span> AI / ML Engineer
+          </button>
+          <button class="track-pill-btn" data-track="data" onclick="switchRoadmapTrack('data')">
+            <span>📊</span> Data Analyst & BI
+          </button>
+          <button class="track-pill-btn" data-track="gov" onclick="switchRoadmapTrack('gov')">
+            <span>🏛️</span> PSU & Govt Engineer (ISRO/NIC)
+          </button>
+          <button class="track-pill-btn" data-track="cyber" onclick="switchRoadmapTrack('cyber')">
+            <span>🛡️</span> Cybersecurity Analyst
+          </button>
+        </div>
+
+        <!-- Real-Time Progress Banner -->
+        <div class="progress-banner-card">
+          <div style="max-width: 480px;">
+            <span class="badge" style="background: rgba(99, 102, 241, 0.3); color: #c7d2fe; border: 1px solid rgba(199, 210, 254, 0.2); margin-bottom: 0.5rem;">
+              🎯 Active Milestones
+            </span>
+            <h2 style="font-size: 1.45rem; color: #ffffff; margin-bottom: 0.3rem;" id="banner-track-heading">
+              Full Stack Web Development Acceleration
+            </h2>
+            <p style="color: #cbd5e1; font-size: 0.85rem;" id="banner-track-sub">
+              Click any milestone status badge below to mark as <strong style="color: #34d399;">Completed</strong> or <strong style="color: #fbbf24;">In Progress</strong>.
+            </p>
+          </div>
+
+          <div style="min-width: 220px; text-align: right;">
+            <div style="font-size: 1.8rem; font-weight: 800; color: #38bdf8;" id="progress-percentage-text">38%</div>
+            <p style="font-size: 0.8rem; color: #cbd5e1; margin-bottom: 0.4rem;">Roadmap Completed</p>
+            <div class="progress-track" style="background: rgba(255,255,255,0.15); height: 8px;">
+              <div class="progress-fill" style="width: 38%; background: #38bdf8;" id="progress-fill-bar"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Dynamic Weeks List Container -->
+        <div style="display: flex; flex-direction: column; gap: 0.95rem;" id="roadmap-weeks-container">
+          <!-- Weeks injected dynamically based on target track -->
+        </div>
+
+      </main>
+    </div>
+  </div>
+
+  <script>
+    // Pre-built expert roadmaps tailored to each target domain
+    const domainRoadmaps = {
+      fullstack: {
+        title: '60-Day Full Stack Web Developer Roadmap',
+        badge: 'Track: Full Stack Web Developer',
+        desc: 'Curated curriculum covering modern React architecture, Node.js APIs, SQL/NoSQL databases, state caching, and cloud deployments.',
+        weeks: [
+          {
+            week: 'W1',
+            title: 'Modern JavaScript (ES6+) & DOM Fundamentals',
+            hours: '12 hrs',
+            status: 'completed',
+            desc: 'Deep dive into asynchronous JavaScript (Async/Await, Promises), Event Loop, Closures, Array methods, and Fetch API integrations.',
+            topics: ['ES6 Modules', 'Async/Await', 'Fetch API', 'DOM Manipulation', 'Git Branches']
+          },
+          {
+            week: 'W2',
+            title: 'React 19 & Component Architecture',
+            hours: '15 hrs',
+            status: 'in_progress',
+            desc: 'Master React functional components, useState/useEffect/useCallback hooks, custom reusable hooks, and component lifecycle.',
+            topics: ['React Hooks', 'State Management', 'Props Drilling', 'Component Lifecycle', 'Vite Setup']
+          },
+          {
+            week: 'W3',
+            title: 'Backend Node.js, Express & REST APIs',
+            hours: '16 hrs',
+            status: 'upcoming',
+            desc: 'Building scalable serverless and Express.js RESTful API endpoints, request validation, authentication tokens (JWT), and CORS headers.',
+            topics: ['Express.js', 'REST Architecture', 'Middleware', 'JWT Auth', 'Error Handling']
+          },
+          {
+            week: 'W4',
+            title: 'Databases: PostgreSQL & MongoDB / Firestore',
+            hours: '15 hrs',
+            status: 'upcoming',
+            desc: 'Database schema modeling, SQL window queries, relational foreign keys, NoSQL document indexing, and Firestore security rules.',
+            topics: ['PostgreSQL Schema', 'Firestore Rules', 'Indexing', 'CRUD Operations', 'ACID Principles']
+          },
+          {
+            week: 'W5',
+            title: 'State Management (Redux/Zustand) & UI Libraries',
+            hours: '14 hrs',
+            status: 'upcoming',
+            desc: 'Global state orchestration, optimistic UI updates, Tailwind CSS / Shadcn components, and form validation with Zod.',
+            topics: ['Zustand', 'Global State', 'Tailwind CSS', 'Responsive Layouts', 'Client Cache']
+          },
+          {
+            week: 'W6',
+            title: 'Full-Stack Capstone Project (Production Deploy)',
+            hours: '20 hrs',
+            status: 'upcoming',
+            desc: 'Build and ship an end-to-end web application (e.g. Kisan Saathi Agri Portal / E-commerce SaaS) with Vercel and Cloud database.',
+            topics: ['Docker Basics', 'Vercel Deployment', 'CI/CD Pipelines', 'Performance CWV', 'Live Demo']
+          },
+          {
+            week: 'W7',
+            title: 'Resume ATS Alignment & Portfolio Publishing',
+            hours: '10 hrs',
+            status: 'upcoming',
+            desc: 'Optimize your resume using CareerSetu Resume AI, craft STAR bullet points, publish GitHub repositories, and link live project demos.',
+            topics: ['ATS Keywords', 'STAR Bullets', 'GitHub README', 'Portfolio Website', 'LinkedIn Branding']
+          },
+          {
+            week: 'W8',
+            title: 'System Design & Technical Mock Interviews',
+            hours: '12 hrs',
+            status: 'upcoming',
+            desc: 'Practice system design concepts (Caching, Load Balancing, Rate Limiting) and complete AI Technical Mock Interviews in CareerSetu.',
+            topics: ['System Design', 'Caching Strategies', 'Mock Interview AI', 'Behavioral HR', 'Placement Readiness']
+          }
+        ]
+      },
+      aiml: {
+        title: '60-Day AI & Machine Learning Engineer Roadmap',
+        badge: 'Track: AI / ML Engineer',
+        desc: 'Structured 8-week curriculum covering Python data science, statistics, PyTorch neural networks, RAG pipelines, and model serving.',
+        weeks: [
+          {
+            week: 'W1',
+            title: 'Python for Scientific Computing & Mathematics',
+            hours: '12 hrs',
+            status: 'completed',
+            desc: 'Advanced Python idioms, vectorization, object-oriented concepts, linear algebra matrix operations, and algorithmic complexity.',
+            topics: ['List Comprehensions', 'Lambda Functions', 'Matrix Algebra', 'Vector Operations', 'Algorithms']
+          },
+          {
+            week: 'W2',
+            title: 'Statistics, Probability & Hypothesis Testing',
+            hours: '14 hrs',
+            status: 'in_progress',
+            desc: 'Probability distributions (Gaussian, Binomial), Bayes Theorem, hypothesis testing, p-values, z-scores, and covariance.',
+            topics: ['Bayes Theorem', 'Hypothesis Testing', 'P-Values', 'Variance', 'Distributions']
+          },
+          {
+            week: 'W3',
+            title: 'Data Wrangling: NumPy, Pandas & Seaborn EDA',
+            hours: '15 hrs',
+            status: 'upcoming',
+            desc: 'Data cleaning, handling missing values, feature encoding, exploratory data analysis (EDA), and interactive data visualization.',
+            topics: ['NumPy Arrays', 'Pandas DataFrames', 'EDA Pipelines', 'Feature Encoding', 'Seaborn Charts']
+          },
+          {
+            week: 'W4',
+            title: 'Supervised & Unsupervised Machine Learning Core',
+            hours: '18 hrs',
+            status: 'upcoming',
+            desc: 'Linear/Logistic Regression, Decision Trees, Random Forests, Gradient Boosting (XGBoost), KMeans clustering, and Scikit-learn.',
+            topics: ['Scikit-learn', 'Cross-Validation', 'XGBoost', 'ROC-AUC Metrics', 'Clustering']
+          },
+          {
+            week: 'W5',
+            title: 'Deep Learning with PyTorch & Transformers',
+            hours: '20 hrs',
+            status: 'upcoming',
+            desc: 'Neural network fundamentals, backpropagation, CNNs for computer vision, RNNs, and Attention/Transformer architectures.',
+            topics: ['PyTorch Tensors', 'Loss Functions', 'CNN Architectures', 'Self-Attention', 'HuggingFace']
+          },
+          {
+            week: 'W6',
+            title: 'Generative AI, RAG & LLM Application Building',
+            hours: '18 hrs',
+            status: 'upcoming',
+            desc: 'Retrieval-Augmented Generation (RAG), Vector Databases (Pinecone/Chroma), Gemini/OpenAI API integrations, and prompt engineering.',
+            topics: ['Vector Embeddings', 'RAG Pipelines', 'LangChain', 'Gemini API', 'ChromaDB']
+          },
+          {
+            week: 'W7',
+            title: 'Model Serving with FastAPI & Docker Deployment',
+            hours: '14 hrs',
+            status: 'upcoming',
+            desc: 'Wrap ML models inside high-throughput FastAPI asynchronous REST endpoints, containerize with Docker, and deploy to cloud.',
+            topics: ['FastAPI Server', 'Model Serialization', 'Docker Container', 'Cloud Inference', 'Latency Benchmarking']
+          },
+          {
+            week: 'W8',
+            title: 'AI Portfolio Capstone & Technical Mock Round',
+            hours: '12 hrs',
+            status: 'upcoming',
+            desc: 'Deploy end-to-end intelligent predictive application (e.g. Kisan Saathi AI Crop Disease Diagnostic) and complete AI Mock Interview.',
+            topics: ['Capstone Release', 'GitHub Portfolio', 'ATS Resume Sync', 'AI Mock Interview', 'Placement Preparation']
+          }
+        ]
+      },
+      data: {
+        title: '60-Day Data Analyst & Business Intelligence Roadmap',
+        badge: 'Track: Data Analyst & BI Specialist',
+        desc: 'Master advanced SQL queries, spreadsheet modeling, Python analytics, and interactive PowerBI/Tableau executive dashboards.',
+        weeks: [
+          {
+            week: 'W1',
+            title: 'Advanced SQL Querying & Relational Databases',
+            hours: '12 hrs',
+            status: 'completed',
+            desc: 'Complex multi-table JOINs, subqueries, GROUP BY aggregations, CTEs, and relational database normalization.',
+            topics: ['SQL Joins', 'CTEs', 'Aggregations', 'Indexes', 'Schema Design']
+          },
+          {
+            week: 'W2',
+            title: 'SQL Window Functions & Analytical Partitioning',
+            hours: '14 hrs',
+            status: 'in_progress',
+            desc: 'RANK, DENSE_RANK, ROW_NUMBER, LEAD/LAG, running totals, cumulative moving averages, and cohort retention queries.',
+            topics: ['Window Functions', 'Running Totals', 'Lead & Lag', 'Cohort Analysis', 'Performance Tuning']
+          },
+          {
+            week: 'W3',
+            title: 'Python for Data Analysis (Pandas & NumPy)',
+            hours: '15 hrs',
+            status: 'upcoming',
+            desc: 'Data manipulation with Pandas, filtering datasets, merging disparate tables, handling datetime series, and outlier detection.',
+            topics: ['Pandas Slicing', 'Time Series', 'Data Cleaning', 'Outliers', 'NumPy Methods']
+          },
+          {
+            week: 'W4',
+            title: 'Data Visualization & Storytelling (Matplotlib / Plotly)',
+            hours: '12 hrs',
+            status: 'upcoming',
+            desc: 'Create impactful business charts, heatmaps, interactive dashboards, and executive reporting summaries.',
+            topics: ['Plotly Graphs', 'Heatmaps', 'KPI Cards', 'Business Reporting', 'Data Storytelling']
+          },
+          {
+            week: 'W5',
+            title: 'PowerBI & Tableau: DAX Modeling & Dashboards',
+            hours: '18 hrs',
+            status: 'upcoming',
+            desc: 'Star schema data modeling, DAX calculated measures, row-level security, interactive slicers, and automated refresh.',
+            topics: ['PowerBI DAX', 'Tableau Dashboards', 'Star Schema', 'Calculated Fields', 'KPI Gauges']
+          },
+          {
+            week: 'W6',
+            title: 'Real-World Business Case Studies & Capstone',
+            hours: '16 hrs',
+            status: 'upcoming',
+            desc: 'Conduct end-to-end sales forecasting, customer churn analytics, and marketing attribution models on public datasets.',
+            topics: ['Churn Analysis', 'Sales Forecasting', 'A/B Testing', 'Executive Deck', 'GitHub Upload']
+          },
+          {
+            week: 'W7',
+            title: 'Resume ATS Optimization for Data Roles',
+            hours: '10 hrs',
+            status: 'upcoming',
+            desc: 'Highlight SQL metrics and PowerBI portfolio links on your resume with CareerSetu ATS Resume Optimizer.',
+            topics: ['ATS Keywords', 'Quantifiable Metrics', 'Tableau Public', 'GitHub Linkage', 'Job Match']
+          },
+          {
+            week: 'W8',
+            title: 'SQL Live Coding & Business Analytics Mock Round',
+            hours: '12 hrs',
+            status: 'upcoming',
+            desc: 'Practice live SQL whiteboard query rounds and business problem-solving in AI Mock Interview Room.',
+            topics: ['Live SQL Tests', 'Guesstimates', 'Behavioral Round', 'AI Interview Score', 'Offer Letter Prep']
+          }
+        ]
+      },
+      gov: {
+        title: '60-Day PSU & Government Engineering Exam Roadmap',
+        badge: 'Track: PSU & Govt Engineer (ISRO / NIC / C-DAC)',
+        desc: 'Comprehensive preparation for central & state engineering examinations, scientific computing, network security, and technical interviews.',
+        weeks: [
+          {
+            week: 'W1',
+            title: 'Digital Electronics & Computer Organization (COA)',
+            hours: '15 hrs',
+            status: 'completed',
+            desc: 'Logic gates, Boolean minimization, K-maps, multiplexers, CPU instruction pipeline, cache memory mapping, and addressing modes.',
+            topics: ['K-Maps', 'CPU Pipeline', 'Cache Mapping', 'Instruction Cycles', 'Memory Hierarchy']
+          },
+          {
+            week: 'W2',
+            title: 'Data Structures & Algorithmic Efficiency (C/C++)',
+            hours: '16 hrs',
+            status: 'in_progress',
+            desc: 'Arrays, Linked Lists, Stacks, Queues, Binary Search Trees, AVL Trees, Graph traversals (BFS/DFS), and Time Complexity (Big-O).',
+            topics: ['Binary Trees', 'Graph BFS/DFS', 'Dynamic Programming', 'Big-O Analysis', 'Pointer Arithmetic']
+          },
+          {
+            week: 'W3',
+            title: 'Operating Systems & Linux Kernel Architecture',
+            hours: '15 hrs',
+            status: 'upcoming',
+            desc: 'Process scheduling algorithms, synchronization (Semaphores/Mutex), Deadlocks (Banker\'s Algorithm), Virtual Memory, and Paging.',
+            topics: ['Process Scheduling', 'Semaphores', 'Deadlock Detection', 'Paging & TLB', 'Linux Shell']
+          },
+          {
+            week: 'W4',
+            title: 'Computer Networks & TCP/IP Protocol Suite',
+            hours: '15 hrs',
+            status: 'upcoming',
+            desc: 'OSI 7 layers, TCP/UDP sockets, Subnetting/CIDR, Routing algorithms (OSPF/BGP), DNS, HTTP/HTTPS, and Wireshark packet analysis.',
+            topics: ['Subnetting CIDR', 'TCP Handshake', 'Routing Protocols', 'Wireshark Labs', 'Network Security']
+          },
+          {
+            week: 'W5',
+            title: 'Database Management Systems & SQL Fundamentals',
+            hours: '14 hrs',
+            status: 'upcoming',
+            desc: 'Relational algebra, B+ Trees, 1NF/2NF/3NF/BCNF Normalization, ACID transactions, and Concurrency Serializability.',
+            topics: ['BCNF Normalization', 'B+ Trees', 'Serializability', 'SQL Queries', 'Relational Algebra']
+          },
+          {
+            week: 'W6',
+            title: 'Software Engineering, Object-Oriented & Security',
+            hours: '14 hrs',
+            status: 'upcoming',
+            desc: 'Software design patterns, SDLC models, UML class diagrams, Cryptography (RSA, AES), and Government cybersecurity frameworks.',
+            topics: ['RSA Cryptography', 'Design Patterns', 'SDLC Models', 'Cyber Law & IT Act', 'NIC Guidelines']
+          },
+          {
+            week: 'W7',
+            title: 'Previous Year Papers & Official PSU Mock Exams',
+            hours: '18 hrs',
+            status: 'upcoming',
+            desc: 'Solve 10+ years of previous papers for ISRO Scientist/Engineer, NIC Scientific Officer, and CDAC Project Engineer exams.',
+            topics: ['ISRO Papers', 'NIC Previous Papers', 'CDAC Technical Test', 'Time Management', 'Speed Tests']
+          },
+          {
+            week: 'W8',
+            title: 'Technical Viva & PSU Interview Board Preparation',
+            hours: '14 hrs',
+            status: 'upcoming',
+            desc: 'Comprehensive revision of core engineering disciplines and AI Mock Viva session for official selection boards.',
+            topics: ['Board Panel Viva', 'Project Presentation', 'Current Tech Trends', 'AI Mock Interview', 'Selection Readiness']
+          }
+        ]
+      },
+      cyber: {
+        title: '60-Day Cybersecurity & Network Defense Roadmap',
+        badge: 'Track: Cybersecurity Specialist',
+        desc: 'Hands-on network security, ethical vulnerability assessment, Linux system hardening, OWASP Top 10, and SIEM security analytics.',
+        weeks: [
+          {
+            week: 'W1',
+            title: 'Networking Fundamentals & Traffic Analysis',
+            hours: '14 hrs',
+            status: 'completed',
+            desc: 'TCP/IP protocols, subnetting, Wireshark packet capture, Nmap port scanning, and firewall filtering rules.',
+            topics: ['Wireshark Labs', 'Nmap Scanning', 'TCP Handshake', 'Port Protocols', 'Packet Inspection']
+          },
+          {
+            week: 'W2',
+            title: 'Linux Systems Administration & Shell Security',
+            hours: '15 hrs',
+            status: 'in_progress',
+            desc: 'Linux command line, file permissions (chmod/chown), SSH hardening, systemd service management, and cron job auditing.',
+            topics: ['Linux Permissions', 'SSH Keys', 'Bash Scripting', 'Service Auditing', 'System Logs']
+          },
+          {
+            week: 'W3',
+            title: 'Web Application Security & OWASP Top 10',
+            hours: '18 hrs',
+            status: 'upcoming',
+            desc: 'SQL Injection, Cross-Site Scripting (XSS), CSRF, Broken Authentication, Burp Suite proxy, and security header configuration.',
+            topics: ['SQLi Defense', 'XSS Prevention', 'Burp Suite', 'OWASP Top 10', 'CSP Headers']
+          },
+          {
+            week: 'W4',
+            title: 'Cryptography & Public Key Infrastructure (PKI)',
+            hours: '14 hrs',
+            status: 'upcoming',
+            desc: 'Symmetric/Asymmetric encryption (AES, RSA), Hashing (SHA-256), Digital Signatures, SSL/TLS certificates, and JWT validation.',
+            topics: ['RSA & AES', 'SSL/TLS Handshake', 'SHA-256', 'Certificates', 'Key Management']
+          },
+          {
+            week: 'W5',
+            title: 'Vulnerability Assessment & Penetration Testing (VAPT)',
+            hours: '18 hrs',
+            status: 'upcoming',
+            desc: 'Vulnerability scanners (OpenVAS/Nessus), Metasploit framework basics, privilege escalation concepts, and remediation reporting.',
+            topics: ['Nessus Scanning', 'Metasploit', 'Privilege Escalation', 'Remediation Plans', 'VAPT Reports']
+          },
+          {
+            week: 'W6',
+            title: 'Security Operations (SOC) & SIEM Log Analysis',
+            hours: '16 hrs',
+            status: 'upcoming',
+            desc: 'Splunk / ELK Stack log analysis, alert triage, incident response lifecycle, and MITRE ATT&CK framework mapping.',
+            topics: ['Splunk Queries', 'Incident Response', 'MITRE ATT&CK', 'Log Triage', 'Malware Analysis']
+          },
+          {
+            week: 'W7',
+            title: 'Security Certifications & ATS Resume Alignment',
+            hours: '10 hrs',
+            status: 'upcoming',
+            desc: 'Prepare for CompTIA Security+, CEH, or Google Cybersecurity Certifications and optimize your resume for security analyst roles.',
+            topics: ['CompTIA Security+', 'Resume Alignment', 'ATS Security Keywords', 'GitHub Labs', 'Job Applications']
+          },
+          {
+            week: 'W8',
+            title: 'Technical Security Mock Interview',
+            hours: '12 hrs',
+            status: 'upcoming',
+            desc: 'Live technical security scenario questions and incident response drills in CareerSetu AI Mock Interview Room.',
+            topics: ['SOC Scenarios', 'Incident Drills', 'AI Mock Interview', 'HR Behavioral', 'Offer Readiness']
+          }
+        ]
+      }
+    };
+
+    let activeTrackKey = 'fullstack';
+    let activeRoadmapData = null;
+
+    document.addEventListener('DOMContentLoaded', async function () {
+      if (!window.CareerSetu || !CareerSetu.checkAuthGuard()) return;
+      CareerSetu.renderUserProfileWidget();
+
+      // Check User Profile Target Track
+      try {
+        const profile = await CareerSetu.getUserData('profiles');
+        if (profile && profile.targetCareer) {
+          const targetStr = profile.targetCareer.toLowerCase();
+          if (targetStr.includes('ai') || targetStr.includes('machine') || targetStr.includes('ml')) {
+            activeTrackKey = 'aiml';
+          } else if (targetStr.includes('data') || targetStr.includes('analyst') || targetStr.includes('bi')) {
+            activeTrackKey = 'data';
+          } else if (targetStr.includes('psu') || targetStr.includes('gov') || targetStr.includes('isro') || targetStr.includes('nic')) {
+            activeTrackKey = 'gov';
+          } else if (targetStr.includes('cyber') || targetStr.includes('security')) {
+            activeTrackKey = 'cyber';
+          } else {
+            activeTrackKey = 'fullstack';
+          }
+        }
+      } catch (e) {}
+
+      // Load Saved Progress if any
+      try {
+        const savedRoadmap = await CareerSetu.getUserData('roadmaps_' + activeTrackKey);
+        if (savedRoadmap && savedRoadmap.weeks) {
+          domainRoadmaps[activeTrackKey].weeks = savedRoadmap.weeks;
+        }
+      } catch (e) {}
+
+      renderTrackView(activeTrackKey);
+    });
+
+    function switchRoadmapTrack(trackKey) {
+      activeTrackKey = trackKey;
+      
+      // Update Pill Buttons
+      document.querySelectorAll('.track-pill-btn').forEach(btn => {
+        if (btn.getAttribute('data-track') === trackKey) {
+          btn.classList.add('active');
+        } else {
+          btn.classList.remove('active');
+        }
+      });
+
+      renderTrackView(trackKey);
+    }
+
+    function renderTrackView(trackKey) {
+      const data = domainRoadmaps[trackKey] || domainRoadmaps.fullstack;
+      activeRoadmapData = data;
+
+      // Update Top Badges & Titles
+      document.getElementById('page-main-title').textContent = data.title;
+      document.getElementById('page-sub-desc').textContent = data.desc;
+      document.getElementById('active-track-badge').textContent = data.badge;
+      document.getElementById('topbar-track-label').textContent = data.badge.replace('Track: ', '');
+      document.getElementById('banner-track-heading').textContent = data.title;
+
+      // Render Weeks
+      const container = document.getElementById('roadmap-weeks-container');
+      let html = '';
+      let completedCount = 0;
+      let totalCount = data.weeks.length;
+
+      data.weeks.forEach((item, index) => {
+        let statusBadge = '';
+        if (item.status === 'completed') {
+          completedCount++;
+          statusBadge = `<span class="badge badge-emerald status-toggle-btn" onclick="toggleWeekStatus(${index})">✓ Completed</span>`;
+        } else if (item.status === 'in_progress') {
+          completedCount += 0.5;
+          statusBadge = `<span class="badge badge-amber status-toggle-btn" onclick="toggleWeekStatus(${index})">◐ In Progress</span>`;
+        } else {
+          statusBadge = `<span class="badge badge-demo status-toggle-btn" onclick="toggleWeekStatus(${index})">○ Upcoming</span>`;
+        }
+
+        const tagsHtml = (item.topics || []).map(t => `<span class="topic-tag">${t}</span>`).join('');
+
+        html += `
+          <div class="roadmap-week-item">
+            <div class="week-badge-circle">${item.week}</div>
+            <div style="flex: 1;">
+              <div class="flex-between">
+                <h4 style="font-size: 1.05rem; color: #0f172a; font-weight: 700;">${item.title}</h4>
+                <span class="badge badge-primary">${item.hours}</span>
+              </div>
+              <p class="text-muted" style="font-size: 0.86rem; margin-top: 0.25rem; line-height: 1.5;">
+                ${item.desc}
+              </p>
+              <div class="topic-checklist">
+                ${tagsHtml}
+              </div>
+            </div>
+            <div>
+              ${statusBadge}
+            </div>
+          </div>
+        `;
+      });
+
+      container.innerHTML = html;
+
+      // Calculate Progress Percentage
+      const pct = Math.round((completedCount / totalCount) * 100);
+      document.getElementById('progress-percentage-text').textContent = pct + '%';
+      document.getElementById('progress-fill-bar').style.width = pct + '%';
+    }
+
+    function toggleWeekStatus(index) {
+      const data = activeRoadmapData;
+      if (!data || !data.weeks[index]) return;
+
+      const current = data.weeks[index].status;
+      if (current === 'completed') {
+        data.weeks[index].status = 'upcoming';
+      } else if (current === 'upcoming') {
+        data.weeks[index].status = 'in_progress';
+      } else {
+        data.weeks[index].status = 'completed';
+      }
+
+      // Re-render
+      renderTrackView(activeTrackKey);
+
+      // Auto-save to Firestore + LocalStorage
+      if (window.CareerSetu) {
+        CareerSetu.saveUserData('roadmaps_' + activeTrackKey, {
+          trackKey: activeTrackKey,
+          weeks: data.weeks,
+          updatedAt: new Date().toISOString()
+        });
+        CareerSetu.saveUserData('roadmaps', {
+          trackKey: activeTrackKey,
+          targetRole: data.badge,
+          weeks: data.weeks,
+          updatedAt: new Date().toISOString()
+        });
+      }
+    }
+  </script>
+</body>
+</html>

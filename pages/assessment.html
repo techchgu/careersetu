@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Career Assessment — CareerSetu AI</title>
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/dashboard.css">
+  <link rel="stylesheet" href="../css/responsive.css">
+
+  <!-- CareerSetu Universal Core (Instant 0ms Load) -->
+  <script src="../js/careersetu-core.js"></script>
+  <!-- Optional Background Firebase SDK -->
+  <script defer src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script defer src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+  <script defer src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+</head>
+<body>
+
+  <div class="app-layout">
+    <aside class="app-sidebar">
+      <div class="sidebar-brand">
+        <a href="../index.html" class="flex-align" style="gap: 0.5rem; text-decoration: none;">
+          <svg width="28" height="28" viewBox="0 0 64 64" fill="none">
+            <rect width="64" height="64" rx="14" fill="#4f46e5" />
+            <path d="M14 44 C22 28, 42 28, 50 44" stroke="#ffffff" stroke-width="4" stroke-linecap="round" />
+            <path d="M20 44 L20 35 M32 44 L32 30 M44 44 L44 35" stroke="#ffffff" stroke-width="3" stroke-linecap="round" />
+            <circle cx="32" cy="20" r="5" fill="#38bdf8" />
+          </svg>
+          <span class="brand-title">CareerSetu <span class="brand-badge">AI</span></span>
+        </a>
+      </div>
+
+      <nav class="sidebar-nav">
+        <a href="dashboard.html" class="nav-item"><span class="nav-icon">📊</span> Dashboard</a>
+        <a href="profile.html" class="nav-item"><span class="nav-icon">👤</span> My Profile</a>
+        <a href="career.html" class="nav-item active"><span class="nav-icon">🧭</span> My Career</a>
+        <a href="skill-gap.html" class="nav-item"><span class="nav-icon">📈</span> Skill Gap</a>
+        <a href="roadmap.html" class="nav-item"><span class="nav-icon">🗺️</span> Roadmap</a>
+        <a href="opportunities.html" class="nav-item"><span class="nav-icon">💼</span> Opportunities</a>
+        <a href="resume.html" class="nav-item"><span class="nav-icon">📄</span> Resume AI</a>
+        <a href="interview.html" class="nav-item"><span class="nav-icon">🎙️</span> Mock Interview</a>
+        <a href="progress.html" class="nav-item"><span class="nav-icon">🎯</span> Progress</a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="user-profile-summary">
+          <div class="user-avatar" id="sidebar-user-avatar">H</div>
+          <div class="user-info-text">
+            <p class="user-name-label" id="sidebar-user-name">Himanshu Sahani</p>
+            <p class="user-role-label" id="sidebar-user-email">himanshu@gmail.com</p>
+          </div>
+          <button id="logout-btn" class="btn btn-sm btn-secondary" title="Log Out" style="padding: 0.25rem 0.5rem; font-size: 0.75rem;">⏻</button>
+        </div>
+      </div>
+    </aside>
+
+    <div class="app-main">
+      <header class="app-topbar">
+        <div class="flex-align">
+          <button class="mobile-menu-btn" id="mobile-menu-toggle">☰</button>
+          <div class="topbar-breadcrumbs">
+            <a href="dashboard.html" class="text-muted">Dashboard</a>
+            <span>/</span>
+            <span class="text-cyan">Career Assessment</span>
+          </div>
+        </div>
+
+        <div class="topbar-actions">
+          <button class="btn btn-secondary btn-sm" id="prefill-assessment-btn">
+            ⚡ Quick-Fill Answers
+          </button>
+        </div>
+      </header>
+
+      <main class="page-content" style="max-width: 800px; margin: 0 auto;">
+        <div id="alert-container"></div>
+
+        <div class="mb-2">
+          <h2>Career Readiness Assessment</h2>
+          <p class="text-muted">
+            Answer these targeted questions to help the AI calibrate your career pathways, domain fit, and opportunity matching.
+          </p>
+        </div>
+
+        <form id="assessment-form">
+          
+          <!-- Q1 -->
+          <div class="card mb-2">
+            <h4 style="margin-bottom: 0.75rem;">1. Which area of engineering / technology interests you the most?</h4>
+            <div style="display: flex; flex-direction: column; gap: 0.6rem;">
+              <label class="flex-align" style="cursor: pointer;">
+                <input type="radio" name="q_interest" value="web_development" checked required>
+                <span>Full Stack Web Development & Cloud Services</span>
+              </label>
+              <label class="flex-align" style="cursor: pointer;">
+                <input type="radio" name="q_interest" value="ai_ml">
+                <span>Artificial Intelligence, Machine Learning & Data Science</span>
+              </label>
+              <label class="flex-align" style="cursor: pointer;">
+                <input type="radio" name="q_interest" value="cybersecurity">
+                <span>Cybersecurity, Networks & System Administration</span>
+              </label>
+              <label class="flex-align" style="cursor: pointer;">
+                <input type="radio" name="q_interest" value="embedded">
+                <span>Embedded Systems, IoT & Core Electronics</span>
+              </label>
+            </div>
+          </div>
+
+          <!-- Q2 -->
+          <div class="card mb-2">
+            <h4 style="margin-bottom: 0.75rem;">2. What type of work environment do you thrive in?</h4>
+            <div style="display: flex; flex-direction: column; gap: 0.6rem;">
+              <label class="flex-align" style="cursor: pointer;">
+                <input type="radio" name="q_env" value="fast_paced_startups" checked required>
+                <span>Fast-paced startups building modern product features</span>
+              </label>
+              <label class="flex-align" style="cursor: pointer;">
+                <input type="radio" name="q_env" value="enterprise_pnc">
+                <span>Established Tech Enterprises & MNCs with structured ladders</span>
+              </label>
+              <label class="flex-align" style="cursor: pointer;">
+                <input type="radio" name="q_env" value="government_psu">
+                <span>Government PSUs (ISRO, CDAC, NIC, DRDO) / Public Sector</span>
+              </label>
+            </div>
+          </div>
+
+          <!-- Q3 -->
+          <div class="card mb-2">
+            <h4 style="margin-bottom: 0.75rem;">3. What describes your core problem-solving style?</h4>
+            <div style="display: flex; flex-direction: column; gap: 0.6rem;">
+              <label class="flex-align" style="cursor: pointer;">
+                <input type="radio" name="q_problem_solving" value="visual_interactive" checked required>
+                <span>Visual & Interactive — I enjoy seeing immediate UI/UX and user impact</span>
+              </label>
+              <label class="flex-align" style="cursor: pointer;">
+                <input type="radio" name="q_problem_solving" value="logical_algorithms">
+                <span>Logical & Algorithmic — I prefer data structures, math and backend efficiency</span>
+              </label>
+              <label class="flex-align" style="cursor: pointer;">
+                <input type="radio" name="q_problem_solving" value="systemic_architecture">
+                <span>Systemic & Architecture — I like connecting APIs, servers, databases and security</span>
+              </label>
+            </div>
+          </div>
+
+          <!-- Q4 -->
+          <div class="card mb-2">
+            <h4 style="margin-bottom: 0.75rem;">4. Select all technologies you have had hands-on exposure to:</h4>
+            <div class="grid-2" style="gap: 0.6rem;">
+              <label class="flex-align" style="cursor: pointer;">
+                <input type="checkbox" name="q_tools" value="html_css" checked>
+                <span>HTML5 / CSS3 / Responsive Layouts</span>
+              </label>
+              <label class="flex-align" style="cursor: pointer;">
+                <input type="checkbox" name="q_tools" value="javascript" checked>
+                <span>JavaScript (ES6+) / TypeScript</span>
+              </label>
+              <label class="flex-align" style="cursor: pointer;">
+                <input type="checkbox" name="q_tools" value="python" checked>
+                <span>Python / Data Analysis</span>
+              </label>
+              <label class="flex-align" style="cursor: pointer;">
+                <input type="checkbox" name="q_tools" value="react">
+                <span>React / Next.js / Frontend Frameworks</span>
+              </label>
+              <label class="flex-align" style="cursor: pointer;">
+                <input type="checkbox" name="q_tools" value="node">
+                <span>Node.js / Express / Backend APIs</span>
+              </label>
+              <label class="flex-align" style="cursor: pointer;">
+                <input type="checkbox" name="q_tools" value="sql" checked>
+                <span>SQL / Relational Databases</span>
+              </label>
+              <label class="flex-align" style="cursor: pointer;">
+                <input type="checkbox" name="q_tools" value="git" checked>
+                <span>Git & GitHub Version Control</span>
+              </label>
+              <label class="flex-align" style="cursor: pointer;">
+                <input type="checkbox" name="q_tools" value="cloud">
+                <span>Cloud Platforms / Firebase / Docker</span>
+              </label>
+            </div>
+          </div>
+
+          <!-- Q5 -->
+          <div class="card mb-2">
+            <h4 style="margin-bottom: 0.75rem;">5. How many hours per week can you dedicate to skill-building & roadmaps?</h4>
+            <div style="display: flex; flex-direction: column; gap: 0.6rem;">
+              <label class="flex-align" style="cursor: pointer;">
+                <input type="radio" name="q_hours" value="5_to_10">
+                <span>5 - 10 hours / week (Casual pacing)</span>
+              </label>
+              <label class="flex-align" style="cursor: pointer;">
+                <input type="radio" name="q_hours" value="15_to_20" checked required>
+                <span>15 - 20 hours / week (Recommended for fast placement readiness)</span>
+              </label>
+              <label class="flex-align" style="cursor: pointer;">
+                <input type="radio" name="q_hours" value="25_plus">
+                <span>25+ hours / week (Intensive bootcamp mode)</span>
+              </label>
+            </div>
+          </div>
+
+          <!-- Q6 -->
+          <div class="card mb-2">
+            <h4 style="margin-bottom: 0.75rem;">6. Would you like your recommendations to include Government / PSU employment alerts?</h4>
+            <div style="display: flex; flex-direction: column; gap: 0.6rem;">
+              <label class="flex-align" style="cursor: pointer;">
+                <input type="radio" name="q_gov_interest" value="yes_technical" checked required>
+                <span>Yes, prioritize technical & engineering roles in Central/State/PSU bodies</span>
+              </label>
+              <label class="flex-align" style="cursor: pointer;">
+                <input type="radio" name="q_gov_interest" value="private_only">
+                <span>No, focus primarily on private tech companies and venture startups</span>
+              </label>
+            </div>
+          </div>
+
+          <div style="display: flex; gap: 1rem; justify-content: flex-end;">
+            <button type="submit" class="btn btn-primary btn-lg" id="submit-assessment-btn">
+              Submit Assessment & View AI Recommendations →
+            </button>
+          </div>
+        </form>
+      </main>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', async function () {
+      if (!window.CareerSetu || !CareerSetu.checkAuthGuard()) return;
+      CareerSetu.renderUserProfileWidget();
+
+      var assessmentForm = document.getElementById('assessment-form');
+      var alertContainer = document.getElementById('alert-container');
+      var prefillBtn = document.getElementById('prefill-assessment-btn');
+
+      // Load existing answers instantly from cache
+      try {
+        var existing = await CareerSetu.getUserData('assessments');
+        if (existing) {
+          populateAssessment(existing);
+        }
+      } catch (err) {}
+
+      if (prefillBtn) {
+        prefillBtn.addEventListener('click', function () {
+          var sample = {
+            q_interest: 'web_development',
+            q_env: 'fast_paced_startups',
+            q_problem_solving: 'visual_interactive',
+            q_tools: ['html_css', 'javascript', 'git', 'sql'],
+            q_hours: '15_to_20',
+            q_gov_interest: 'yes_technical'
+          };
+          populateAssessment(sample);
+          showAlert('Sample assessment answers selected! Click "Submit Assessment" to proceed.', 'info');
+        });
+      }
+
+      if (assessmentForm) {
+        assessmentForm.addEventListener('submit', async function (e) {
+          e.preventDefault();
+          var submitBtn = document.getElementById('submit-assessment-btn');
+          submitBtn.disabled = true;
+          submitBtn.innerHTML = 'Analyzing...';
+
+          var formData = new FormData(assessmentForm);
+          var responses = {
+            q_interest: formData.get('q_interest') || 'web_development',
+            q_env: formData.get('q_env') || 'fast_paced_startups',
+            q_problem_solving: formData.get('q_problem_solving') || 'visual_interactive',
+            q_tools: formData.getAll('q_tools'),
+            q_hours: formData.get('q_hours') || '15_to_20',
+            q_gov_interest: formData.get('q_gov_interest') || 'yes_technical',
+            completedAt: new Date().toISOString()
+          };
+
+          try {
+            await CareerSetu.saveUserData('assessments', responses);
+            // Instant navigation
+            window.location.href = 'career.html';
+          } catch (err) {
+            showAlert('Failed to save assessment: ' + err.message, 'error');
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Submit Assessment & View AI Recommendations →';
+          }
+        });
+      }
+
+      function populateAssessment(data) {
+        for (var key in data) {
+          if (Array.isArray(data[key])) {
+            data[key].forEach(function (val) {
+              var checkbox = document.querySelector('input[name="' + key + '"][value="' + val + '"]');
+              if (checkbox) checkbox.checked = true;
+            });
+          } else {
+            var radio = document.querySelector('input[name="' + key + '"][value="' + data[key] + '"]');
+            if (radio) radio.checked = true;
+          }
+        }
+      }
+
+      function showAlert(message, type) {
+        if (!alertContainer) return;
+        var alertClass = type === 'success' ? 'alert-emerald' : (type === 'error' ? 'alert-rose' : 'alert-primary');
+        alertContainer.innerHTML = '<div class="alert ' + alertClass + '" style="margin-bottom: 1rem; padding: 0.75rem 1rem; border-radius: 8px; font-size: 0.88rem; background: ' + (type === 'success' ? '#ecfdf5' : (type === 'error' ? '#fff1f2' : '#eff6ff')) + '; color: ' + (type === 'success' ? '#047857' : (type === 'error' ? '#b91c1c' : '#1e40af')) + '; border: 1px solid ' + (type === 'success' ? '#a7f3d0' : (type === 'error' ? '#fecdd3' : '#bfdbfe')) + ';">' + message + '</div>';
+        alertContainer.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }
+    });
+  </script>
+</body>
+</html>

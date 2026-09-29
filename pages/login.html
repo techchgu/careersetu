@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login — CareerSetu AI</title>
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/auth.css">
+  <link rel="stylesheet" href="../css/responsive.css">
+  <style>
+    .auth-card {
+      background: #ffffff;
+      border: 1px solid var(--border-color);
+      box-shadow: var(--shadow-lg);
+    }
+  </style>
+
+  <!-- CareerSetu Universal Core (Instant 0ms Load) -->
+  <script src="../js/careersetu-core.js"></script>
+  <!-- Optional Background Firebase SDK -->
+  <script defer src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script defer src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+  <script defer src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+</head>
+<body>
+
+  <div class="auth-wrapper" style="background: radial-gradient(circle at 50% 20%, #eff6ff 0%, #f8fafc 80%);">
+    <div class="auth-card">
+      <div class="auth-header">
+        <a href="../index.html" class="flex-align" style="justify-content: center; gap: 0.6rem; text-decoration: none; margin-bottom: 0.75rem;">
+          <svg width="34" height="34" viewBox="0 0 64 64" fill="none">
+            <rect width="64" height="64" rx="14" fill="#4f46e5" />
+            <path d="M14 44 C22 28, 42 28, 50 44" stroke="#ffffff" stroke-width="4" stroke-linecap="round" />
+            <path d="M20 44 L20 35 M32 44 L32 30 M44 44 L44 35" stroke="#ffffff" stroke-width="3" stroke-linecap="round" />
+            <circle cx="32" cy="20" r="5" fill="#38bdf8" />
+          </svg>
+          <span style="font-size: 1.6rem; font-weight: 800; color: #0f172a;">CareerSetu <span class="badge badge-primary" style="font-size: 0.75rem;">AI</span></span>
+        </a>
+        <p class="auth-subtitle">Sign in to resume your personalized career readiness journey</p>
+      </div>
+
+      <div id="alert-box"></div>
+
+      <form id="login-form">
+        <div class="form-group">
+          <label class="form-label" for="email">Email Address</label>
+          <input type="email" id="email" class="form-control" placeholder="your-email@gmail.com" required autocomplete="email">
+        </div>
+
+        <div class="form-group">
+          <div class="flex-between" style="margin-bottom: 0.4rem;">
+            <label class="form-label" for="password" style="margin-bottom: 0;">Password</label>
+            <a href="#" id="forgot-password-link" style="font-size: 0.8rem;">Forgot Password?</a>
+          </div>
+          <input type="password" id="password" class="form-control" placeholder="••••••••" required autocomplete="current-password">
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-pill" style="width: 100%; margin-top: 0.5rem;" id="login-submit-btn">
+          Sign In
+        </button>
+      </form>
+
+      <!-- 1-Click Demo / Presentation Access -->
+      <div class="demo-account-box" style="background: #f8fafc; border: 1px dashed #cbd5e1; margin-top: 1.25rem; padding: 1rem; border-radius: 12px;">
+        <p style="color: #475569; font-weight: 600; font-size: 0.85rem; margin-bottom: 0.5rem;">Sample / Demo Account:</p>
+        <button type="button" class="btn btn-sm btn-outline btn-pill" style="width: 100%;" id="demo-login-btn">
+          ⚡ 1-Click Demo Login (Himanshu Sahani Profile)
+        </button>
+      </div>
+
+      <div class="auth-footer" style="margin-top: 1.25rem; text-align: center;">
+        Don't have an account yet? <a href="signup.html" style="font-weight: 600;">Create an Account</a>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      if (window.CareerSetu) {
+        CareerSetu.checkAuthGuard(true);
+      }
+
+      var loginForm = document.getElementById('login-form');
+      var demoBtn = document.getElementById('demo-login-btn');
+      var forgotLink = document.getElementById('forgot-password-link');
+      var alertBox = document.getElementById('alert-box');
+
+      try {
+        var lastUser = CareerSetu.getCurrentUser();
+        if (lastUser && lastUser.email) {
+          document.getElementById('email').value = lastUser.email;
+        }
+      } catch (e) {}
+
+      loginForm.addEventListener('submit', async function (e) {
+        e.preventDefault();
+        var email = document.getElementById('email').value.trim();
+        var password = document.getElementById('password').value;
+        var submitBtn = document.getElementById('login-submit-btn');
+
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = 'Signing In...';
+
+        try {
+          if (!window.CareerSetu) {
+            throw new Error('Core engine initializing...');
+          }
+          await CareerSetu.logIn(email, password);
+          // Instant navigation without artificial delay
+          window.location.href = 'dashboard.html';
+        } catch (err) {
+          showAlert(err.message || 'Login failed. Please check your credentials.', 'error');
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'Sign In';
+        }
+      });
+
+      demoBtn.addEventListener('click', function () {
+        CareerSetu.loginAsDemoJudge();
+        window.location.href = 'dashboard.html';
+      });
+
+      forgotLink.addEventListener('click', function (e) {
+        e.preventDefault();
+        showAlert('If an account exists for this email, password reset instructions will be sent.', 'info');
+      });
+
+      function showAlert(msg, type) {
+        var alertClass = type === 'success' ? 'alert-emerald' : (type === 'error' ? 'alert-rose' : 'alert-primary');
+        alertBox.innerHTML = '<div class="alert ' + alertClass + '" style="margin-bottom: 1rem; padding: 0.75rem 1rem; border-radius: 8px; font-size: 0.88rem; background: ' + (type === 'success' ? '#ecfdf5' : (type === 'error' ? '#fff1f2' : '#eff6ff')) + '; color: ' + (type === 'success' ? '#047857' : (type === 'error' ? '#b91c1c' : '#1e40af')) + '; border: 1px solid ' + (type === 'success' ? '#a7f3d0' : (type === 'error' ? '#fecdd3' : '#bfdbfe')) + ';">' + msg + '</div>';
+      }
+    });
+  </script>
+</body>
+</html>

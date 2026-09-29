@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Learning Hub — CareerSetu AI</title>
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/dashboard.css">
+  <link rel="stylesheet" href="../css/responsive.css">
+
+  <!-- CareerSetu Universal Core (Instant 0ms Load) -->
+  <script src="../js/careersetu-core.js"></script>
+</head>
+<body>
+
+  <div class="app-layout">
+    <aside class="app-sidebar">
+      <div class="sidebar-brand">
+        <a href="../index.html" class="flex-align" style="gap: 0.5rem; text-decoration: none;">
+          <svg width="28" height="28" viewBox="0 0 64 64" fill="none">
+            <rect width="64" height="64" rx="14" fill="#4f46e5" />
+            <path d="M14 44 C22 28, 42 28, 50 44" stroke="#ffffff" stroke-width="4" stroke-linecap="round" />
+            <path d="M20 44 L20 35 M32 44 L32 30 M44 44 L44 35" stroke="#ffffff" stroke-width="3" stroke-linecap="round" />
+            <circle cx="32" cy="20" r="5" fill="#38bdf8" />
+          </svg>
+          <span class="brand-title">CareerSetu <span class="brand-badge">AI</span></span>
+        </a>
+      </div>
+
+      <nav class="sidebar-nav">
+        <a href="dashboard.html" class="nav-item"><span class="nav-icon">📊</span> Dashboard</a>
+        <a href="profile.html" class="nav-item"><span class="nav-icon">👤</span> My Profile</a>
+        <a href="career.html" class="nav-item"><span class="nav-icon">🧭</span> My Career</a>
+        <a href="skill-gap.html" class="nav-item"><span class="nav-icon">📈</span> Skill Gap</a>
+        <a href="roadmap.html" class="nav-item"><span class="nav-icon">🗺️</span> Roadmap</a>
+        <a href="opportunities.html" class="nav-item"><span class="nav-icon">💼</span> Opportunities</a>
+        <a href="resume.html" class="nav-item"><span class="nav-icon">📄</span> Resume AI</a>
+        <a href="interview.html" class="nav-item"><span class="nav-icon">🎙️</span> Mock Interview</a>
+        <a href="progress.html" class="nav-item"><span class="nav-icon">🎯</span> Progress</a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="user-profile-summary">
+          <div class="user-avatar" id="sidebar-user-avatar">H</div>
+          <div class="user-info-text">
+            <p class="user-name-label" id="sidebar-user-name">Himanshu Sahani</p>
+            <p class="user-role-label" id="sidebar-user-email">himanshu@gmail.com</p>
+          </div>
+          <button id="logout-btn" class="btn btn-sm btn-secondary" title="Log Out" style="padding: 0.25rem 0.5rem; font-size: 0.75rem;">⏻</button>
+        </div>
+      </div>
+    </aside>
+
+    <div class="app-main">
+      <header class="app-topbar">
+        <div class="flex-align">
+          <button class="mobile-menu-btn" id="mobile-menu-toggle">☰</button>
+          <div class="topbar-breadcrumbs">
+            <a href="dashboard.html" class="text-muted">Dashboard</a>
+            <span>/</span>
+            <span class="text-cyan">Learning Hub</span>
+          </div>
+        </div>
+        <a href="roadmap.html" class="btn btn-sm btn-primary">View Career Roadmap →</a>
+      </header>
+
+      <main class="page-content">
+        <div class="page-header flex-between">
+          <div>
+            <h1 class="page-title">Curated Learning Hub</h1>
+            <p class="page-description">Handpicked courses, certifications, and hands-on tracks directly addressing your identified skill gaps.</p>
+          </div>
+          <div style="display: flex; gap: 0.5rem;">
+            <button class="btn btn-sm btn-primary filter-btn active" data-filter="all">All Resources</button>
+            <button class="btn btn-sm btn-secondary filter-btn" data-filter="courses">Courses</button>
+            <button class="btn btn-sm btn-secondary filter-btn" data-filter="certifications">Certifications</button>
+          </div>
+        </div>
+
+        <div class="alert alert-info mb-2">
+          <span>ℹ️ <strong>Curated Quality Guarantee:</strong> All linked resources are verified from official open providers (freeCodeCamp, MDN, Google Cloud, Meta, NPTEL) with zero paywalled clutter.</span>
+        </div>
+
+        <div class="grid-3" id="learning-grid">
+          <!-- Dynamic rendering from js/learning.js -->
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      if (window.CareerSetu) {
+        CareerSetu.checkAuthGuard();
+        CareerSetu.renderUserProfileWidget();
+      }
+
+      var coursesList = [
+        {
+          id: 'c1',
+          type: 'course',
+          title: 'JavaScript Algorithms and Data Structures',
+          provider: 'freeCodeCamp',
+          skill: 'Vanilla JavaScript ES6+',
+          difficulty: 'Beginner to Intermediate',
+          duration: '300 hours (Self-paced)',
+          why: 'Covers core ES6 syntax, object-oriented concepts, and algorithmic thinking with zero framework overhead.',
+          link: 'https://www.freecodecamp.org/learn/javascript-algorithms-and-data-structures/',
+          isVerified: true
+        },
+        {
+          id: 'c2',
+          type: 'course',
+          title: 'Modern CSS & Responsive Design Guide',
+          provider: 'MDN Web Docs Learning Area',
+          skill: 'CSS3, Grid, Flexbox, Media Queries',
+          difficulty: 'Beginner',
+          duration: '40 hours',
+          why: 'Official authoritative web documentation on responsive layouts without relying on bloated CSS frameworks.',
+          link: 'https://developer.mozilla.org/en-US/docs/Learn/CSS',
+          isVerified: true
+        },
+        {
+          id: 'c3',
+          type: 'course',
+          title: 'Serverless Functions on Vercel Masterclass',
+          provider: 'Vercel Engineering Tutorials',
+          skill: 'Serverless Node.js & APIs',
+          difficulty: 'Intermediate',
+          duration: '15 hours',
+          why: 'Direct guide to deploying zero-server backend REST endpoints with environment variable security.',
+          link: 'https://vercel.com/docs/functions',
+          isVerified: true
+        },
+        {
+          id: 'c4',
+          type: 'course',
+          title: 'Google Generative AI for Developers',
+          provider: 'Google Cloud Skills Boost',
+          skill: 'Gemini API & Prompt Engineering',
+          difficulty: 'Intermediate',
+          duration: '20 hours',
+          why: 'Master multimodal prompts, structured JSON generation, and secure AI API orchestration.',
+          link: 'https://www.cloudskillsboost.google/',
+          isVerified: true
+        },
+        {
+          id: 'c5',
+          type: 'certification',
+          title: 'Meta Certified Front-End Developer',
+          provider: 'Meta / Coursera',
+          skill: 'HTML5, CSS, JS, Git, UX Principles',
+          difficulty: 'Intermediate',
+          duration: '4-6 Months',
+          why: 'Recognized by top employers worldwide for rigorous front-end engineering foundations.',
+          link: 'https://www.coursera.org/professional-certificates/meta-front-end-developer',
+          isVerified: true
+        },
+        {
+          id: 'c6',
+          type: 'certification',
+          title: 'Google Cloud Certified Cloud Digital Leader',
+          provider: 'Google Cloud',
+          skill: 'Cloud Infrastructure, Security & AI',
+          difficulty: 'Beginner to Intermediate',
+          duration: '2-3 Months',
+          why: 'Validates holistic cloud capabilities and modern distributed systems knowledge.',
+          link: 'https://cloud.google.com/learn/certification/cloud-digital-leader',
+          isVerified: true
+        },
+        {
+          id: 'c7',
+          type: 'certification',
+          title: 'GitHub Foundations Certification',
+          provider: 'GitHub',
+          skill: 'Git, GitHub Actions, Collaboration',
+          difficulty: 'Beginner',
+          duration: '1 Month',
+          why: 'Official industry credential proving competence in open-source and professional repository workflows.',
+          link: 'https://resources.github.com/learn/certifications/',
+          isVerified: true
+        },
+        {
+          id: 'c8',
+          type: 'course',
+          title: 'NPTEL Cloud Computing & Distributed Systems',
+          provider: 'IIT Kharagpur / SWAYAM',
+          skill: 'Distributed Systems & Cloud Architecture',
+          difficulty: 'Intermediate',
+          duration: '8 Weeks',
+          why: 'Government of India recognized academic credit and premier institutional certification.',
+          link: 'https://nptel.ac.in/courses',
+          isVerified: true
+        }
+      ];
+
+      var grid = document.getElementById('learning-grid');
+      var filterBtns = document.querySelectorAll('.filter-btn');
+
+      function render(items) {
+        if (!grid) return;
+        grid.innerHTML = items.map(function (item) {
+          return '<div class="card" style="display: flex; flex-direction: column; justify-content: space-between;">' +
+            '<div>' +
+              '<div class="flex-between mb-1">' +
+                '<span class="badge ' + (item.type === 'certification' ? 'badge-amber' : 'badge-cyan') + '">' +
+                  (item.type === 'certification' ? '★ Certification' : '📖 Course') +
+                '</span>' +
+                '<span class="badge ' + (item.isVerified ? 'badge-emerald' : 'badge-demo') + '">' +
+                  (item.isVerified ? '✓ Verified Source' : 'Demo Resource') +
+                '</span>' +
+              '</div>' +
+              '<h3 style="font-size: 1.15rem; margin-bottom: 0.4rem;">' + item.title + '</h3>' +
+              '<p class="text-cyan" style="font-size: 0.85rem; font-weight: 600; margin-bottom: 0.75rem;">Provider: ' + item.provider + '</p>' +
+              '<div style="background: #f8fafc; padding: 0.75rem; border-radius: 8px; margin-bottom: 1rem; font-size: 0.825rem; border: 1px solid #e2e8f0;">' +
+                '<p style="margin-bottom: 0.25rem;"><strong>Focus Skill:</strong> ' + item.skill + '</p>' +
+                '<p style="margin-bottom: 0.25rem;"><strong>Difficulty:</strong> ' + item.difficulty + '</p>' +
+                '<p><strong>Duration:</strong> ' + item.duration + '</p>' +
+              '</div>' +
+              '<p class="text-muted" style="font-size: 0.85rem; margin-bottom: 1.25rem;">' + item.why + '</p>' +
+            '</div>' +
+            '<div style="padding-top: 1rem; border-top: 1px solid #e2e8f0; display: flex; gap: 0.5rem;">' +
+              '<a href="' + item.link + '" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-primary" style="flex: 1;">View Course ↗</a>' +
+              '<button class="btn btn-sm btn-secondary enroll-track-btn" data-title="' + item.title + '" title="Track in Progress">+ Track</button>' +
+            '</div>' +
+          '</div>';
+        }).join('');
+
+        document.querySelectorAll('.enroll-track-btn').forEach(function (btn) {
+          btn.addEventListener('click', function (e) {
+            var title = e.currentTarget.getAttribute('data-title');
+            e.currentTarget.textContent = '✓ Tracked';
+            e.currentTarget.classList.remove('btn-secondary');
+            e.currentTarget.classList.add('btn-outline');
+          });
+        });
+      }
+
+      render(coursesList);
+
+      filterBtns.forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          filterBtns.forEach(function (b) {
+            b.classList.remove('active', 'btn-primary');
+            b.classList.add('btn-secondary');
+          });
+          btn.classList.add('active', 'btn-primary');
+          btn.classList.remove('btn-secondary');
+
+          var filter = btn.getAttribute('data-filter');
+          if (filter === 'all') {
+            render(coursesList);
+          } else if (filter === 'courses') {
+            render(coursesList.filter(function (c) { return c.type === 'course'; }));
+          } else if (filter === 'certifications') {
+            render(coursesList.filter(function (c) { return c.type === 'certification'; }));
+          }
+        });
+      });
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Skill Gap Analyzer — CareerSetu AI</title>
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/dashboard.css">
+  <link rel="stylesheet" href="../css/responsive.css">
+
+  <!-- CareerSetu Universal Core (Instant 0ms Load) -->
+  <script src="../js/careersetu-core.js"></script>
+  <!-- Optional Background Firebase SDK -->
+  <script defer src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script defer src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+  <script defer src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+</head>
+<body>
+
+  <div class="app-layout">
+    <!-- Dark Navy Sidebar (Poster) -->
+    <aside class="app-sidebar">
+      <div class="sidebar-brand">
+        <a href="../index.html" class="flex-align" style="gap: 0.5rem; text-decoration: none;">
+          <svg width="28" height="28" viewBox="0 0 64 64" fill="none">
+            <rect width="64" height="64" rx="14" fill="#4f46e5" />
+            <path d="M14 44 C22 28, 42 28, 50 44" stroke="#ffffff" stroke-width="4" stroke-linecap="round" />
+            <path d="M20 44 L20 35 M32 44 L32 30 M44 44 L44 35" stroke="#ffffff" stroke-width="3" stroke-linecap="round" />
+            <circle cx="32" cy="20" r="5" fill="#38bdf8" />
+          </svg>
+          <span class="brand-title">CareerSetu <span class="brand-badge">AI</span></span>
+        </a>
+      </div>
+
+      <nav class="sidebar-nav">
+        <a href="dashboard.html" class="nav-item"><span class="nav-icon">📊</span> Dashboard</a>
+        <a href="profile.html" class="nav-item"><span class="nav-icon">👤</span> My Profile</a>
+        <a href="career.html" class="nav-item"><span class="nav-icon">🧭</span> My Career</a>
+        <a href="skill-gap.html" class="nav-item active"><span class="nav-icon">📈</span> Skill Gap</a>
+        <a href="roadmap.html" class="nav-item"><span class="nav-icon">🗺️</span> Roadmap</a>
+        <a href="opportunities.html" class="nav-item"><span class="nav-icon">💼</span> Opportunities</a>
+        <a href="resume.html" class="nav-item"><span class="nav-icon">📄</span> Resume AI</a>
+        <a href="interview.html" class="nav-item"><span class="nav-icon">🎙️</span> Mock Interview</a>
+        <a href="progress.html" class="nav-item"><span class="nav-icon">🎯</span> Progress</a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="user-profile-summary">
+          <div class="user-avatar" id="sidebar-user-avatar">H</div>
+          <div class="user-info-text">
+            <p class="user-name-label" id="sidebar-user-name">Himanshu Sahani</p>
+            <p class="user-role-label" id="sidebar-user-email">himanshu@gmail.com</p>
+          </div>
+          <button id="logout-btn" class="btn btn-sm btn-secondary" title="Log Out" style="padding: 0.25rem 0.5rem; font-size: 0.75rem;">⏻</button>
+        </div>
+      </div>
+    </aside>
+
+    <div class="app-main">
+      <header class="app-topbar">
+        <div class="flex-align">
+          <button class="mobile-menu-btn" id="mobile-menu-toggle">☰</button>
+          <div class="topbar-breadcrumbs">
+            <span>Skill Gap Analyzer</span>
+            <span>/</span>
+            <span class="text-primary" style="font-weight: 600;">Skills</span>
+          </div>
+        </div>
+        <a href="roadmap.html" class="btn btn-sm btn-primary">Bridge with 60-Day Roadmap →</a>
+      </header>
+
+      <main class="page-content">
+        <div class="page-header flex-between">
+          <div>
+            <h1 class="page-title">Skill Gap Analysis</h1>
+            <p class="page-description">
+              Target Career: <strong class="text-primary" id="skill-gap-target-title">AI / ML Engineer</strong>. Real-time comparison against industry hiring thresholds.
+            </p>
+          </div>
+          <div class="flex-align">
+            <span class="badge badge-emerald">✓ Target Met</span>
+            <span class="badge badge-rose">⚠️ Deficit Gap</span>
+          </div>
+        </div>
+
+        <!-- Required vs Current Level Comparative Chart -->
+        <div class="card">
+          <h3 style="font-size: 1.15rem; margin-bottom: 1.25rem; color: #0f172a;">
+            Required vs Current Level
+          </h3>
+
+          <div id="dual-bar-container" style="display: flex; flex-direction: column; gap: 1.15rem;">
+            <!-- Dynamically populated -->
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', async function () {
+      if (window.CareerSetu) {
+        CareerSetu.checkAuthGuard();
+        CareerSetu.renderUserProfileWidget();
+      }
+
+      var trackSkillsMap = {
+        'AI / ML Engineer': [
+          { name: 'Python', current: 85, required: 80 },
+          { name: 'SQL & Data Queries', current: 90, required: 80 },
+          { name: 'Machine Learning (Scikit-Learn)', current: 40, required: 80 },
+          { name: 'Deep Learning (PyTorch / TF)', current: 25, required: 75 },
+          { name: 'Applied Statistics & Probability', current: 45, required: 70 },
+          { name: 'Data Structures & Algorithms', current: 65, required: 70 }
+        ],
+        'Full Stack Developer': [
+          { name: 'HTML5 & Responsive CSS', current: 92, required: 85 },
+          { name: 'JavaScript ES6+ & TypeScript', current: 86, required: 85 },
+          { name: 'React.js & Frontend State', current: 80, required: 80 },
+          { name: 'Node.js, Express & REST APIs', current: 55, required: 80 },
+          { name: 'SQL & Database Architecture', current: 88, required: 75 },
+          { name: 'Cloud Deployment & CI/CD', current: 35, required: 70 }
+        ],
+        'Data Analyst': [
+          { name: 'Advanced SQL & Query Optimization', current: 90, required: 85 },
+          { name: 'Python (Pandas, NumPy)', current: 80, required: 80 },
+          { name: 'Data Visualization (PowerBI / Tableau)', current: 45, required: 75 },
+          { name: 'Statistical Testing & EDA', current: 50, required: 75 },
+          { name: 'Excel / Spreadsheets Modeling', current: 85, required: 70 },
+          { name: 'Business Communication', current: 75, required: 70 }
+        ],
+        'PSU / Government Technical Exams': [
+          { name: 'Core CS Foundations (OS, DBMS, CN)', current: 75, required: 85 },
+          { name: 'Engineering Mathematics & Aptitude', current: 60, required: 80 },
+          { name: 'Data Structures & Algorithms', current: 65, required: 80 },
+          { name: 'General Awareness & Reasoning', current: 55, required: 75 },
+          { name: 'C / C++ & System Programming', current: 70, required: 75 },
+          { name: 'Technical Writing & Documentation', current: 75, required: 70 }
+        ],
+        'Cybersecurity Analyst': [
+          { name: 'Computer Networking (TCP/IP, OSI)', current: 65, required: 85 },
+          { name: 'Linux System Administration', current: 70, required: 80 },
+          { name: 'Web Application Security (OWASP)', current: 40, required: 80 },
+          { name: 'Python for Security Scripting', current: 82, required: 75 },
+          { name: 'SIEM & Log Analysis', current: 30, required: 75 },
+          { name: 'Cryptography Foundations', current: 50, required: 70 }
+        ]
+      };
+
+      try {
+        var profile = (await CareerSetu.getUserData('profiles')) || {};
+        var targetTrack = profile.targetCareer || 'Full Stack Developer';
+        
+        var titleEl = document.getElementById('skill-gap-target-title');
+        if (titleEl) titleEl.textContent = targetTrack;
+
+        var skills = trackSkillsMap[targetTrack] || trackSkillsMap['Full Stack Developer'];
+
+        // Render Comparative Dual Bars
+        var barContainer = document.getElementById('dual-bar-container');
+        if (barContainer) {
+          barContainer.innerHTML = skills.map(function (s) {
+            var diff = s.current - s.required;
+            var isMet = diff >= 0;
+            var isCritical = diff < -20;
+            var fillClass = isMet ? 'progress-fill-emerald' : isCritical ? 'progress-fill-rose' : 'progress-fill-amber';
+            var highlightClass = isMet ? 'text-emerald' : isCritical ? 'text-rose' : 'text-amber';
+            var labelNote = isMet ? '' : isCritical ? ' (Critical)' : ' (Gap)';
+
+            return '<div class="dual-bar-row">' +
+              '<div class="dual-bar-header">' +
+                '<span>' + s.name + '</span>' +
+                '<span class="text-dim">Required: ' + s.required + '% • <strong class="' + highlightClass + '">Current: ' + s.current + '%' + labelNote + '</strong></span>' +
+              '</div>' +
+              '<div class="dual-bar-track">' +
+                '<div class="dual-bar-current ' + fillClass + '" style="width: ' + s.current + '%;"></div>' +
+              '</div>' +
+            '</div>';
+          }).join('');
+        }
+      } catch (err) {
+        console.warn('Skill gap load error:', err);
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Government Opportunities — CareerSetu AI</title>
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/dashboard.css">
+  <link rel="stylesheet" href="../css/responsive.css">
+
+  <!-- CareerSetu Universal Core (Instant 0ms Load) -->
+  <script src="../js/careersetu-core.js"></script>
+</head>
+<body>
+
+  <div class="app-layout">
+    <aside class="app-sidebar">
+      <div class="sidebar-brand">
+        <a href="../index.html" class="flex-align" style="gap: 0.5rem; text-decoration: none;">
+          <svg width="28" height="28" viewBox="0 0 64 64" fill="none">
+            <rect width="64" height="64" rx="14" fill="#4f46e5" />
+            <path d="M14 44 C22 28, 42 28, 50 44" stroke="#ffffff" stroke-width="4" stroke-linecap="round" />
+            <path d="M20 44 L20 35 M32 44 L32 30 M44 44 L44 35" stroke="#ffffff" stroke-width="3" stroke-linecap="round" />
+            <circle cx="32" cy="20" r="5" fill="#38bdf8" />
+          </svg>
+          <span class="brand-title">CareerSetu <span class="brand-badge">AI</span></span>
+        </a>
+      </div>
+
+      <nav class="sidebar-nav">
+        <a href="dashboard.html" class="nav-item"><span class="nav-icon">📊</span> Dashboard</a>
+        <a href="profile.html" class="nav-item"><span class="nav-icon">👤</span> My Profile</a>
+        <a href="career.html" class="nav-item"><span class="nav-icon">🧭</span> My Career</a>
+        <a href="skill-gap.html" class="nav-item"><span class="nav-icon">📈</span> Skill Gap</a>
+        <a href="roadmap.html" class="nav-item"><span class="nav-icon">🗺️</span> Roadmap</a>
+        <a href="opportunities.html" class="nav-item active"><span class="nav-icon">💼</span> Opportunities</a>
+        <a href="resume.html" class="nav-item"><span class="nav-icon">📄</span> Resume AI</a>
+        <a href="interview.html" class="nav-item"><span class="nav-icon">🎙️</span> Mock Interview</a>
+        <a href="progress.html" class="nav-item"><span class="nav-icon">🎯</span> Progress</a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="user-profile-summary">
+          <div class="user-avatar" id="sidebar-user-avatar">H</div>
+          <div class="user-info-text">
+            <p class="user-name-label" id="sidebar-user-name">Himanshu Sahani</p>
+            <p class="user-role-label" id="sidebar-user-email">himanshu@gmail.com</p>
+          </div>
+          <button id="logout-btn" class="btn btn-sm btn-secondary" title="Log Out" style="padding: 0.25rem 0.5rem; font-size: 0.75rem;">⏻</button>
+        </div>
+      </div>
+    </aside>
+
+    <div class="app-main">
+      <header class="app-topbar">
+        <div class="flex-align">
+          <button class="mobile-menu-btn" id="mobile-menu-toggle">☰</button>
+          <div class="topbar-breadcrumbs">
+            <a href="dashboard.html" class="text-muted">Dashboard</a>
+            <span>/</span>
+            <span class="text-cyan">Government Hub</span>
+          </div>
+        </div>
+        <a href="https://www.ncs.gov.in" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-outline">
+          National Career Service (NCS) ↗
+        </a>
+      </header>
+
+      <main class="page-content">
+        <div class="page-header flex-between">
+          <div>
+            <h1 class="page-title">Government & Public Sector Employment</h1>
+            <p class="page-description">Curated technical, research, and administrative openings across Central, State, and Public Sector Undertakings.</p>
+          </div>
+          <span class="badge badge-emerald">Verified Official Portals</span>
+        </div>
+
+        <!-- Filter Bar -->
+        <div class="card mb-2" style="padding: 1rem 1.25rem;">
+          <div class="grid-2">
+            <div>
+              <input type="text" id="gov-search" class="form-control" placeholder="🔍 Search organization (ISRO, NIC, BEL), post, or qualification...">
+            </div>
+            <div>
+              <select id="category-filter" class="form-control">
+                <option value="all">All Sectors (Central, State & PSUs)</option>
+                <option value="central">Central Government Only (ISRO, NIC, MeitY, SSC)</option>
+                <option value="psu">Public Sector Undertakings (PSUs: BEL, C-DAC, BHEL)</option>
+                <option value="state">State Governments & Digital Missions</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid-2" id="gov-grid">
+          <!-- Dynamic rendering from js/government.js -->
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      if (window.CareerSetu) {
+        CareerSetu.checkAuthGuard();
+        CareerSetu.renderUserProfileWidget();
+      }
+
+      var govOpportunities = [
+        {
+          id: 'gov-1',
+          category: 'central',
+          title: 'Scientist / Engineer ‘SC’ (Computer Science)',
+          organization: 'ISRO (Indian Space Research Organisation)',
+          eligibility: 'B.E / B.Tech in CSE / IT with minimum 65% marks or 6.84 CGPA',
+          qualification: 'B.Tech / B.E / M.Tech in CS/IT',
+          area: 'Technical & Space Informatics',
+          appPeriod: 'Annual ICRB Examination Cycle',
+          portalUrl: 'https://www.isro.gov.in/Careers.html',
+          isOfficial: true
+        },
+        {
+          id: 'gov-2',
+          category: 'central',
+          title: 'Scientific Officer / Technical Officer',
+          organization: 'NIC (National Informatics Centre) / MeitY',
+          eligibility: 'Bachelor Degree in Engineering or MCA / M.Sc with Computer Science',
+          qualification: 'B.E / B.Tech / MCA / M.Sc',
+          area: 'Government Cloud Infrastructure & e-Governance',
+          appPeriod: 'NIELIT Central Recruitment Drive',
+          portalUrl: 'https://www.nic.in/recruitment/',
+          isOfficial: true
+        },
+        {
+          id: 'gov-3',
+          category: 'psu',
+          title: 'Project Engineer / Software Development Trainee',
+          organization: 'C-DAC (Centre for Development of Advanced Computing)',
+          eligibility: '1st Class B.E. / B.Tech / MCA with knowledge of Web & Database APIs',
+          qualification: 'B.Tech / MCA',
+          area: 'High Performance Computing & National Software Projects',
+          appPeriod: 'Rolling / Project-based intake',
+          portalUrl: 'https://www.cdac.in/careers',
+          isOfficial: true
+        },
+        {
+          id: 'gov-4',
+          category: 'psu',
+          title: 'Graduate Engineer Trainee (GET) - Computer Science',
+          organization: 'BEL (Bharat Electronics Limited)',
+          eligibility: 'B.E / B.Tech with First Class for General/OBC, Pass class for SC/ST/PwD',
+          qualification: 'B.Tech Computer Science / Information Science',
+          area: 'Defence Software Systems & Embedded Communications',
+          appPeriod: 'Annual Gate / Direct Interview Selection',
+          portalUrl: 'https://bel-india.in/CareersGrid.aspx',
+          isOfficial: true
+        },
+        {
+          id: 'gov-5',
+          category: 'central',
+          title: 'Assistant Programmer / Junior Software Engineer',
+          organization: 'SSC (Staff Selection Commission) & Central Ministries',
+          eligibility: 'Graduation in CS/IT or Diploma in Computer Application',
+          qualification: 'B.Sc Computer Science / BCA / B.Tech',
+          area: 'Departmental Database Administration',
+          appPeriod: 'SSC CGL / Selection Posts',
+          portalUrl: 'https://ssc.nic.in',
+          isOfficial: true
+        },
+        {
+          id: 'gov-6',
+          category: 'state',
+          title: 'Technical Associate / Full Stack Developer (Contractual)',
+          organization: 'State Digital Mission & State IT Development Corps',
+          eligibility: 'B.Tech / BCA with demonstrated experience in modern web platforms',
+          qualification: 'B.Tech / BCA / MCA',
+          area: 'Citizen Service Portals & Public Dashboards',
+          appPeriod: 'State Specific Rolling Notification',
+          portalUrl: 'https://www.ncs.gov.in',
+          isOfficial: true
+        }
+      ];
+
+      var grid = document.getElementById('gov-grid');
+      var searchInput = document.getElementById('gov-search');
+      var categoryFilter = document.getElementById('category-filter');
+
+      function render(items) {
+        if (!grid) return;
+        if (!items.length) {
+          grid.innerHTML = '<div class="card" style="grid-column: span 2; text-align: center; padding: 2.5rem;"><p class="text-muted">No government opportunities match your search filter.</p></div>';
+          return;
+        }
+
+        grid.innerHTML = items.map(function (item) {
+          return '<div class="card" style="display: flex; flex-direction: column; justify-content: space-between;">' +
+            '<div>' +
+              '<div class="flex-between mb-1">' +
+                '<span class="badge ' + (item.category === 'central' ? 'badge-primary' : item.category === 'psu' ? 'badge-amber' : 'badge-cyan') + '">' +
+                  (item.category === 'central' ? '🏛️ Central Govt' : item.category === 'psu' ? '⚡ PSU / Enterprise' : '🌐 State Mission') +
+                '</span>' +
+                '<span class="badge badge-emerald">✓ Verified Portal</span>' +
+              '</div>' +
+              '<h3 style="font-size: 1.15rem; margin-bottom: 0.35rem;">' + item.title + '</h3>' +
+              '<p class="text-primary" style="font-weight: 700; font-size: 0.9rem; margin-bottom: 0.75rem;">' + item.organization + '</p>' +
+              '<div style="background: #f8fafc; padding: 0.75rem; border-radius: 8px; margin-bottom: 1rem; font-size: 0.825rem; border: 1px solid #e2e8f0;">' +
+                '<p style="margin-bottom: 0.25rem;"><strong>Eligibility:</strong> ' + item.eligibility + '</p>' +
+                '<p style="margin-bottom: 0.25rem;"><strong>Focus Domain:</strong> ' + item.area + '</p>' +
+                '<p><strong>Recruitment Mode:</strong> ' + item.appPeriod + '</p>' +
+              '</div>' +
+            '</div>' +
+            '<div style="padding-top: 1rem; border-top: 1px solid #e2e8f0; display: flex; gap: 0.5rem;">' +
+              '<a href="' + item.portalUrl + '" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-primary" style="flex: 1;">Official Portal ↗</a>' +
+              '<button class="btn btn-sm btn-secondary bookmark-btn" data-id="' + item.id + '" title="Save to Tracked Openings">+ Save</button>' +
+            '</div>' +
+          '</div>';
+        }).join('');
+
+        document.querySelectorAll('.bookmark-btn').forEach(function (btn) {
+          btn.addEventListener('click', function (e) {
+            e.currentTarget.textContent = '✓ Saved';
+            e.currentTarget.classList.remove('btn-secondary');
+            e.currentTarget.classList.add('btn-outline');
+          });
+        });
+      }
+
+      function filterItems() {
+        var query = (searchInput ? searchInput.value : '').toLowerCase().trim();
+        var cat = categoryFilter ? categoryFilter.value : 'all';
+
+        var filtered = govOpportunities.filter(function (item) {
+          var matchesCategory = (cat === 'all') || (item.category === cat);
+          var matchesQuery = !query || 
+            item.title.toLowerCase().includes(query) ||
+            item.organization.toLowerCase().includes(query) ||
+            item.eligibility.toLowerCase().includes(query) ||
+            item.area.toLowerCase().includes(query);
+          return matchesCategory && matchesQuery;
+        });
+
+        render(filtered);
+      }
+
+      render(govOpportunities);
+
+      if (searchInput) searchInput.addEventListener('input', filterItems);
+      if (categoryFilter) categoryFilter.addEventListener('change', filterItems);
+    });
+  </script>
+</body>
+</html>

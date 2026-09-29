@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Career Explorer / Recommendations — CareerSetu AI</title>
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/dashboard.css">
+  <link rel="stylesheet" href="../css/responsive.css">
+
+  <!-- CareerSetu Universal Core (Instant 0ms Load) -->
+  <script src="../js/careersetu-core.js"></script>
+  <!-- Optional Background Firebase SDK -->
+  <script defer src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script defer src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+  <script defer src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+</head>
+<body>
+
+  <div class="app-layout">
+    <!-- Dark Navy Sidebar (Poster) -->
+    <aside class="app-sidebar">
+      <div class="sidebar-brand">
+        <a href="../index.html" class="flex-align" style="gap: 0.5rem; text-decoration: none;">
+          <svg width="28" height="28" viewBox="0 0 64 64" fill="none">
+            <rect width="64" height="64" rx="14" fill="#4f46e5" />
+            <path d="M14 44 C22 28, 42 28, 50 44" stroke="#ffffff" stroke-width="4" stroke-linecap="round" />
+            <path d="M20 44 L20 35 M32 44 L32 30 M44 44 L44 35" stroke="#ffffff" stroke-width="3" stroke-linecap="round" />
+            <circle cx="32" cy="20" r="5" fill="#38bdf8" />
+          </svg>
+          <span class="brand-title">CareerSetu <span class="brand-badge">AI</span></span>
+        </a>
+      </div>
+
+      <nav class="sidebar-nav">
+        <a href="dashboard.html" class="nav-item"><span class="nav-icon">📊</span> Dashboard</a>
+        <a href="profile.html" class="nav-item"><span class="nav-icon">👤</span> My Profile</a>
+        <a href="career.html" class="nav-item active"><span class="nav-icon">🧭</span> My Career</a>
+        <a href="skill-gap.html" class="nav-item"><span class="nav-icon">📈</span> Skill Gap</a>
+        <a href="roadmap.html" class="nav-item"><span class="nav-icon">🗺️</span> Roadmap</a>
+        <a href="opportunities.html" class="nav-item"><span class="nav-icon">💼</span> Opportunities</a>
+        <a href="resume.html" class="nav-item"><span class="nav-icon">📄</span> Resume AI</a>
+        <a href="interview.html" class="nav-item"><span class="nav-icon">🎙️</span> Mock Interview</a>
+        <a href="progress.html" class="nav-item"><span class="nav-icon">🎯</span> Progress</a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="user-profile-summary">
+          <div class="user-avatar" id="sidebar-user-avatar">H</div>
+          <div class="user-info-text">
+            <p class="user-name-label" id="sidebar-user-name">Himanshu Sahani</p>
+            <p class="user-role-label" id="sidebar-user-email">himanshu@gmail.com</p>
+          </div>
+          <button id="logout-btn" class="btn btn-sm btn-secondary" title="Log Out" style="padding: 0.25rem 0.5rem; font-size: 0.75rem;">⏻</button>
+        </div>
+      </div>
+    </aside>
+
+    <div class="app-main">
+      <header class="app-topbar">
+        <div class="flex-align">
+          <button class="mobile-menu-btn" id="mobile-menu-toggle">☰</button>
+          <div class="topbar-breadcrumbs">
+            <span>Career Explorer</span>
+            <span>/</span>
+            <span class="text-primary" style="font-weight: 600;">Career Recommendations</span>
+          </div>
+        </div>
+        <a href="skill-gap.html" class="btn btn-sm btn-primary">Check Skill Gap Analyzer →</a>
+      </header>
+
+      <main class="page-content">
+        <div class="page-header flex-between">
+          <div>
+            <h1 class="page-title">Career Explorer</h1>
+            <p class="page-description">Discover the best career paths based on your academic profile, verified skills and projects.</p>
+          </div>
+        </div>
+
+        <!-- Selector Row -->
+        <div class="card mb-2" style="padding: 1.25rem 1.5rem;">
+          <div style="display: flex; gap: 1rem; align-items: center; max-width: 600px;">
+            <select id="career-select" class="form-control" style="font-weight: 600; font-size: 0.95rem;">
+              <option value="AI / ML Engineer" selected>AI / ML Engineer</option>
+              <option value="Full Stack Developer">Full Stack Web Developer</option>
+              <option value="Data Scientist">Data Scientist</option>
+              <option value="Data Analyst">Data Analyst & BI Specialist</option>
+              <option value="Cloud Engineer">Cloud & DevOps Engineer</option>
+              <option value="PSU & Govt Engineer">PSU & Govt Engineer (ISRO/NIC/CDAC)</option>
+            </select>
+            <button type="button" class="btn btn-primary" id="get-recommendations-btn" style="white-space: nowrap;">
+              Get Recommendations
+            </button>
+          </div>
+        </div>
+
+        <!-- Featured Fit Highlight Card -->
+        <div class="card mb-2" style="padding: 2rem;">
+          <div style="display: grid; grid-template-columns: 200px 1fr; gap: 2.5rem; align-items: center;">
+            
+            <!-- Circular Gauge -->
+            <div style="text-align: center;">
+              <div class="gauge-container" style="width: 140px; height: 140px;">
+                <svg class="gauge-svg" width="140" height="140" viewBox="0 0 140 140">
+                  <circle class="gauge-circle-bg" cx="70" cy="70" r="58" stroke-width="9"></circle>
+                  <circle class="gauge-circle-progress" id="career-fit-circle" cx="70" cy="70" r="58" stroke="#3b82f6" stroke-width="9"
+                    stroke-dasharray="364.4" stroke-dashoffset="69.2"></circle>
+                </svg>
+                <div class="gauge-center-text">
+                  <span class="gauge-value" id="fit-score-val" style="font-size: 1.8rem; color: #0f172a;">88%</span>
+                  <span class="gauge-label">Career Fit</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Why this career? details -->
+            <div>
+              <h3 style="font-size: 1.25rem; color: #0f172a; margin-bottom: 0.75rem;" id="why-title">Why this career?</h3>
+              <ul style="list-style: none; display: flex; flex-direction: column; gap: 0.5rem; margin-bottom: 1.5rem;" id="why-list">
+                <li class="flex-align" style="font-size: 0.95rem; color: #15803d; font-weight: 500;">
+                  <span style="font-size: 1.1rem;">✓</span> Strong Python foundation & algorithmic data structures
+                </li>
+                <li class="flex-align" style="font-size: 0.95rem; color: #15803d; font-weight: 500;">
+                  <span style="font-size: 1.1rem;">✓</span> Good SQL and relational database queries
+                </li>
+                <li class="flex-align" style="font-size: 0.95rem; color: #15803d; font-weight: 500;">
+                  <span style="font-size: 1.1rem;">✓</span> Relevant projects (Kisan Saathi agricultural portal & web platforms)
+                </li>
+              </ul>
+
+              <div style="display: flex; gap: 0.75rem;">
+                <a href="skill-gap.html" class="btn btn-primary btn-sm">View Details & Gap</a>
+                <a href="roadmap.html" class="btn btn-secondary btn-sm">Open 60-Day Roadmap</a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Other Career Options -->
+        <div class="card">
+          <h3 style="font-size: 1.15rem; margin-bottom: 1.25rem; color: #0f172a;">Other Career Options</h3>
+          
+          <div style="display: flex; flex-direction: column; gap: 1rem;" id="other-careers-list">
+            <!-- Option 1 -->
+            <div>
+              <div class="flex-between" style="margin-bottom: 0.35rem;">
+                <span style="font-weight: 600; font-size: 0.9rem;">Full Stack Web Developer</span>
+                <span class="badge badge-emerald">85%</span>
+              </div>
+              <div class="progress-track" style="height: 9px;">
+                <div class="progress-fill progress-fill-emerald" style="width: 85%;"></div>
+              </div>
+            </div>
+
+            <!-- Option 2 -->
+            <div>
+              <div class="flex-between" style="margin-bottom: 0.35rem;">
+                <span style="font-weight: 600; font-size: 0.9rem;">Data Scientist & Analytics</span>
+                <span class="badge badge-cyan">81%</span>
+              </div>
+              <div class="progress-track" style="height: 9px;">
+                <div class="progress-fill" style="width: 81%; background: var(--brand-cyan);"></div>
+              </div>
+            </div>
+
+            <!-- Option 3 -->
+            <div>
+              <div class="flex-between" style="margin-bottom: 0.35rem;">
+                <span style="font-weight: 600; font-size: 0.9rem;">PSU & Govt Junior Engineer (ISRO/NIC)</span>
+                <span class="badge badge-primary">76%</span>
+              </div>
+              <div class="progress-track" style="height: 9px;">
+                <div class="progress-fill" style="width: 76%; background: #4f46e5;"></div>
+              </div>
+            </div>
+
+            <!-- Option 4 -->
+            <div>
+              <div class="flex-between" style="margin-bottom: 0.35rem;">
+                <span style="font-weight: 600; font-size: 0.9rem;">Cloud & DevOps Engineer</span>
+                <span class="badge badge-amber">70%</span>
+              </div>
+              <div class="progress-track" style="height: 9px;">
+                <div class="progress-fill progress-fill-amber" style="width: 70%;"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', async function () {
+      if (!window.CareerSetu || !CareerSetu.checkAuthGuard()) return;
+      CareerSetu.renderUserProfileWidget();
+
+      const careerSelect = document.getElementById('career-select');
+      const getRecBtn = document.getElementById('get-recommendations-btn');
+
+      // Hydrate from user profile target career
+      try {
+        const profile = await CareerSetu.getUserData('profiles');
+        if (profile && profile.targetCareer) {
+          for (let i = 0; i < careerSelect.options.length; i++) {
+            if (careerSelect.options[i].value.toLowerCase().includes(profile.targetCareer.toLowerCase()) ||
+                profile.targetCareer.toLowerCase().includes(careerSelect.options[i].value.toLowerCase())) {
+              careerSelect.selectedIndex = i;
+              break;
+            }
+          }
+          updateCareerRecommendations(careerSelect.value, profile);
+        }
+      } catch (e) {}
+
+      if (getRecBtn) {
+        getRecBtn.addEventListener('click', async function () {
+          const profile = (await CareerSetu.getUserData('profiles')) || {};
+          updateCareerRecommendations(careerSelect.value, profile);
+        });
+      }
+
+      careerSelect.addEventListener('change', async function () {
+        const profile = (await CareerSetu.getUserData('profiles')) || {};
+        updateCareerRecommendations(careerSelect.value, profile);
+      });
+
+      function updateCareerRecommendations(selectedCareer, profile) {
+        const skillsStr = profile.technicalSkills || 'Python, SQL, React, HTML5, CSS3, JavaScript';
+        const projName = profile.projectName || 'Kisan Saathi Agricultural Portal';
+        
+        let score = 88;
+        let reasons = [];
+
+        if (selectedCareer.includes('Full Stack')) {
+          score = 92;
+          reasons = [
+            '✓ Proficient in React, JavaScript, HTML5/CSS3 and responsive UI engineering',
+            '✓ Solid backend architecture with SQL/NoSQL & REST API design',
+            `✓ Practical full-stack project portfolio (${projName})`
+          ];
+        } else if (selectedCareer.includes('AI') || selectedCareer.includes('ML')) {
+          score = 88;
+          reasons = [
+            '✓ Strong Python foundation & algorithmic data structures',
+            '✓ Good SQL and relational database queries',
+            `✓ Relevant project application (${projName}) with cloud integration`
+          ];
+        } else if (selectedCareer.includes('Data')) {
+          score = 86;
+          reasons = [
+            '✓ Strong SQL data querying and analytical aggregation skills',
+            '✓ Python data analysis foundation for statistical modeling',
+            `✓ Applied data visualization in portfolio project (${projName})`
+          ];
+        } else {
+          score = 84;
+          reasons = [
+            '✓ Core engineering fundamentals in computer systems & networks',
+            '✓ Strong technical problem solving and algorithm analysis',
+            `✓ Proven hands-on development implementation (${projName})`
+          ];
+        }
+
+        document.getElementById('fit-score-val').textContent = score + '%';
+        const offset = 364.4 - (364.4 * (score / 100));
+        document.getElementById('career-fit-circle').style.strokeDashoffset = offset;
+
+        document.getElementById('why-list').innerHTML = reasons.map(r => `
+          <li class="flex-align" style="font-size: 0.95rem; color: #15803d; font-weight: 500;">
+            <span style="font-size: 1.1rem;">✓</span> ${r.replace('✓ ', '')}
+          </li>
+        `).join('');
+      }
+    });
+  </script>
+</body>
+</html>
