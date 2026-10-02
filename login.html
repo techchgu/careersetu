@@ -1,0 +1,1524 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Login — CareerSetu AI</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Manrope:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet"
+    >
+
+    <!-- Font Awesome -->
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    >
+
+    <style>
+
+        /* =====================================================
+           RESET
+        ===================================================== */
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            min-height: 100vh;
+
+            font-family: "Inter", sans-serif;
+
+            color: #10204a;
+
+            overflow-x: hidden;
+
+            background:
+                radial-gradient(
+                    circle at 5% 10%,
+                    rgba(96, 165, 250, .35),
+                    transparent 28%
+                ),
+                radial-gradient(
+                    circle at 95% 20%,
+                    rgba(129, 140, 248, .28),
+                    transparent 28%
+                ),
+                linear-gradient(
+                    135deg,
+                    #edf7ff 0%,
+                    #f8fbff 50%,
+                    #eef5ff 100%
+                );
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        button,
+        input {
+            font-family: inherit;
+        }
+
+
+        /* =====================================================
+           BACKGROUND
+        ===================================================== */
+
+        .background {
+            position: fixed;
+
+            inset: 0;
+
+            overflow: hidden;
+
+            pointer-events: none;
+
+            z-index: -1;
+        }
+
+        .circle {
+            position: absolute;
+
+            border-radius: 50%;
+
+            filter: blur(70px);
+
+            opacity: .45;
+        }
+
+        .circle.one {
+            width: 360px;
+            height: 360px;
+
+            left: -160px;
+            top: 100px;
+
+            background: #60a5fa;
+        }
+
+        .circle.two {
+            width: 420px;
+            height: 420px;
+
+            right: -180px;
+            bottom: -120px;
+
+            background: #a78bfa;
+        }
+
+
+        /* =====================================================
+           HEADER
+        ===================================================== */
+
+        .header {
+            padding: 18px 4% 0;
+        }
+
+        .navbar {
+            max-width: 1450px;
+
+            min-height: 76px;
+
+            margin: auto;
+
+            padding: 0 22px 0 28px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: space-between;
+
+            background: rgba(255,255,255,.94);
+
+            border: 1px solid rgba(255,255,255,.9);
+
+            border-radius: 22px;
+
+            box-shadow:
+                0 15px 45px
+                rgba(31,75,135,.13);
+
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+        }
+
+
+        /* =====================================================
+           LOGO
+        ===================================================== */
+
+        .logo {
+            display: flex;
+
+            align-items: center;
+
+            gap: 12px;
+        }
+
+        .logo-icon {
+            width: 45px;
+            height: 45px;
+
+            display: flex;
+
+            align-items: center;
+            justify-content: center;
+
+            color: white;
+
+            font-size: 22px;
+
+            background:
+                linear-gradient(
+                    145deg,
+                    #1976ff,
+                    #1749d1
+                );
+
+            clip-path:
+                polygon(
+                    50% 0%,
+                    100% 25%,
+                    82% 38%,
+                    82% 72%,
+                    50% 90%,
+                    18% 72%,
+                    18% 38%,
+                    0% 25%
+                );
+        }
+
+        .logo-text {
+            font-family: "Manrope", sans-serif;
+
+            font-size: 27px;
+
+            font-weight: 800;
+
+            letter-spacing: -1px;
+
+            color: #07133d;
+        }
+
+        .logo-text span {
+            color: #1877f2;
+        }
+
+
+        /* =====================================================
+           BACK HOME
+        ===================================================== */
+
+        .back-home {
+            display: flex;
+
+            align-items: center;
+
+            gap: 8px;
+
+            color: #50617f;
+
+            font-size: 14px;
+
+            font-weight: 600;
+
+            transition: .25s ease;
+        }
+
+        .back-home:hover {
+            color: #2563eb;
+        }
+
+
+        /* =====================================================
+           LOGIN AREA
+        ===================================================== */
+
+        .login-wrapper {
+            min-height:
+                calc(100vh - 95px);
+
+            padding:
+                55px 5% 60px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+        }
+
+        .login-container {
+            width: 100%;
+
+            max-width: 1050px;
+
+            display: grid;
+
+            grid-template-columns:
+                1fr 1fr;
+
+            background:
+                rgba(255,255,255,.94);
+
+            border:
+                1px solid
+                rgba(255,255,255,.95);
+
+            border-radius: 32px;
+
+            overflow: hidden;
+
+            box-shadow:
+                0 25px 70px
+                rgba(30,64,175,.13);
+
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+
+
+        /* =====================================================
+           LEFT SIDE
+        ===================================================== */
+
+        .login-visual {
+            position: relative;
+
+            min-height: 600px;
+
+            padding: 50px;
+
+            display: flex;
+
+            flex-direction: column;
+
+            justify-content: center;
+
+            overflow: hidden;
+
+            color: white;
+
+            background:
+                linear-gradient(
+                    145deg,
+                    #176de5,
+                    #303bc9
+                );
+        }
+
+        .login-visual::before {
+            content: "";
+
+            position: absolute;
+
+            width: 350px;
+            height: 350px;
+
+            right: -140px;
+            top: -130px;
+
+            border-radius: 50%;
+
+            background:
+                rgba(255,255,255,.10);
+        }
+
+        .login-visual::after {
+            content: "";
+
+            position: absolute;
+
+            width: 300px;
+            height: 300px;
+
+            left: -150px;
+            bottom: -150px;
+
+            border-radius: 50%;
+
+            background:
+                rgba(255,255,255,.08);
+        }
+
+
+        /* =====================================================
+           VISUAL CONTENT
+        ===================================================== */
+
+        .visual-content {
+            position: relative;
+
+            z-index: 2;
+        }
+
+        .visual-badge {
+            display: inline-flex;
+
+            align-items: center;
+
+            gap: 8px;
+
+            padding:
+                9px 15px;
+
+            margin-bottom: 22px;
+
+            border-radius: 999px;
+
+            color: white;
+
+            background:
+                rgba(255,255,255,.14);
+
+            border:
+                1px solid
+                rgba(255,255,255,.15);
+
+            font-size: 12px;
+
+            font-weight: 700;
+        }
+
+        .visual-content h1 {
+            max-width: 430px;
+
+            font-family: "Manrope", sans-serif;
+
+            font-size:
+                clamp(36px, 4vw, 52px);
+
+            line-height: 1.08;
+
+            letter-spacing: -2px;
+
+            margin-bottom: 18px;
+        }
+
+        .visual-content h1 span {
+            color: #9ed7ff;
+        }
+
+        .visual-content p {
+            max-width: 440px;
+
+            color:
+                rgba(255,255,255,.78);
+
+            font-size: 14px;
+
+            line-height: 1.75;
+        }
+
+
+        /* =====================================================
+           FEATURE MINI CARDS
+        ===================================================== */
+
+        .mini-features {
+            display: grid;
+
+            grid-template-columns:
+                1fr 1fr;
+
+            gap: 12px;
+
+            margin-top: 35px;
+
+            max-width: 450px;
+        }
+
+        .mini-feature {
+            display: flex;
+
+            align-items: center;
+
+            gap: 11px;
+
+            padding: 13px;
+
+            border-radius: 15px;
+
+            background:
+                rgba(255,255,255,.11);
+
+            border:
+                1px solid
+                rgba(255,255,255,.10);
+        }
+
+        .mini-feature i {
+            width: 36px;
+            height: 36px;
+
+            flex-shrink: 0;
+
+            display: flex;
+
+            align-items: center;
+            justify-content: center;
+
+            border-radius: 10px;
+
+            background:
+                rgba(255,255,255,.14);
+
+            font-size: 14px;
+        }
+
+        .mini-feature span {
+            font-size: 12px;
+
+            font-weight: 600;
+        }
+
+
+        /* =====================================================
+           RIGHT LOGIN FORM
+        ===================================================== */
+
+        .login-form-area {
+            padding:
+                50px 55px;
+
+            display: flex;
+
+            flex-direction: column;
+
+            justify-content: center;
+        }
+
+        .login-heading {
+            margin-bottom: 30px;
+        }
+
+        .login-heading h2 {
+            font-family: "Manrope", sans-serif;
+
+            color: #0b1740;
+
+            font-size: 31px;
+
+            letter-spacing: -.8px;
+
+            margin-bottom: 8px;
+        }
+
+        .login-heading p {
+            color: #78859e;
+
+            font-size: 13px;
+
+            line-height: 1.6;
+        }
+
+
+        /* =====================================================
+           FORM
+        ===================================================== */
+
+        .form-group {
+            margin-bottom: 19px;
+        }
+
+        .form-group label {
+            display: block;
+
+            margin-bottom: 8px;
+
+            color: #273354;
+
+            font-size: 13px;
+
+            font-weight: 700;
+        }
+
+        .input-box {
+            position: relative;
+        }
+
+        .input-box > i {
+            position: absolute;
+
+            left: 15px;
+
+            top: 50%;
+
+            transform:
+                translateY(-50%);
+
+            color: #7390bd;
+
+            font-size: 14px;
+
+            pointer-events: none;
+        }
+
+        .input-box input {
+            width: 100%;
+
+            height: 51px;
+
+            padding:
+                0 45px 0 44px;
+
+            border:
+                1px solid #dce6f4;
+
+            border-radius: 13px;
+
+            outline: none;
+
+            background: #f9fbff;
+
+            color: #172554;
+
+            font-size: 14px;
+
+            transition: .25s ease;
+        }
+
+        .input-box input::placeholder {
+            color: #a3aec1;
+        }
+
+        .input-box input:focus {
+            background: white;
+
+            border-color: #5b8def;
+
+            box-shadow:
+                0 0 0 4px
+                rgba(37,99,235,.08);
+        }
+
+        .password-toggle {
+            position: absolute;
+
+            right: 15px;
+
+            top: 50%;
+
+            transform:
+                translateY(-50%);
+
+            border: none;
+
+            background: transparent;
+
+            color: #7890b4;
+
+            cursor: pointer;
+
+            font-size: 14px;
+        }
+
+
+        /* =====================================================
+           OPTIONS
+        ===================================================== */
+
+        .form-options {
+            display: flex;
+
+            align-items: center;
+
+            justify-content: space-between;
+
+            gap: 15px;
+
+            margin:
+                2px 0 22px;
+        }
+
+        .remember {
+            display: flex;
+
+            align-items: center;
+
+            gap: 7px;
+
+            color: #71809b;
+
+            font-size: 12px;
+
+            cursor: pointer;
+        }
+
+        .remember input {
+            accent-color: #2563eb;
+
+            width: 14px;
+            height: 14px;
+        }
+
+        .forgot {
+            color: #2563eb;
+
+            font-size: 12px;
+
+            font-weight: 700;
+        }
+
+
+        /* =====================================================
+           LOGIN BUTTON
+        ===================================================== */
+
+        .login-submit {
+            width: 100%;
+
+            height: 52px;
+
+            border: none;
+
+            border-radius: 14px;
+
+            color: white;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #2187ff,
+                    #1949db
+                );
+
+            font-size: 15px;
+
+            font-weight: 700;
+
+            cursor: pointer;
+
+            box-shadow:
+                0 12px 28px
+                rgba(37,99,235,.25);
+
+            transition: .3s ease;
+        }
+
+        .login-submit:hover {
+            transform: translateY(-2px);
+
+            box-shadow:
+                0 17px 35px
+                rgba(37,99,235,.33);
+        }
+
+        .login-submit:disabled {
+            opacity: .7;
+
+            cursor: not-allowed;
+
+            transform: none;
+        }
+
+
+        /* =====================================================
+           DIVIDER
+        ===================================================== */
+
+        .divider {
+            display: flex;
+
+            align-items: center;
+
+            gap: 12px;
+
+            margin:
+                25px 0;
+        }
+
+        .divider::before,
+        .divider::after {
+            content: "";
+
+            flex: 1;
+
+            height: 1px;
+
+            background: #e5ebf4;
+        }
+
+        .divider span {
+            color: #99a5b9;
+
+            font-size: 11px;
+
+            font-weight: 600;
+        }
+
+
+        /* =====================================================
+           SIGN UP
+        ===================================================== */
+
+        .signup-text {
+            text-align: center;
+
+            color: #7b879c;
+
+            font-size: 13px;
+        }
+
+        .signup-text a {
+            color: #2563eb;
+
+            font-weight: 700;
+        }
+
+        .signup-text a:hover {
+            text-decoration: underline;
+        }
+
+
+        /* =====================================================
+           MESSAGE
+        ===================================================== */
+
+        .message {
+            display: none;
+
+            padding:
+                11px 13px;
+
+            margin-bottom: 17px;
+
+            border-radius: 11px;
+
+            font-size: 12px;
+
+            line-height: 1.5;
+        }
+
+        .message.error {
+            display: block;
+
+            color: #b42318;
+
+            background: #fef3f2;
+
+            border:
+                1px solid #fecdca;
+        }
+
+        .message.success {
+            display: block;
+
+            color: #047857;
+
+            background: #ecfdf5;
+
+            border:
+                1px solid #bbf7d0;
+        }
+
+
+        /* =====================================================
+           RESPONSIVE
+        ===================================================== */
+
+        @media (max-width: 850px) {
+
+            .login-container {
+                grid-template-columns: 1fr;
+            }
+
+            .login-visual {
+                min-height: auto;
+
+                padding: 38px;
+            }
+
+            .visual-content h1 {
+                max-width: 650px;
+            }
+
+            .visual-content p {
+                max-width: 650px;
+            }
+
+            .mini-features {
+                max-width: 650px;
+            }
+
+            .login-form-area {
+                padding:
+                    40px;
+            }
+        }
+
+
+        @media (max-width: 600px) {
+
+            .header {
+                padding:
+                    10px 3% 0;
+            }
+
+            .navbar {
+                min-height: 65px;
+
+                padding:
+                    0 17px;
+
+                border-radius: 17px;
+            }
+
+            .logo-icon {
+                width: 39px;
+                height: 39px;
+
+                font-size: 19px;
+            }
+
+            .logo-text {
+                font-size: 21px;
+            }
+
+            .back-home {
+                font-size: 12px;
+            }
+
+            .login-wrapper {
+                padding:
+                    30px 4% 45px;
+            }
+
+            .login-container {
+                border-radius: 23px;
+            }
+
+            .login-visual {
+                padding: 28px 22px;
+            }
+
+            .visual-content h1 {
+                font-size: 36px;
+
+                letter-spacing: -1.5px;
+            }
+
+            .visual-content p {
+                font-size: 13px;
+            }
+
+            .mini-features {
+                grid-template-columns: 1fr;
+
+                margin-top: 25px;
+            }
+
+            .login-form-area {
+                padding:
+                    30px 22px;
+            }
+
+            .login-heading h2 {
+                font-size: 27px;
+            }
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+    <!-- =====================================================
+         BACKGROUND
+    ====================================================== -->
+
+    <div class="background">
+
+        <div class="circle one"></div>
+
+        <div class="circle two"></div>
+
+    </div>
+
+
+    <!-- =====================================================
+         HEADER
+    ====================================================== -->
+
+    <header class="header">
+
+        <nav class="navbar">
+
+
+            <!-- LOGO -->
+
+            <a
+                href="index.html"
+                class="logo"
+            >
+
+                <div class="logo-icon">
+
+                    <i class="fa-solid fa-graduation-cap"></i>
+
+                </div>
+
+                <div class="logo-text">
+
+                    CareerSetu<span>AI</span>
+
+                </div>
+
+            </a>
+
+
+            <!-- HOME -->
+
+            <a
+                href="index.html"
+                class="back-home"
+            >
+
+                <i class="fa-solid fa-arrow-left"></i>
+
+                Back to Home
+
+            </a>
+
+        </nav>
+
+    </header>
+
+
+    <!-- =====================================================
+         LOGIN
+    ====================================================== -->
+
+    <main class="login-wrapper">
+
+        <div class="login-container">
+
+
+            <!-- =================================================
+                 LEFT VISUAL
+            ================================================== -->
+
+            <section class="login-visual">
+
+                <div class="visual-content">
+
+
+                    <div class="visual-badge">
+
+                        <i class="fa-solid fa-sparkles"></i>
+
+                        AI Powered Career Guidance
+
+                    </div>
+
+
+                    <h1>
+
+                        Build Your
+
+                        <span>
+                            Career.
+                        </span>
+
+                        Shape Your Future.
+
+                    </h1>
+
+
+                    <p>
+
+                        Login to CareerSetu AI and continue
+                        your personalized career journey.
+
+                        Understand your skills, follow your
+                        roadmap and prepare for opportunities.
+
+                    </p>
+
+
+                    <div class="mini-features">
+
+
+                        <div class="mini-feature">
+
+                            <i class="fa-solid fa-chart-column"></i>
+
+                            <span>
+                                AI Analysis
+                            </span>
+
+                        </div>
+
+
+                        <div class="mini-feature">
+
+                            <i class="fa-solid fa-magnifying-glass-chart"></i>
+
+                            <span>
+                                Skill Gap
+                            </span>
+
+                        </div>
+
+
+                        <div class="mini-feature">
+
+                            <i class="fa-solid fa-road"></i>
+
+                            <span>
+                                Career Roadmap
+                            </span>
+
+                        </div>
+
+
+                        <div class="mini-feature">
+
+                            <i class="fa-solid fa-briefcase"></i>
+
+                            <span>
+                                Opportunities
+                            </span>
+
+                        </div>
+
+
+                        <div class="mini-feature">
+
+                            <i class="fa-solid fa-file-lines"></i>
+
+                            <span>
+                                Resume
+                            </span>
+
+                        </div>
+
+
+                        <div class="mini-feature">
+
+                            <i class="fa-solid fa-microphone"></i>
+
+                            <span>
+                                Interview
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- =================================================
+                 RIGHT LOGIN
+            ================================================== -->
+
+            <section class="login-form-area">
+
+
+                <div class="login-heading">
+
+                    <h2>
+                        Welcome Back 👋
+                    </h2>
+
+                    <p>
+                        Login to continue your CareerSetu AI journey.
+                    </p>
+
+                </div>
+
+
+                <!-- MESSAGE -->
+
+                <div
+                    id="message"
+                    class="message"
+                ></div>
+
+
+                <!-- FORM -->
+
+                <form id="loginForm">
+
+
+                    <!-- EMAIL -->
+
+                    <div class="form-group">
+
+                        <label for="email">
+                            Email Address
+                        </label>
+
+                        <div class="input-box">
+
+                            <i class="fa-regular fa-envelope"></i>
+
+                            <input
+                                type="email"
+                                id="email"
+                                name="email"
+                                placeholder="Enter your email"
+                                autocomplete="email"
+                                required
+                            >
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- PASSWORD -->
+
+                    <div class="form-group">
+
+                        <label for="password">
+                            Password
+                        </label>
+
+                        <div class="input-box">
+
+                            <i class="fa-solid fa-lock"></i>
+
+                            <input
+                                type="password"
+                                id="password"
+                                name="password"
+                                placeholder="Enter your password"
+                                autocomplete="current-password"
+                                required
+                            >
+
+                            <button
+                                type="button"
+                                class="password-toggle"
+                                id="passwordToggle"
+                                aria-label="Show password"
+                            >
+
+                                <i class="fa-regular fa-eye"></i>
+
+                            </button>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- OPTIONS -->
+
+                    <div class="form-options">
+
+                        <label class="remember">
+
+                            <input
+                                type="checkbox"
+                                id="rememberMe"
+                            >
+
+                            Remember me
+
+                        </label>
+
+
+                        <a
+                            href="#"
+                            class="forgot"
+                            id="forgotPassword"
+                        >
+                            Forgot Password?
+                        </a>
+
+                    </div>
+
+
+                    <!-- LOGIN -->
+
+                    <button
+                        type="submit"
+                        class="login-submit"
+                        id="loginButton"
+                    >
+
+                        <i class="fa-solid fa-right-to-bracket"></i>
+
+                        Login to CareerSetu AI
+
+                    </button>
+
+                </form>
+
+
+                <!-- DIVIDER -->
+
+                <div class="divider">
+
+                    <span>
+                        NEW TO CAREERSETU AI?
+                    </span>
+
+                </div>
+
+
+                <!-- SIGNUP -->
+
+                <p class="signup-text">
+
+                    Don't have an account?
+
+                    <a href="signup.html">
+                        Create Account
+                    </a>
+
+                </p>
+
+            </section>
+
+        </div>
+
+    </main>
+
+
+    <!-- =====================================================
+         JAVASCRIPT
+    ====================================================== -->
+
+    <script>
+
+        /* =====================================================
+           PASSWORD SHOW / HIDE
+        ===================================================== */
+
+        const passwordInput =
+            document.getElementById("password");
+
+        const passwordToggle =
+            document.getElementById("passwordToggle");
+
+
+        passwordToggle.addEventListener(
+            "click",
+            function () {
+
+                const icon =
+                    passwordToggle.querySelector("i");
+
+
+                if (
+                    passwordInput.type === "password"
+                ) {
+
+                    passwordInput.type = "text";
+
+                    icon.classList.remove(
+                        "fa-eye"
+                    );
+
+                    icon.classList.add(
+                        "fa-eye-slash"
+                    );
+
+                } else {
+
+                    passwordInput.type = "password";
+
+                    icon.classList.remove(
+                        "fa-eye-slash"
+                    );
+
+                    icon.classList.add(
+                        "fa-eye"
+                    );
+
+                }
+
+            }
+        );
+
+
+        /* =====================================================
+           MESSAGE FUNCTION
+        ===================================================== */
+
+        function showMessage(
+            message,
+            type = "error"
+        ) {
+
+            const box =
+                document.getElementById("message");
+
+            box.textContent = message;
+
+            box.className =
+                "message " + type;
+
+        }
+
+
+        /* =====================================================
+           LOGIN FORM
+        ===================================================== */
+
+        const loginForm =
+            document.getElementById("loginForm");
+
+        const loginButton =
+            document.getElementById("loginButton");
+
+
+        loginForm.addEventListener(
+            "submit",
+            async function (event) {
+
+                event.preventDefault();
+
+
+                const email =
+                    document
+                        .getElementById("email")
+                        .value
+                        .trim();
+
+
+                const password =
+                    document
+                        .getElementById("password")
+                        .value;
+
+
+                if (!email || !password) {
+
+                    showMessage(
+                        "Please enter your email and password."
+                    );
+
+                    return;
+
+                }
+
+
+                /*
+                 * =================================================
+                 * IMPORTANT
+                 * =================================================
+                 *
+                 * Yahan tumhare existing Firebase authentication
+                 * code ko connect kiya ja sakta hai.
+                 *
+                 * Agar tumhara existing auth.js Firebase login
+                 * handle karta hai, is form ke IDs:
+                 *
+                 * email
+                 * password
+                 * loginButton
+                 *
+                 * use kar sakta hai.
+                 *
+                 */
+
+
+                loginButton.disabled = true;
+
+                loginButton.innerHTML =
+                    '<i class="fa-solid fa-spinner fa-spin"></i> Logging in...';
+
+
+                /*
+                 * TEMPORARY DEMO
+                 *
+                 * Firebase connect hone ke baad
+                 * is section ko firebase login function
+                 * se replace karna hai.
+                 */
+
+                setTimeout(function () {
+
+                    loginButton.disabled = false;
+
+                    loginButton.innerHTML =
+                        '<i class="fa-solid fa-right-to-bracket"></i> Login to CareerSetu AI';
+
+
+                    showMessage(
+                        "Login form is ready. Connect your existing Firebase authentication here.",
+                        "success"
+                    );
+
+                }, 900);
+
+            }
+        );
+
+
+        /* =====================================================
+           FORGOT PASSWORD
+        ===================================================== */
+
+        document
+            .getElementById("forgotPassword")
+            .addEventListener(
+                "click",
+                function (event) {
+
+                    event.preventDefault();
+
+                    const email =
+                        document
+                            .getElementById("email")
+                            .value
+                            .trim();
+
+
+                    if (!email) {
+
+                        showMessage(
+                            "Please enter your email address first."
+                        );
+
+                        document
+                            .getElementById("email")
+                            .focus();
+
+                        return;
+
+                    }
+
+
+                    showMessage(
+                        "Password reset will use your Firebase authentication setup.",
+                        "success"
+                    );
+
+                }
+            );
+
+    </script>
+
+</body>
+
+</html>

@@ -1,705 +1,3088 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dashboard / Career Overview — CareerSetu AI</title>
+
+  <title>Dashboard | CareerSetu AI</title>
+
+  <!-- Existing CSS -->
   <link rel="stylesheet" href="../css/style.css">
   <link rel="stylesheet" href="../css/dashboard.css">
   <link rel="stylesheet" href="../css/responsive.css">
 
-  <!-- Firebase Web SDK Compat (CDN) -->
+  <!-- Firebase -->
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
-  <!-- CareerSetu Universal Core -->
+
+  <!-- CareerSetu Core -->
   <script src="../js/careersetu-core.js"></script>
 
   <style>
-    /* ===== WELCOME HERO BANNER ===== */
-    .dash-hero {
-      background: linear-gradient(135deg, #1e1b4b 0%, #2d2a6e 40%, #1a237e 70%, #1e293b 100%);
-      border-radius: 16px;
-      padding: 2rem 2.25rem;
-      margin-bottom: 1.75rem;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      overflow: hidden;
-      position: relative;
-    }
-    .dash-hero::before {
-      content: '';
-      position: absolute;
-      top: -60px; right: -60px;
-      width: 260px; height: 260px;
-      background: radial-gradient(circle, rgba(99,102,241,0.25) 0%, transparent 70%);
-      border-radius: 50%;
-    }
-    .dash-hero-left { flex: 1; z-index: 1; }
-    .dash-hero-greeting {
-      font-size: 1rem;
-      color: #93c5fd;
-      font-weight: 600;
-      margin-bottom: 0.35rem;
-      display: flex;
-      align-items: center;
-      gap: 0.4rem;
-    }
-    .dash-hero-name {
-      font-size: 2rem;
-      font-weight: 800;
-      color: #ffffff;
-      margin-bottom: 0.5rem;
-      line-height: 1.15;
-    }
-    .dash-hero-sub {
-      color: #cbd5e1;
-      font-size: 0.9rem;
-      line-height: 1.55;
-      max-width: 340px;
+    * {
+      box-sizing: border-box;
     }
 
-    /* Dream → Learn → Grow text */
+    html,
+    body {
+      width: 100%;
+      max-width: 100%;
+      overflow-x: hidden;
+    }
+
+    /* ================= HERO ================= */
+
+    .dash-hero {
+      width: 100%;
+      min-height: 155px;
+      margin-bottom: 26px;
+      padding: 28px 34px;
+
+      border-radius: 16px;
+
+      background:
+        linear-gradient(
+          135deg,
+          #1e1b4b,
+          #2d2a6e,
+          #1a237e,
+          #1e293b
+        );
+
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+
+      gap: 25px;
+
+      position: relative;
+      overflow: hidden;
+    }
+
+    .dash-hero-left {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .dash-hero-greeting {
+      color: #93c5fd;
+      font-size: 15px;
+      font-weight: 600;
+      margin-bottom: 7px;
+    }
+
+    .dash-hero-name {
+      color: #ffffff;
+      font-size: 2rem;
+      font-weight: 800;
+      line-height: 1.2;
+      margin-bottom: 8px;
+      word-break: break-word;
+    }
+
+    .dash-hero-sub {
+      color: #cbd5e1;
+      font-size: 14px;
+      line-height: 1.55;
+    }
+
     .dash-hero-right {
-      z-index: 1;
+      width: 180px;
+      flex-shrink: 0;
+
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 1rem;
+      justify-content: center;
+
+      gap: 8px;
     }
+
     .dash-dream-text {
-      font-family: 'Segoe UI', cursive, sans-serif;
-      font-size: 1.35rem;
       color: #ffffff;
+      font-size: 15px;
       font-style: italic;
-      font-weight: 500;
-      letter-spacing: 0.02em;
       text-align: center;
-      line-height: 1.6;
     }
-    .dash-dream-text .arrow { color: #38bdf8; margin: 0 0.4rem; }
 
-    /* Target SVG illustration */
+    .dash-dream-text .arrow {
+      color: #38bdf8;
+      margin: 0 5px;
+    }
+
     .dash-hero-illustration {
-      width: 110px;
-      height: 110px;
-      flex-shrink: 0;
+      width: 90px;
+      height: 90px;
     }
 
-    /* ===== PIPELINE SECTION HEADER ===== */
+    /* ================= PIPELINE ================= */
+
     .pipeline-header {
       display: flex;
       align-items: center;
-      gap: 0.6rem;
-      margin-bottom: 1.25rem;
+      gap: 9px;
+      margin-bottom: 16px;
     }
+
     .pipeline-header h3 {
-      font-size: 1.15rem;
+      margin: 0;
+      font-size: 18px;
       font-weight: 800;
       color: #0f172a;
     }
-    .pipeline-header svg { flex-shrink: 0; }
 
-    /* ===== 7-STEP PIPELINE CARDS ===== */
     .pipeline-steps {
+      width: 100%;
+
       display: flex;
-      align-items: flex-start;
+      align-items: stretch;
+
       gap: 0;
+
+      padding: 12px 4px 15px;
+
       overflow-x: auto;
-      padding-bottom: 0.5rem;
-      -ms-overflow-style: none;
-      scrollbar-width: none;
-    }
-    .pipeline-steps::-webkit-scrollbar { display: none; }
-
-    /* Arrow connector between cards */
-    .pipeline-arrow {
-      flex-shrink: 0;
-      font-size: 1.2rem;
-      color: #94a3b8;
-      padding: 0 0.1rem;
-      margin-top: 3.5rem;
-      line-height: 1;
     }
 
-    /* Individual step card */
     .pipeline-card {
-      flex-shrink: 0;
-      width: 126px;
-      background: #ffffff;
-      border: 1.5px solid #e2e8f0;
-      border-radius: 14px;
-      padding: 1.1rem 0.75rem 0.9rem;
+      flex: 1 1 0;
+
+      min-width: 105px;
+      height: 190px;
+
+      padding: 15px 7px 11px;
+
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 0.5rem;
-      text-decoration: none;
+
+      gap: 6px;
+
       position: relative;
-      transition: box-shadow 0.18s, border-color 0.18s, transform 0.18s;
-      cursor: pointer;
-    }
-    .pipeline-card:hover {
-      box-shadow: 0 6px 24px rgba(79,70,229,0.13);
-      border-color: #a5b4fc;
-      transform: translateY(-3px);
-    }
-    .pipeline-card.completed {
-      border-color: #a7f3d0;
-      background: #f0fdf4;
-    }
-    .pipeline-card.active-step {
-      border-color: #6366f1;
-      background: #eef2ff;
-      box-shadow: 0 4px 16px rgba(99,102,241,0.15);
+
+      background: #ffffff;
+
+      border: 1.5px solid #e2e8f0;
+
+      border-radius: 14px;
+
+      text-decoration: none;
+
+      transition: .2s ease;
     }
 
-    /* Step number badge — top-left */
+    .pipeline-card:hover {
+      transform: translateY(-3px);
+
+      box-shadow:
+        0 8px 24px rgba(79, 70, 229, .14);
+
+      border-color: #a5b4fc;
+    }
+
+    .pipeline-card.completed {
+      background: #f0fdf4;
+      border-color: #a7f3d0;
+    }
+
+    .pipeline-card.active-step {
+      background: #eef2ff;
+      border-color: #6366f1;
+
+      box-shadow:
+        0 5px 18px rgba(99, 102, 241, .14);
+    }
+
+    .pipeline-arrow {
+      width: 18px;
+      flex: 0 0 18px;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      color: #94a3b8;
+      font-size: 14px;
+    }
+
     .step-num-badge {
       position: absolute;
-      top: -10px;
-      left: 10px;
-      width: 22px; height: 22px;
-      border-radius: 50%;
-      font-size: 0.72rem;
-      font-weight: 800;
+
+      top: -9px;
+      left: 9px;
+
+      width: 22px;
+      height: 22px;
+
       display: flex;
       align-items: center;
       justify-content: center;
-      color: #fff;
-      border: 2px solid #fff;
-      box-shadow: 0 1px 4px rgba(0,0,0,0.15);
+
+      border-radius: 50%;
+
+      color: #ffffff;
+
+      font-size: 11px;
+      font-weight: 800;
+
+      border: 2px solid #ffffff;
     }
 
-    /* Icon circle */
     .step-icon-ring {
-      width: 60px; height: 60px;
+      width: 54px;
+      height: 54px;
+
+      flex-shrink: 0;
+
       border-radius: 50%;
+
       display: flex;
       align-items: center;
       justify-content: center;
-      margin-bottom: 0.25rem;
+
+      margin-bottom: 4px;
     }
 
-    /* Title */
     .step-title {
-      font-size: 0.88rem;
-      font-weight: 800;
+      width: 100%;
+
       color: #0f172a;
+
+      font-size: 12.5px;
+      font-weight: 800;
+
       text-align: center;
+
       line-height: 1.2;
+
+      overflow-wrap: anywhere;
     }
 
-    /* Subtitle */
     .step-subtitle {
-      font-size: 0.73rem;
+      width: 100%;
+
+      min-height: 30px;
+
       color: #64748b;
+
+      font-size: 10.5px;
+
       text-align: center;
-      line-height: 1.3;
+
+      line-height: 1.25;
+
+      overflow-wrap: anywhere;
     }
 
-    /* Arrow go button */
     .step-go-btn {
-      width: 32px; height: 32px;
+      width: 31px;
+      height: 31px;
+
+      flex-shrink: 0;
+
+      margin-top: auto;
+
       border-radius: 50%;
-      border: none;
+
       display: flex;
       align-items: center;
       justify-content: center;
-      margin-top: 0.3rem;
-      cursor: pointer;
-      font-size: 0.9rem;
-      color: #fff;
-      transition: transform 0.15s, opacity 0.15s;
-    }
-    .step-go-btn:hover { transform: scale(1.12); opacity: 0.9; }
 
-    /* ===== METRIC CARDS (bottom grid) ===== */
+      color: #ffffff;
+    }
+
+    /* ================= LOWER GRID ================= */
+
     .dash-grid-lower {
+      width: 100%;
+
       display: grid;
-      grid-template-columns: 1.4fr 1fr;
-      gap: 1.25rem;
-      margin-top: 1.5rem;
+
+      grid-template-columns:
+        minmax(0, 1.4fr)
+        minmax(280px, 1fr);
+
+      gap: 18px;
+
+      margin-top: 26px;
     }
 
-    /* Readiness Gauge card */
     .gauge-card {
-      background: #fff;
+      width: 100%;
+
+      min-height: 150px;
+
+      padding: 20px;
+
+      background: #ffffff;
+
       border: 1.5px solid #e2e8f0;
+
       border-radius: 14px;
-      padding: 1.5rem 1.75rem;
-      display: flex;
-      align-items: center;
-      gap: 1.5rem;
-    }
-    .gauge-card-info { flex: 1; }
-    .gauge-card-info .badge { display: inline-block; margin-bottom: 0.5rem; }
-    .gauge-card-info h2 { font-size: 1.2rem; font-weight: 700; margin-bottom: 0.3rem; color: #0f172a; }
-    .gauge-card-info p { font-size: 0.82rem; color: #64748b; }
 
-    /* Mini metric pills */
+      display: flex;
+
+      align-items: center;
+
+      gap: 18px;
+    }
+
+    .gauge-card-info {
+      min-width: 0;
+      flex: 1;
+    }
+
+    .gauge-card-info h2 {
+      margin: 8px 0 5px;
+
+      font-size: 18px;
+
+      color: #0f172a;
+    }
+
+    .gauge-card-info p {
+      margin: 0;
+
+      font-size: 12px;
+
+      line-height: 1.5;
+
+      color: #64748b;
+    }
+
+    /* ================= METRICS ================= */
+
     .metric-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 0.85rem;
-    }
-    .metric-card {
-      background: #fff;
-      border: 1.5px solid #e2e8f0;
-      border-radius: 12px;
-      padding: 1rem 1.1rem;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      transition: box-shadow 0.15s;
-    }
-    .metric-card:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.07); }
-    .metric-label { font-size: 0.78rem; font-weight: 600; color: #64748b; margin-bottom: 0.3rem; }
-    .metric-value { font-size: 1.55rem; font-weight: 800; line-height: 1; }
-    .metric-emoji { font-size: 1.6rem; }
+      width: 100%;
 
-    /* Quick action cards */
-    .quick-actions-grid {
       display: grid;
-      grid-template-columns: repeat(3,1fr);
-      gap: 1rem;
-      margin-top: 1.25rem;
+
+      grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+
+      gap: 12px;
     }
-    .quick-card {
-      background: #fff;
+
+    .metric-card {
+      min-width: 0;
+
+      min-height: 70px;
+
+      padding: 12px 14px;
+
+      background: #ffffff;
+
       border: 1.5px solid #e2e8f0;
+
       border-radius: 12px;
-      padding: 1.1rem 1.15rem;
+
+      display: flex;
+
+      align-items: center;
+
+      justify-content: space-between;
+
+      gap: 8px;
+    }
+
+    .metric-label {
+      margin-bottom: 5px;
+
+      color: #64748b;
+
+      font-size: 11px;
+    }
+
+    .metric-value {
+      font-size: 21px;
+
+      font-weight: 800;
+
+      line-height: 1;
+    }
+
+    .metric-emoji {
+      font-size: 22px;
+    }
+
+    /* ================= QUICK CARDS ================= */
+
+    .quick-actions-grid {
+      width: 100%;
+
+      display: grid;
+
+      grid-template-columns:
+        repeat(3, minmax(0, 1fr));
+
+      gap: 14px;
+
+      margin-top: 18px;
+    }
+
+    .quick-card {
+      min-width: 0;
+
+      padding: 16px;
+
+      background: #ffffff;
+
+      border: 1.5px solid #e2e8f0;
+
+      border-radius: 12px;
+
       text-decoration: none;
-      display: block;
-      transition: box-shadow 0.15s, border-color 0.15s;
+
+      transition: .2s ease;
     }
+
     .quick-card:hover {
-      box-shadow: 0 4px 14px rgba(0,0,0,0.08);
-      border-color: #a5b4fc;
+      transform: translateY(-2px);
+
+      box-shadow:
+        0 6px 18px rgba(0, 0, 0, .08);
     }
-    .quick-card .badge { display: inline-block; margin-bottom: 0.5rem; }
-    .quick-card h3 { font-size: 1rem; font-weight: 700; color: #0f172a; margin-bottom: 0.3rem; }
-    .quick-card p { font-size: 0.82rem; color: #64748b; }
+
+    .quick-card h3 {
+      margin: 8px 0 5px;
+
+      color: #0f172a;
+
+      font-size: 15px;
+    }
+
+    .quick-card p {
+      margin: 0;
+
+      color: #64748b;
+
+      font-size: 12px;
+
+      line-height: 1.5;
+    }
+
+    /* ================= USER ================= */
+
+    .user-name-label,
+    .user-role-label {
+      overflow: hidden;
+
+      text-overflow: ellipsis;
+
+      white-space: nowrap;
+    }
+
+    /* ================= MOBILE ================= */
 
     @media (max-width: 900px) {
-      .dash-grid-lower { grid-template-columns: 1fr; }
-      .quick-actions-grid { grid-template-columns: 1fr; }
-      .dash-hero { flex-direction: column; gap: 1.25rem; }
-      .pipeline-card { width: 108px; }
+
+      .dash-hero {
+        flex-direction: column;
+
+        align-items: flex-start;
+
+        padding: 24px;
+      }
+
+      .dash-hero-right {
+        width: 100%;
+
+        flex-direction: row;
+      }
+
+      .dash-grid-lower {
+        grid-template-columns: 1fr;
+      }
+
+      .quick-actions-grid {
+        grid-template-columns:
+          repeat(2, minmax(0, 1fr));
+      }
+
+      .pipeline-card {
+        flex: 0 0 110px;
+      }
+    }
+
+    @media (max-width: 600px) {
+
+      .dash-hero {
+        padding: 20px 17px;
+      }
+
+      .dash-hero-name {
+        font-size: 1.45rem;
+      }
+
+      .dash-hero-right {
+        justify-content: space-between;
+      }
+
+      .dash-hero-illustration {
+        width: 70px;
+        height: 70px;
+      }
+
+      .pipeline-steps {
+        display: grid;
+
+        grid-template-columns:
+          repeat(2, minmax(0, 1fr));
+
+        gap: 12px;
+
+        overflow: visible;
+      }
+
+      .pipeline-arrow {
+        display: none;
+      }
+
+      .pipeline-card {
+        width: 100%;
+
+        min-width: 0;
+
+        height: auto;
+
+        min-height: 165px;
+      }
+
+      .dash-grid-lower {
+        display: flex;
+
+        flex-direction: column;
+
+        gap: 13px;
+      }
+
+      .gauge-card {
+        flex-direction: column;
+
+        align-items: flex-start;
+      }
+
+      .quick-actions-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 400px) {
+
+      .dash-hero {
+        padding: 17px 14px;
+      }
+
+      .dash-hero-name {
+        font-size: 1.3rem;
+      }
+
+      .pipeline-steps {
+        gap: 9px;
+      }
+
+      .pipeline-card {
+        min-height: 155px;
+
+        padding: 13px 6px 10px;
+      }
+
+      .step-icon-ring {
+        width: 46px;
+        height: 46px;
+      }
     }
   </style>
 </head>
+
 <body>
 
-  <div class="app-layout">
-    <!-- Dark Navy Sidebar -->
-    <aside class="app-sidebar">
-      <div class="sidebar-brand">
-        <a href="../index.html" class="flex-align" style="gap: 0.5rem; text-decoration: none;">
-          <svg width="28" height="28" viewBox="0 0 64 64" fill="none">
-            <rect width="64" height="64" rx="14" fill="#4f46e5" />
-            <path d="M14 44 C22 28, 42 28, 50 44" stroke="#ffffff" stroke-width="4" stroke-linecap="round" />
-            <path d="M20 44 L20 35 M32 44 L32 30 M44 44 L44 35" stroke="#ffffff" stroke-width="3" stroke-linecap="round" />
-            <circle cx="32" cy="20" r="5" fill="#38bdf8" />
-          </svg>
-          <span class="brand-title">CareerSetu <span class="brand-badge">AI</span></span>
-        </a>
-      </div>
+<div class="app-layout">
 
-      <nav class="sidebar-nav">
-        <a href="dashboard.html" class="nav-item active"><span class="nav-icon">📊</span> Dashboard</a>
-        <a href="profile.html" class="nav-item"><span class="nav-icon">👤</span> My Profile</a>
-        <a href="career.html" class="nav-item"><span class="nav-icon">🧭</span> My Career</a>
-        <a href="skill-gap.html" class="nav-item"><span class="nav-icon">📈</span> Skill Gap</a>
-        <a href="roadmap.html" class="nav-item"><span class="nav-icon">🗺️</span> Roadmap</a>
-        <a href="opportunities.html" class="nav-item"><span class="nav-icon">💼</span> Opportunities</a>
-        <a href="resume.html" class="nav-item"><span class="nav-icon">📄</span> Resume AI</a>
-        <a href="interview.html" class="nav-item"><span class="nav-icon">🎙️</span> Mock Interview</a>
-        <a href="progress.html" class="nav-item"><span class="nav-icon">🎯</span> Progress</a>
-      </nav>
+  <!-- =====================================================
+       SIDEBAR
+  ====================================================== -->
 
-      <div class="sidebar-footer">
-        <div class="user-profile-summary">
-          <div class="user-avatar" id="sidebar-user-avatar">H</div>
-          <div class="user-info-text">
-            <p class="user-name-label" id="sidebar-user-name">Himanshu Sahani</p>
-            <p class="user-role-label" id="sidebar-user-email">himanshu@gmail.com</p>
-          </div>
-          <button id="logout-btn" class="btn btn-sm btn-secondary" title="Log Out" style="padding: 0.25rem 0.5rem; font-size: 0.75rem;">⏻</button>
-        </div>
-      </div>
-    </aside>
+  <aside class="app-sidebar" id="app-sidebar">
 
-    <div class="app-main">
-      <!-- Topbar -->
-      <header class="app-topbar">
-        <div class="flex-align">
-          <button class="mobile-menu-btn" id="mobile-menu-toggle">☰</button>
-          <div class="topbar-breadcrumbs">
-            <span>Career Overview</span>
-            <span>/</span>
-            <span class="text-primary" style="font-weight: 600;">Main Dashboard</span>
-          </div>
-        </div>
-        <div class="topbar-actions">
-          <a href="career.html" class="btn btn-primary btn-sm btn-pill">
-            ✦ Explore AI Career Recommendations →
-          </a>
-        </div>
-      </header>
+    <!-- BRAND -->
 
-      <main class="page-content">
-        <div class="container">
+    <div class="sidebar-brand">
 
-          <!-- ===== WELCOME HERO BANNER ===== -->
-          <div class="dash-hero">
-            <div class="dash-hero-left">
-              <div class="dash-hero-greeting">
-                🤝 Welcome Back,
-              </div>
-              <div class="dash-hero-name" id="welcome-user-name">Himanshu Sahani</div>
-              <div class="dash-hero-sub">
-                Your future is built by the choices you make today.<br>
-                Let's get closer to your dream career!
-              </div>
-            </div>
+      <a
+        href="../index.html"
+        class="flex-align"
+        style="
+          gap:.5rem;
+          text-decoration:none;
+        ">
 
-            <!-- Dream → Learn → Grow + Illustration -->
-            <div class="dash-hero-right">
-              <div class="dash-dream-text">
-                Dream <span class="arrow">✦</span> Learn <span class="arrow">✦</span> Grow
-              </div>
-              <!-- Target / Goal SVG Illustration -->
-              <svg class="dash-hero-illustration" viewBox="0 0 140 130" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <!-- Outer ring -->
-                <circle cx="80" cy="62" r="48" stroke="rgba(255,255,255,0.15)" stroke-width="3"/>
-                <!-- Mid ring -->
-                <circle cx="80" cy="62" r="34" stroke="rgba(255,255,255,0.22)" stroke-width="3"/>
-                <!-- Inner ring -->
-                <circle cx="80" cy="62" r="20" fill="#4f46e5" opacity="0.85"/>
-                <!-- Bullseye -->
-                <circle cx="80" cy="62" r="10" fill="#818cf8"/>
-                <!-- Arrow shaft -->
-                <line x1="20" y1="30" x2="75" y2="58" stroke="#38bdf8" stroke-width="3" stroke-linecap="round"/>
-                <!-- Arrow head -->
-                <polygon points="75,52 82,60 68,64" fill="#38bdf8"/>
-                <!-- Bar chart bottom-right -->
-                <rect x="88" y="98" width="8" height="20" rx="2" fill="#6366f1" opacity="0.7"/>
-                <rect x="100" y="90" width="8" height="28" rx="2" fill="#818cf8" opacity="0.8"/>
-                <rect x="112" y="80" width="8" height="38" rx="2" fill="#a5b4fc"/>
-                <!-- Stars -->
-                <circle cx="30" cy="18" r="3" fill="#38bdf8" opacity="0.6"/>
-                <circle cx="120" cy="25" r="2" fill="#c7d2fe" opacity="0.5"/>
-                <circle cx="125" cy="55" r="2.5" fill="#38bdf8" opacity="0.4"/>
-              </svg>
-            </div>
-          </div>
+        <svg
+          width="28"
+          height="28"
+          viewBox="0 0 64 64"
+          fill="none">
 
-          <!-- ===== CONTINUOUS READINESS PIPELINE ===== -->
-          <div class="pipeline-header">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
-              <circle cx="12" cy="12" r="10" fill="#6366f1"/>
-              <path d="M8 12l3 3 5-5" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-            <h3>Continuous Readiness Pipeline</h3>
-          </div>
+          <rect
+            width="64"
+            height="64"
+            rx="14"
+            fill="#4f46e5"/>
 
-          <div class="pipeline-steps" id="pipeline-steps">
+          <path
+            d="M14 44 C22 28, 42 28, 50 44"
+            stroke="#fff"
+            stroke-width="4"
+            stroke-linecap="round"/>
 
-            <!-- Step 1: Profile -->
-            <a href="profile.html" class="pipeline-card" id="step-profile">
-              <div class="step-num-badge" style="background:#6366f1;">1</div>
-              <div class="step-icon-ring" style="background:linear-gradient(135deg,#dbeafe,#eff6ff);">
-                <svg width="30" height="30" viewBox="0 0 24 24" fill="none">
-                  <circle cx="12" cy="8" r="4" fill="#6366f1"/>
-                  <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" stroke="#6366f1" stroke-width="2" stroke-linecap="round"/>
-                </svg>
-              </div>
-              <div class="step-title">Profile</div>
-              <div class="step-subtitle">Know Yourself</div>
-              <div class="step-go-btn" style="background:#6366f1;">&#8594;</div>
-            </a>
+          <path
+            d="M20 44 L20 35 M32 44 L32 30 M44 44 L44 35"
+            stroke="#fff"
+            stroke-width="3"
+            stroke-linecap="round"/>
 
-            <div class="pipeline-arrow">&#8594;</div>
+          <circle
+            cx="32"
+            cy="20"
+            r="5"
+            fill="#38bdf8"/>
 
-            <!-- Step 2: Career AI -->
-            <a href="career.html" class="pipeline-card" id="step-career">
-              <div class="step-num-badge" style="background:#7c3aed;">2</div>
-              <div class="step-icon-ring" style="background:linear-gradient(135deg,#ede9fe,#f5f3ff);">
-                <svg width="30" height="30" viewBox="0 0 24 24" fill="none">
-                  <rect x="4" y="4" width="16" height="16" rx="5" fill="#7c3aed"/>
-                  <text x="12" y="14.5" text-anchor="middle" font-size="8" font-weight="800" fill="white" font-family="Arial">AI</text>
-                </svg>
-              </div>
-              <div class="step-title">Career AI</div>
-              <div class="step-subtitle">Get Smart Guidance</div>
-              <div class="step-go-btn" style="background:#7c3aed;">&#8594;</div>
-            </a>
+        </svg>
 
-            <div class="pipeline-arrow">&#8594;</div>
+        <span class="brand-title">
+          CareerSetu
+          <span class="brand-badge">
+            AI
+          </span>
+        </span>
 
-            <!-- Step 3: Skill Gap -->
-            <a href="skill-gap.html" class="pipeline-card" id="step-skills">
-              <div class="step-num-badge" style="background:#059669;">3</div>
-              <div class="step-icon-ring" style="background:linear-gradient(135deg,#d1fae5,#ecfdf5);">
-                <svg width="30" height="30" viewBox="0 0 24 24" fill="none">
-                  <rect x="4" y="14" width="4" height="6" rx="1" fill="#059669"/>
-                  <rect x="10" y="10" width="4" height="10" rx="1" fill="#059669"/>
-                  <rect x="16" y="6" width="4" height="14" rx="1" fill="#059669"/>
-                </svg>
-              </div>
-              <div class="step-title">Skill Gap</div>
-              <div class="step-subtitle">Find What to Improve</div>
-              <div class="step-go-btn" style="background:#059669;">&#8594;</div>
-            </a>
+      </a>
 
-            <div class="pipeline-arrow">&#8594;</div>
-
-            <!-- Step 4: Roadmap -->
-            <a href="roadmap.html" class="pipeline-card" id="step-learning">
-              <div class="step-num-badge" style="background:#ea580c;">4</div>
-              <div class="step-icon-ring" style="background:linear-gradient(135deg,#ffedd5,#fff7ed);">
-                <svg width="30" height="30" viewBox="0 0 24 24" fill="none">
-                  <circle cx="12" cy="12" r="9" stroke="#ea580c" stroke-width="1.5" fill="none"/>
-                  <path d="M8 14 Q10 8 14 10 Q16 11 14 15" stroke="#ea580c" stroke-width="2" stroke-linecap="round" fill="none"/>
-                  <circle cx="14" cy="15" r="2" fill="#ea580c"/>
-                </svg>
-              </div>
-              <div class="step-title">Roadmap</div>
-              <div class="step-subtitle">Your Growth Plan</div>
-              <div class="step-go-btn" style="background:#ea580c;">&#8594;</div>
-            </a>
-
-            <div class="pipeline-arrow">&#8594;</div>
-
-            <!-- Step 5: Jobs/PSU -->
-            <a href="opportunities.html" class="pipeline-card" id="step-opportunities">
-              <div class="step-num-badge" style="background:#dc2626;">5</div>
-              <div class="step-icon-ring" style="background:linear-gradient(135deg,#fee2e2,#fff5f5);">
-                <svg width="30" height="30" viewBox="0 0 24 24" fill="none">
-                  <rect x="3" y="10" width="18" height="11" rx="2" stroke="#dc2626" stroke-width="1.8" fill="none"/>
-                  <path d="M8 10V7a4 4 0 018 0v3" stroke="#dc2626" stroke-width="1.8" stroke-linecap="round" fill="none"/>
-                  <line x1="12" y1="14" x2="12" y2="17" stroke="#dc2626" stroke-width="1.8" stroke-linecap="round"/>
-                </svg>
-              </div>
-              <div class="step-title">Jobs/PSU</div>
-              <div class="step-subtitle">Explore Opportunities</div>
-              <div class="step-go-btn" style="background:#dc2626;">&#8594;</div>
-            </a>
-
-            <div class="pipeline-arrow">&#8594;</div>
-
-            <!-- Step 6: Resume -->
-            <a href="resume.html" class="pipeline-card" id="step-prep">
-              <div class="step-num-badge" style="background:#6366f1;">6</div>
-              <div class="step-icon-ring" style="background:linear-gradient(135deg,#ede9fe,#f0f4ff);">
-                <svg width="30" height="30" viewBox="0 0 24 24" fill="none">
-                  <rect x="5" y="3" width="14" height="18" rx="2" stroke="#6366f1" stroke-width="1.8" fill="none"/>
-                  <line x1="9" y1="8" x2="15" y2="8" stroke="#6366f1" stroke-width="1.5" stroke-linecap="round"/>
-                  <line x1="9" y1="11" x2="15" y2="11" stroke="#6366f1" stroke-width="1.5" stroke-linecap="round"/>
-                  <line x1="9" y1="14" x2="12" y2="14" stroke="#6366f1" stroke-width="1.5" stroke-linecap="round"/>
-                </svg>
-              </div>
-              <div class="step-title">Resume</div>
-              <div class="step-subtitle">Build a Strong Resume</div>
-              <div class="step-go-btn" style="background:#6366f1;">&#8594;</div>
-            </a>
-
-            <div class="pipeline-arrow">&#8594;</div>
-
-            <!-- Step 7: Interview -->
-            <a href="interview.html" class="pipeline-card" id="step-readiness">
-              <div class="step-num-badge" style="background:#0891b2;">7</div>
-              <div class="step-icon-ring" style="background:linear-gradient(135deg,#cffafe,#ecfeff);">
-                <svg width="30" height="30" viewBox="0 0 24 24" fill="none">
-                  <circle cx="12" cy="10" r="5" stroke="#0891b2" stroke-width="1.8" fill="none"/>
-                  <path d="M8 10 C8 7 16 7 16 10" stroke="#0891b2" stroke-width="1.5" fill="none"/>
-                  <line x1="12" y1="15" x2="12" y2="20" stroke="#0891b2" stroke-width="1.8" stroke-linecap="round"/>
-                  <line x1="8" y1="20" x2="16" y2="20" stroke="#0891b2" stroke-width="1.8" stroke-linecap="round"/>
-                </svg>
-              </div>
-              <div class="step-title">Interview</div>
-              <div class="step-subtitle">Practice &amp; Prepare</div>
-              <div class="step-go-btn" style="background:#0891b2;">&#8594;</div>
-            </a>
-
-          </div><!-- /pipeline-steps -->
-
-          <!-- ===== LOWER GRID: Gauge + Metrics ===== -->
-          <div class="dash-grid-lower">
-
-            <!-- Readiness Gauge -->
-            <div class="gauge-card">
-              <div class="gauge-card-info">
-                <span class="badge badge-emerald">Employability Index</span>
-                <h2>Overall Career Readiness</h2>
-                <p>Calculated from skills, projects, verified assessment &amp; ATS resume score.</p>
-              </div>
-              <div class="gauge-container" style="width:140px;height:140px;flex-shrink:0;">
-                <svg class="gauge-svg" width="140" height="140" viewBox="0 0 140 140">
-                  <circle class="gauge-circle-bg" cx="70" cy="70" r="58" stroke-width="10"></circle>
-                  <circle class="gauge-circle-progress" cx="70" cy="70" r="58" stroke="#10b981" stroke-width="10"
-                    stroke-dasharray="364.4" stroke-dashoffset="93"></circle>
-                </svg>
-                <div class="gauge-center-text">
-                  <span class="gauge-value" style="font-size:1.8rem;color:#0f172a;" id="dash-readiness-val">81%</span>
-                  <span class="gauge-label">Readiness</span>
-                  <span style="font-size:0.7rem;color:#10b981;font-weight:700;margin-top:0.2rem;">&#8593; 12% this week</span>
-                </div>
-              </div>
-            </div>
-
-            <!-- Mini Metrics -->
-            <div class="metric-grid">
-              <div class="metric-card">
-                <div>
-                  <div class="metric-label">Skills Match</div>
-                  <div class="metric-value text-primary" id="dash-skills-val">74%</div>
-                </div>
-                <span class="metric-emoji">📊</span>
-              </div>
-              <div class="metric-card">
-                <div>
-                  <div class="metric-label">Career Fit</div>
-                  <div class="metric-value text-emerald" id="dash-career-fit-val">81%</div>
-                </div>
-                <span class="metric-emoji">🎯</span>
-              </div>
-              <div class="metric-card">
-                <div>
-                  <div class="metric-label">ATS Resume</div>
-                  <div class="metric-value text-amber" id="dash-resume-val">72%</div>
-                </div>
-                <span class="metric-emoji">📄</span>
-              </div>
-              <div class="metric-card">
-                <div>
-                  <div class="metric-label">Interview Score</div>
-                  <div class="metric-value text-primary" id="dash-interview-val">63%</div>
-                </div>
-                <span class="metric-emoji">🎙️</span>
-              </div>
-            </div>
-          </div>
-
-          <!-- ===== QUICK ACTION CARDS ===== -->
-          <div class="quick-actions-grid">
-            <a href="skill-gap.html" class="quick-card" style="border-left:4px solid var(--brand-cyan);">
-              <span class="badge badge-cyan">Top Skill Gap</span>
-              <h3 id="dash-top-gap">Machine Learning &amp; Statistics</h3>
-              <p>3 critical gaps identified. View remediation roadmap →</p>
-            </a>
-            <a href="roadmap.html" class="quick-card" style="border-left:4px solid var(--brand-primary);">
-              <span class="badge badge-primary">60-Day Roadmap</span>
-              <h3>Week 1–2: Core Systems</h3>
-              <p>Resume tasks &amp; live milestone tracking →</p>
-            </a>
-            <a href="opportunities.html" class="quick-card" style="border-left:4px solid var(--brand-emerald);">
-              <span class="badge badge-emerald">Matched Opportunities</span>
-              <h3>18 Roles Matched</h3>
-              <p>Explore private internships &amp; PSU / Govt vacancies →</p>
-            </a>
-          </div>
-
-        </div>
-      </main>
     </div>
+
+
+    <!-- NAVIGATION -->
+
+    <nav
+      class="sidebar-nav"
+      aria-label="Dashboard navigation">
+
+      <a
+        href="dashboard.html"
+        class="nav-item">
+
+        <span class="nav-icon">
+          📊
+        </span>
+
+        Dashboard
+
+      </a>
+
+
+      <a
+        href="profile.html"
+        class="nav-item">
+
+        <span class="nav-icon">
+          👤
+        </span>
+
+        My Profile
+
+      </a>
+
+
+      <a
+        href="career.html"
+        class="nav-item">
+
+        <span class="nav-icon">
+          🧭
+        </span>
+
+        My Career
+
+      </a>
+
+
+      <a
+        href="skill-gap.html"
+        class="nav-item">
+
+        <span class="nav-icon">
+          📈
+        </span>
+
+        Skill Gap
+
+      </a>
+
+
+      <a
+        href="roadmap.html"
+        class="nav-item">
+
+        <span class="nav-icon">
+          🗺️
+        </span>
+
+        Roadmap
+
+      </a>
+
+
+      <a
+        href="opportunities.html"
+        class="nav-item">
+
+        <span class="nav-icon">
+          💼
+        </span>
+
+        Opportunities
+
+      </a>
+
+
+      <a
+        href="resume.html"
+        class="nav-item">
+
+        <span class="nav-icon">
+          📄
+        </span>
+
+        Resume AI
+
+      </a>
+
+
+      <a
+        href="interview.html"
+        class="nav-item">
+
+        <span class="nav-icon">
+          🎙️
+        </span>
+
+        Mock Interview
+
+      </a>
+
+
+      <a
+        href="progress.html"
+        class="nav-item">
+
+        <span class="nav-icon">
+          🎯
+        </span>
+
+        Progress
+
+      </a>
+
+    </nav>
+
+
+    <!-- USER -->
+
+    <div class="sidebar-footer">
+
+      <div class="user-profile-summary">
+
+        <!-- Dynamic avatar -->
+
+        <div
+          class="user-avatar"
+          id="sidebar-user-avatar">
+
+          S
+
+        </div>
+
+
+        <div class="user-info-text">
+
+          <p
+            class="user-name-label"
+            id="sidebar-user-name">
+
+            Student
+
+          </p>
+
+
+          <p
+            class="user-role-label"
+            id="sidebar-user-email">
+
+            Loading...
+
+          </p>
+
+        </div>
+
+
+        <button
+          id="logout-btn"
+          class="btn btn-sm btn-secondary"
+          type="button"
+          title="Log Out">
+
+          ⏻
+
+        </button>
+
+      </div>
+
+    </div>
+
+  </aside>
+
+
+  <!-- =====================================================
+       MAIN
+  ====================================================== -->
+
+  <div class="app-main">
+
+
+    <!-- TOPBAR -->
+
+    <header class="app-topbar">
+
+      <div class="flex-align">
+
+        <button
+          class="mobile-menu-btn"
+          id="mobile-menu-toggle"
+          type="button">
+
+          ☰
+
+        </button>
+
+
+        <div class="topbar-breadcrumbs">
+
+          <span>
+            Career Overview
+          </span>
+
+          <span>
+            /
+          </span>
+
+          <span
+            class="text-primary"
+            style="font-weight:600;">
+
+            Main Dashboard
+
+          </span>
+
+        </div>
+
+      </div>
+
+
+      <div class="topbar-actions">
+
+        <a
+          href="career.html"
+          class="btn btn-primary btn-sm btn-pill">
+
+          ✦ Explore AI Career Recommendations →
+
+        </a>
+
+      </div>
+
+    </header>
+
+
+    <!-- =====================================================
+         PAGE
+    ====================================================== -->
+
+    <main class="page-content">
+
+      <div class="container">
+
+
+        <!-- =================================================
+             HERO
+        ================================================== -->
+
+        <section class="dash-hero">
+
+          <div class="dash-hero-left">
+
+            <div class="dash-hero-greeting">
+
+              🤝 Welcome Back,
+
+            </div>
+
+
+            <!-- DYNAMIC NAME -->
+
+            <div
+              class="dash-hero-name"
+              id="welcome-user-name">
+
+              Student
+
+            </div>
+
+
+            <div class="dash-hero-sub">
+
+              Your future is built by the choices
+              you make today.
+
+              <br>
+
+              Let's get closer to your dream career!
+
+            </div>
+
+          </div>
+
+
+          <div class="dash-hero-right">
+
+            <div class="dash-dream-text">
+
+              Dream
+
+              <span class="arrow">
+                ✦
+              </span>
+
+              Learn
+
+              <span class="arrow">
+                ✦
+              </span>
+
+              Grow
+
+            </div>
+
+
+            <svg
+              class="dash-hero-illustration"
+              viewBox="0 0 140 130"
+              fill="none">
+
+              <circle
+                cx="80"
+                cy="62"
+                r="48"
+                stroke="rgba(255,255,255,.15)"
+                stroke-width="3"/>
+
+              <circle
+                cx="80"
+                cy="62"
+                r="34"
+                stroke="rgba(255,255,255,.22)"
+                stroke-width="3"/>
+
+              <circle
+                cx="80"
+                cy="62"
+                r="20"
+                fill="#4f46e5"
+                opacity=".85"/>
+
+              <circle
+                cx="80"
+                cy="62"
+                r="10"
+                fill="#818cf8"/>
+
+              <line
+                x1="20"
+                y1="30"
+                x2="75"
+                y2="58"
+                stroke="#38bdf8"
+                stroke-width="3"
+                stroke-linecap="round"/>
+
+              <polygon
+                points="75,52 82,60 68,64"
+                fill="#38bdf8"/>
+
+              <rect
+                x="88"
+                y="98"
+                width="8"
+                height="20"
+                rx="2"
+                fill="#6366f1"/>
+
+              <rect
+                x="100"
+                y="90"
+                width="8"
+                height="28"
+                rx="2"
+                fill="#818cf8"/>
+
+              <rect
+                x="112"
+                y="80"
+                width="8"
+                height="38"
+                rx="2"
+                fill="#a5b4fc"/>
+
+            </svg>
+
+          </div>
+
+        </section>
+
+
+        <!-- =================================================
+             PIPELINE
+        ================================================== -->
+
+        <section>
+
+          <div class="pipeline-header">
+
+            <span>
+              ✔️
+            </span>
+
+            <h3>
+              Continuous Readiness Pipeline
+            </h3>
+
+          </div>
+
+
+          <div
+            class="pipeline-steps"
+            id="pipeline-steps">
+
+
+            <!-- PROFILE -->
+
+            <a
+              href="profile.html"
+              class="pipeline-card"
+              id="step-profile">
+
+              <div
+                class="step-num-badge"
+                style="background:#6366f1;">
+
+                1
+
+              </div>
+
+
+              <div
+                class="step-icon-ring"
+                style="
+                  background:
+                  linear-gradient(
+                    135deg,
+                    #dbeafe,
+                    #eff6ff
+                  );
+                ">
+
+                👤
+
+              </div>
+
+
+              <div class="step-title">
+                Profile
+              </div>
+
+              <div class="step-subtitle">
+                Know Yourself
+              </div>
+
+
+              <div
+                class="step-go-btn"
+                style="background:#6366f1;">
+
+                →
+
+              </div>
+
+            </a>
+
+
+            <div class="pipeline-arrow">
+              →
+            </div>
+
+
+            <!-- CAREER -->
+
+            <a
+              href="career.html"
+              class="pipeline-card"
+              id="step-career">
+
+              <div
+                class="step-num-badge"
+                style="background:#7c3aed;">
+
+                2
+
+              </div>
+
+
+              <div
+                class="step-icon-ring"
+                style="
+                  background:
+                  linear-gradient(
+                    135deg,
+                    #ede9fe,
+                    #f5f3ff
+                  );
+                ">
+
+                🤖
+
+              </div>
+
+
+              <div class="step-title">
+                Career AI
+              </div>
+
+              <div class="step-subtitle">
+                Get Smart Guidance
+              </div>
+
+
+              <div
+                class="step-go-btn"
+                style="background:#7c3aed;">
+
+                →
+
+              </div>
+
+            </a>
+
+
+            <div class="pipeline-arrow">
+              →
+            </div>
+
+
+            <!-- SKILLS -->
+
+            <a
+              href="skill-gap.html"
+              class="pipeline-card"
+              id="step-skills">
+
+              <div
+                class="step-num-badge"
+                style="background:#059669;">
+
+                3
+
+              </div>
+
+
+              <div
+                class="step-icon-ring"
+                style="
+                  background:
+                  linear-gradient(
+                    135deg,
+                    #d1fae5,
+                    #ecfdf5
+                  );
+                ">
+
+                📊
+
+              </div>
+
+
+              <div class="step-title">
+                Skill Gap
+              </div>
+
+              <div class="step-subtitle">
+                Find What to Improve
+              </div>
+
+
+              <div
+                class="step-go-btn"
+                style="background:#059669;">
+
+                →
+
+              </div>
+
+            </a>
+
+
+            <div class="pipeline-arrow">
+              →
+            </div>
+
+
+            <!-- ROADMAP -->
+
+            <a
+              href="roadmap.html"
+              class="pipeline-card"
+              id="step-learning">
+
+              <div
+                class="step-num-badge"
+                style="background:#ea580c;">
+
+                4
+
+              </div>
+
+
+              <div
+                class="step-icon-ring"
+                style="
+                  background:
+                  linear-gradient(
+                    135deg,
+                    #ffedd5,
+                    #fff7ed
+                  );
+                ">
+
+                🗺️
+
+              </div>
+
+
+              <div class="step-title">
+                Roadmap
+              </div>
+
+              <div class="step-subtitle">
+                Your Growth Plan
+              </div>
+
+
+              <div
+                class="step-go-btn"
+                style="background:#ea580c;">
+
+                →
+
+              </div>
+
+            </a>
+
+
+            <div class="pipeline-arrow">
+              →
+            </div>
+
+
+            <!-- JOBS -->
+
+            <a
+              href="opportunities.html"
+              class="pipeline-card"
+              id="step-opportunities">
+
+              <div
+                class="step-num-badge"
+                style="background:#dc2626;">
+
+                5
+
+              </div>
+
+
+              <div
+                class="step-icon-ring"
+                style="
+                  background:
+                  linear-gradient(
+                    135deg,
+                    #fee2e2,
+                    #fff5f5
+                  );
+                ">
+
+                💼
+
+              </div>
+
+
+              <div class="step-title">
+                Jobs/PSU
+              </div>
+
+              <div class="step-subtitle">
+                Explore Opportunities
+              </div>
+
+
+              <div
+                class="step-go-btn"
+                style="background:#dc2626;">
+
+                →
+
+              </div>
+
+            </a>
+
+
+            <div class="pipeline-arrow">
+              →
+            </div>
+
+
+            <!-- RESUME -->
+
+            <a
+              href="resume.html"
+              class="pipeline-card"
+              id="step-prep">
+
+              <div
+                class="step-num-badge"
+                style="background:#6366f1;">
+
+                6
+
+              </div>
+
+
+              <div
+                class="step-icon-ring"
+                style="
+                  background:
+                  linear-gradient(
+                    135deg,
+                    #ede9fe,
+                    #f0f4ff
+                  );
+                ">
+
+                📄
+
+              </div>
+
+
+              <div class="step-title">
+                Resume
+              </div>
+
+              <div class="step-subtitle">
+                Build a Strong Resume
+              </div>
+
+
+              <div
+                class="step-go-btn"
+                style="background:#6366f1;">
+
+                →
+
+              </div>
+
+            </a>
+
+
+            <div class="pipeline-arrow">
+              →
+            </div>
+
+
+            <!-- INTERVIEW -->
+
+            <a
+              href="interview.html"
+              class="pipeline-card"
+              id="step-readiness">
+
+              <div
+                class="step-num-badge"
+                style="background:#0891b2;">
+
+                7
+
+              </div>
+
+
+              <div
+                class="step-icon-ring"
+                style="
+                  background:
+                  linear-gradient(
+                    135deg,
+                    #cffafe,
+                    #ecfeff
+                  );
+                ">
+
+                🎙️
+
+              </div>
+
+
+              <div class="step-title">
+                Interview
+              </div>
+
+              <div class="step-subtitle">
+                Practice &amp; Prepare
+              </div>
+
+
+              <div
+                class="step-go-btn"
+                style="background:#0891b2;">
+
+                →
+
+              </div>
+
+            </a>
+
+          </div>
+
+        </section>
+
+
+        <!-- =================================================
+             READINESS
+        ================================================== -->
+
+        <section class="dash-grid-lower">
+
+
+          <!-- GAUGE -->
+
+          <div class="gauge-card">
+
+            <div class="gauge-card-info">
+
+              <span class="badge badge-emerald">
+                Employability Index
+              </span>
+
+
+              <h2>
+                Overall Career Readiness
+              </h2>
+
+
+              <p>
+                Calculated from skills,
+                projects, verified assessment
+                &amp; ATS resume score.
+              </p>
+
+            </div>
+
+
+            <div
+              style="
+                width:140px;
+                height:140px;
+                position:relative;
+                flex-shrink:0;
+              ">
+
+              <svg
+                width="140"
+                height="140"
+                viewBox="0 0 140 140">
+
+                <circle
+                  cx="70"
+                  cy="70"
+                  r="58"
+                  fill="none"
+                  stroke="#e5e7eb"
+                  stroke-width="10"/>
+
+
+                <circle
+                  id="dash-gauge-progress"
+                  cx="70"
+                  cy="70"
+                  r="58"
+                  fill="none"
+                  stroke="#10b981"
+                  stroke-width="10"
+                  stroke-linecap="round"
+                  stroke-dasharray="364.4"
+                  stroke-dashoffset="69.2"
+                  transform="rotate(-90 70 70)"
+                  style="
+                    transition:
+                    stroke-dashoffset .8s ease;
+                  "/>
+
+              </svg>
+
+
+              <div
+                style="
+                  position:absolute;
+                  inset:0;
+
+                  display:flex;
+                  flex-direction:column;
+
+                  align-items:center;
+                  justify-content:center;
+                ">
+
+                <strong
+                  id="dash-readiness-val"
+                  style="
+                    font-size:1.8rem;
+                    color:#0f172a;
+                  ">
+
+                  0%
+
+                </strong>
+
+
+                <span
+                  style="
+                    font-size:.7rem;
+                    color:#64748b;
+                  ">
+
+                  Readiness
+
+                </span>
+
+
+                <span
+                  id="dash-readiness-change"
+                  style="
+                    font-size:.7rem;
+                    color:#10b981;
+                    font-weight:700;
+                    margin-top:3px;
+                  ">
+
+                  Complete profile
+
+                </span>
+
+              </div>
+
+            </div>
+
+          </div>
+
+
+          <!-- METRICS -->
+
+          <div class="metric-grid">
+
+
+            <div class="metric-card">
+
+              <div>
+
+                <div class="metric-label">
+                  Skills Match
+                </div>
+
+                <div
+                  class="metric-value text-primary"
+                  id="dash-skills-val">
+
+                  0%
+
+                </div>
+
+              </div>
+
+              <span class="metric-emoji">
+                📊
+              </span>
+
+            </div>
+
+
+            <div class="metric-card">
+
+              <div>
+
+                <div class="metric-label">
+                  Career Fit
+                </div>
+
+                <div
+                  class="metric-value text-emerald"
+                  id="dash-career-fit-val">
+
+                  0%
+
+                </div>
+
+              </div>
+
+              <span class="metric-emoji">
+                🎯
+              </span>
+
+            </div>
+
+
+            <div class="metric-card">
+
+              <div>
+
+                <div class="metric-label">
+                  ATS Resume
+                </div>
+
+                <div
+                  class="metric-value text-amber"
+                  id="dash-resume-val">
+
+                  0%
+
+                </div>
+
+              </div>
+
+              <span class="metric-emoji">
+                📄
+              </span>
+
+            </div>
+
+
+            <div class="metric-card">
+
+              <div>
+
+                <div class="metric-label">
+                  Interview Score
+                </div>
+
+                <div
+                  class="metric-value text-primary"
+                  id="dash-interview-val">
+
+                  0%
+
+                </div>
+
+              </div>
+
+              <span class="metric-emoji">
+                🎙️
+              </span>
+
+            </div>
+
+          </div>
+
+        </section>
+
+
+        <!-- =================================================
+             QUICK ACTIONS
+        ================================================== -->
+
+        <section class="quick-actions-grid">
+
+
+          <a
+            href="skill-gap.html"
+            class="quick-card"
+            style="
+              border-left:
+              4px solid
+              var(--brand-cyan);
+            ">
+
+            <span class="badge badge-cyan">
+              Top Skill Gap
+            </span>
+
+
+            <h3 id="dash-top-gap">
+
+              Complete your profile
+
+            </h3>
+
+
+            <p id="dash-top-gap-desc">
+
+              Your personalized skill-gap
+              analysis will appear here.
+
+            </p>
+
+          </a>
+
+
+          <a
+            href="roadmap.html"
+            class="quick-card"
+            style="
+              border-left:
+              4px solid
+              var(--brand-primary);
+            ">
+
+            <span class="badge badge-primary">
+              Career Roadmap
+            </span>
+
+
+            <h3 id="dash-roadmap-title">
+
+              Create your roadmap
+
+            </h3>
+
+
+            <p id="dash-roadmap-desc">
+
+              Build a personalized learning
+              and career plan.
+
+            </p>
+
+          </a>
+
+
+          <a
+            href="opportunities.html"
+            class="quick-card"
+            style="
+              border-left:
+              4px solid
+              var(--brand-emerald);
+            ">
+
+            <span class="badge badge-emerald">
+              Opportunities
+            </span>
+
+
+            <h3 id="dash-opportunities-title">
+
+              Explore opportunities
+
+            </h3>
+
+
+            <p id="dash-opportunities-desc">
+
+              Find internships, jobs
+              and relevant opportunities.
+
+            </p>
+
+          </a>
+
+        </section>
+
+      </div>
+
+    </main>
+
   </div>
 
-  <script>
-    document.addEventListener('DOMContentLoaded', async function () {
-      if (!window.CareerSetu || !CareerSetu.checkAuthGuard()) return;
-      CareerSetu.renderUserProfileWidget();
+</div>
 
-      var user = CareerSetu.getCurrentUser();
-      var welcomeNameEl = document.getElementById('welcome-user-name');
 
-      if (welcomeNameEl && user) {
-        var rawName = user.displayName || (user.email ? user.email.split('@')[0] : 'Student');
-        welcomeNameEl.textContent = rawName;
+<!-- =========================================================
+     DASHBOARD JAVASCRIPT
+========================================================== -->
+
+<script>
+
+document.addEventListener(
+  "DOMContentLoaded",
+  async function () {
+
+    /*
+     * =====================================================
+     * 1. CHECK CAREERSETU
+     * =====================================================
+     */
+
+    if (!window.CareerSetu) {
+
+      console.error(
+        "CareerSetu core not loaded."
+      );
+
+      return;
+
+    }
+
+
+    /*
+     * =====================================================
+     * 2. AUTH GUARD
+     * =====================================================
+     */
+
+    if (!CareerSetu.checkAuthGuard()) {
+
+      return;
+
+    }
+
+
+    /*
+     * =====================================================
+     * 3. GET CURRENT USER
+     * =====================================================
+     */
+
+    var user =
+      CareerSetu.getCurrentUser();
+
+
+    if (!user) {
+
+      window.location.href =
+        "login.html";
+
+      return;
+
+    }
+
+
+    /*
+     * =====================================================
+     * 4. FIRST SIDEBAR RENDER
+     * =====================================================
+     */
+
+    CareerSetu.renderUserProfileWidget();
+
+
+    /*
+     * =====================================================
+     * 5. GET FIRESTORE / LOCAL PROFILE
+     * =====================================================
+     */
+
+    var profile = {};
+
+    try {
+
+      profile =
+        (
+          await CareerSetu.getUserData(
+            "profiles"
+          )
+        ) || {};
+
+    } catch (error) {
+
+      console.warn(
+        "Profile loading error:",
+        error
+      );
+
+    }
+
+
+    /*
+     * =====================================================
+     * 6. DYNAMIC STUDENT NAME
+     * =====================================================
+     */
+
+    var studentName =
+      profile.fullName ||
+      user.displayName ||
+      (
+        user.email
+          ? user.email.split("@")[0]
+          : "Student"
+      );
+
+
+    /*
+     * =====================================================
+     * 7. DYNAMIC EMAIL
+     * =====================================================
+     */
+
+    var studentEmail =
+      user.email ||
+      profile.email ||
+      "No email";
+
+
+    /*
+     * =====================================================
+     * 8. DYNAMIC PHOTO
+     * =====================================================
+     */
+
+    var studentPhoto =
+      profile.photoURL ||
+      user.photoURL ||
+      "";
+
+
+    /*
+     * =====================================================
+     * 9. UPDATE SIDEBAR
+     * =====================================================
+     */
+
+    setText(
+      "sidebar-user-name",
+      studentName
+    );
+
+
+    setText(
+      "sidebar-user-email",
+      studentEmail
+    );
+
+
+    /*
+     * =====================================================
+     * 10. UPDATE WELCOME NAME
+     * =====================================================
+     */
+
+    setText(
+      "welcome-user-name",
+      studentName
+    );
+
+
+    /*
+     * =====================================================
+     * 11. UPDATE PHOTO
+     * =====================================================
+     */
+
+    updateAvatar(
+      document.getElementById(
+        "sidebar-user-avatar"
+      ),
+      studentName,
+      studentPhoto
+    );
+
+
+    /*
+     * =====================================================
+     * 12. LOAD DASHBOARD DATA
+     * =====================================================
+     */
+
+    var recommendations = {};
+    var skillGaps = {};
+    var resumes = {};
+    var interviews = {};
+
+
+    try {
+
+      recommendations =
+        (
+          await CareerSetu.getUserData(
+            "careerRecommendations"
+          )
+        ) || {};
+
+
+      skillGaps =
+        (
+          await CareerSetu.getUserData(
+            "skillGaps"
+          )
+        ) || {};
+
+
+      resumes =
+        (
+          await CareerSetu.getUserData(
+            "resumes"
+          )
+        ) || {};
+
+
+      interviews =
+        (
+          await CareerSetu.getUserData(
+            "interviews"
+          )
+        ) || {};
+
+    } catch (error) {
+
+      console.warn(
+        "Dashboard data error:",
+        error
+      );
+
+    }
+
+
+    /*
+     * =====================================================
+     * 13. CAREER READINESS
+     * =====================================================
+     */
+
+    var readiness =
+      getNumber(
+        recommendations.data &&
+        recommendations.data.readinessScore
+      );
+
+
+    if (readiness === null) {
+
+      readiness = 0;
+
+    }
+
+
+    setText(
+      "dash-readiness-val",
+      readiness + "%"
+    );
+
+
+    setText(
+      "dash-career-fit-val",
+      readiness + "%"
+    );
+
+
+    updateGauge(
+      readiness
+    );
+
+
+    /*
+     * =====================================================
+     * 14. SKILLS
+     * =====================================================
+     */
+
+    var skillsMatch =
+      getNumber(
+        skillGaps.data &&
+        skillGaps.data.skillsMatch
+      );
+
+
+    if (skillsMatch === null) {
+
+      var missingSkills =
+        getMissingSkills(
+          skillGaps
+        );
+
+      if (missingSkills.length) {
+
+        skillsMatch =
+          Math.max(
+            0,
+            100 -
+            missingSkills.length * 8
+          );
+
+      } else {
+
+        skillsMatch = 0;
+
       }
 
-      // Logout
-      var logoutBtn = document.getElementById('logout-btn');
-      if (logoutBtn) {
-        logoutBtn.addEventListener('click', function () {
-          if (window.CareerSetu && CareerSetu.logout) CareerSetu.logout();
-          window.location.href = 'login.html';
-        });
-      }
+    }
 
-      loadDashboardSummary();
 
-      async function loadDashboardSummary() {
-        try {
-          var profile       = (await CareerSetu.getUserData('profiles')) || {};
-          var recommendations = (await CareerSetu.getUserData('careerRecommendations')) || {};
-          var skillGaps     = (await CareerSetu.getUserData('skillGaps')) || {};
-          var resume        = (await CareerSetu.getUserData('resumes')) || {};
-          var interview     = (await CareerSetu.getUserData('interviews')) || {};
+    setText(
+      "dash-skills-val",
+      skillsMatch + "%"
+    );
 
-          // Welcome name
-          if (profile.fullName && welcomeNameEl) {
-            welcomeNameEl.textContent = profile.fullName;
+
+    /*
+     * =====================================================
+     * 15. RESUME SCORE
+     * =====================================================
+     */
+
+    var resumeScore =
+      getNumber(
+        resumes.data &&
+        resumes.data.atsScore
+      );
+
+
+    if (resumeScore === null) {
+
+      resumeScore = 0;
+
+    }
+
+
+    setText(
+      "dash-resume-val",
+      resumeScore + "%"
+    );
+
+
+    /*
+     * =====================================================
+     * 16. INTERVIEW SCORE
+     * =====================================================
+     */
+
+    var interviewScore =
+      getNumber(
+        interviews.averageScore
+      );
+
+
+    if (interviewScore === null) {
+
+      interviewScore = 0;
+
+    }
+
+
+    if (
+      interviewScore > 0 &&
+      interviewScore <= 10
+    ) {
+
+      interviewScore *= 10;
+
+    }
+
+
+    interviewScore =
+      Math.min(
+        100,
+        Math.round(
+          interviewScore
+        )
+      );
+
+
+    setText(
+      "dash-interview-val",
+      interviewScore + "%"
+    );
+
+
+    /*
+     * =====================================================
+     * 17. SKILL GAP CARD
+     * =====================================================
+     */
+
+    var missingSkills =
+      getMissingSkills(
+        skillGaps
+      );
+
+
+    var firstSkill =
+      getFirstSkill(
+        missingSkills
+      );
+
+
+    if (firstSkill) {
+
+      setText(
+        "dash-top-gap",
+        firstSkill
+      );
+
+
+      setText(
+        "dash-top-gap-desc",
+
+        missingSkills.length +
+        " skill gap(s) identified. Open Skill Gap to improve them."
+
+      );
+
+    } else {
+
+      setText(
+        "dash-top-gap",
+        "No critical skill gap yet"
+      );
+
+
+      setText(
+        "dash-top-gap-desc",
+
+        "Complete your career analysis to generate personalized skill recommendations."
+
+      );
+
+    }
+
+
+    /*
+     * =====================================================
+     * 18. TARGET CAREER
+     * =====================================================
+     */
+
+    var targetCareer =
+      profile.targetCareer ||
+      profile.targetRole ||
+      profile.careerGoal ||
+      "";
+
+
+    if (targetCareer) {
+
+      setText(
+        "dash-roadmap-title",
+
+        targetCareer +
+        " Roadmap"
+
+      );
+
+
+      setText(
+        "dash-roadmap-desc",
+
+        "Follow your personalized roadmap for " +
+        targetCareer +
+        "."
+
+      );
+
+    } else {
+
+      setText(
+        "dash-roadmap-title",
+        "Create your career roadmap"
+      );
+
+
+      setText(
+        "dash-roadmap-desc",
+
+        "Complete your profile and career analysis to generate a personalized plan."
+
+      );
+
+    }
+
+
+    /*
+     * =====================================================
+     * 19. JOURNEY
+     * =====================================================
+     */
+
+    updateJourneySteps(
+      profile,
+      recommendations,
+      skillGaps,
+      resumes,
+      interviews
+    );
+
+
+    /*
+     * =====================================================
+     * 20. ACTIVE NAVIGATION
+     * =====================================================
+     */
+
+    setActiveNavigation();
+
+
+    /*
+     * =====================================================
+     * 21. LOGOUT
+     * =====================================================
+     */
+
+    var logoutButton =
+      document.getElementById(
+        "logout-btn"
+      );
+
+
+    if (logoutButton) {
+
+      logoutButton.addEventListener(
+        "click",
+        function (event) {
+
+          event.preventDefault();
+
+
+          if (
+            CareerSetu.logout
+          ) {
+
+            CareerSetu.logout();
+
+          } else if (
+            CareerSetu.logOut
+          ) {
+
+            CareerSetu.logOut();
+
           }
 
-          // Fitness score
-          var fitScore = (recommendations.data && recommendations.data.readinessScore) ? recommendations.data.readinessScore : 81;
-          var fitEl = document.getElementById('dash-career-fit-val');
-          if (fitEl) fitEl.textContent = fitScore + '%';
-          var gaugeValEl = document.getElementById('dash-readiness-val');
-          if (gaugeValEl) gaugeValEl.textContent = fitScore + '%';
-
-          // Skills match
-          var skillsEl = document.getElementById('dash-skills-val');
-          if (skillsEl) {
-            var topGaps = (skillGaps.data && skillGaps.data.missingCriticalSkills) ? skillGaps.data.missingCriticalSkills : [];
-            var score = topGaps.length ? Math.max(50, 95 - (topGaps.length * 8)) : 74;
-            skillsEl.textContent = score + '%';
-          }
-
-          // Resume
-          var resumeScore = (resume.data && resume.data.atsScore) ? resume.data.atsScore : 72;
-          var resumeEl = document.getElementById('dash-resume-val');
-          if (resumeEl) resumeEl.textContent = resumeScore + '%';
-
-          // Interview
-          var interviewScore = interview.averageScore ? Math.round(interview.averageScore * 10) : 63;
-          var interviewEl = document.getElementById('dash-interview-val');
-          if (interviewEl) interviewEl.textContent = interviewScore + '%';
-
-          // Top gap
-          var gapEl = document.getElementById('dash-top-gap');
-          if (gapEl) {
-            var firstGap = (skillGaps.data && skillGaps.data.missingCriticalSkills && skillGaps.data.missingCriticalSkills[0])
-              ? skillGaps.data.missingCriticalSkills[0].skill : 'Machine Learning & Cloud Architecture';
-            gapEl.textContent = firstGap;
-          }
-
-          // Update pipeline step states
-          updateJourneySteps(profile, recommendations, resume, interview);
-        } catch (err) {
-          console.warn('Dashboard summary error:', err);
         }
+      );
+
+    }
+
+
+    /*
+     * =====================================================
+     * 22. MOBILE SIDEBAR
+     * =====================================================
+     */
+
+    var menuButton =
+      document.getElementById(
+        "mobile-menu-toggle"
+      );
+
+
+    var sidebar =
+      document.getElementById(
+        "app-sidebar"
+      );
+
+
+    if (
+      menuButton &&
+      sidebar
+    ) {
+
+      menuButton.addEventListener(
+        "click",
+        function () {
+
+          sidebar.classList.toggle(
+            "open"
+          );
+
+        }
+      );
+
+
+      sidebar
+        .querySelectorAll(
+          ".nav-item"
+        )
+        .forEach(
+          function (link) {
+
+            link.addEventListener(
+              "click",
+              function () {
+
+                sidebar.classList.remove(
+                  "open"
+                );
+
+              }
+            );
+
+          }
+        );
+
+    }
+
+  });
+
+
+/* =========================================================
+   HELPER
+========================================================= */
+
+function setText(
+  id,
+  value
+) {
+
+  var element =
+    document.getElementById(
+      id
+    );
+
+
+  if (element) {
+
+    element.textContent =
+      value;
+
+  }
+
+}
+
+
+/* =========================================================
+   NUMBER
+========================================================= */
+
+function getNumber(
+  value
+) {
+
+  if (
+    value === null ||
+    value === undefined ||
+    value === ""
+  ) {
+
+    return null;
+
+  }
+
+
+  var number =
+    Number(value);
+
+
+  if (
+    Number.isFinite(
+      number
+    )
+  ) {
+
+    return Math.round(
+      number
+    );
+
+  }
+
+
+  return null;
+
+}
+
+
+/* =========================================================
+   AVATAR
+========================================================= */
+
+function updateAvatar(
+  element,
+  name,
+  photoURL
+) {
+
+  if (!element) {
+
+    return;
+
+  }
+
+
+  element.innerHTML = "";
+
+
+  if (photoURL) {
+
+    var img =
+      document.createElement(
+        "img"
+      );
+
+
+    img.src =
+      photoURL;
+
+
+    img.alt =
+      name;
+
+
+    img.style.width =
+      "100%";
+
+
+    img.style.height =
+      "100%";
+
+
+    img.style.objectFit =
+      "cover";
+
+
+    img.style.borderRadius =
+      "50%";
+
+
+    img.style.display =
+      "block";
+
+
+    img.onerror =
+      function () {
+
+        element.innerHTML = "";
+
+        element.textContent =
+          getInitial(
+            name
+          );
+
+      };
+
+
+    element.appendChild(
+      img
+    );
+
+  } else {
+
+    element.textContent =
+      getInitial(
+        name
+      );
+
+  }
+
+}
+
+
+/* =========================================================
+   INITIAL
+========================================================= */
+
+function getInitial(
+  name
+) {
+
+  return (
+    String(
+      name || "Student"
+    )
+      .trim()
+      .charAt(0)
+      .toUpperCase()
+  ) || "S";
+
+}
+
+
+/* =========================================================
+   SKILLS
+========================================================= */
+
+function getMissingSkills(
+  skillGaps
+) {
+
+  var data =
+    skillGaps &&
+    skillGaps.data;
+
+
+  if (
+    !data ||
+    !Array.isArray(
+      data.missingCriticalSkills
+    )
+  ) {
+
+    return [];
+
+  }
+
+
+  return data.missingCriticalSkills;
+
+}
+
+
+/* =========================================================
+   FIRST SKILL
+========================================================= */
+
+function getFirstSkill(
+  skills
+) {
+
+  if (!skills.length) {
+
+    return "";
+
+  }
+
+
+  var item =
+    skills[0];
+
+
+  if (
+    typeof item ===
+    "string"
+  ) {
+
+    return item;
+
+  }
+
+
+  if (
+    item &&
+    item.skill
+  ) {
+
+    return item.skill;
+
+  }
+
+
+  if (
+    item &&
+    item.name
+  ) {
+
+    return item.name;
+
+  }
+
+
+  if (
+    item &&
+    item.title
+  ) {
+
+    return item.title;
+
+  }
+
+
+  return "";
+
+}
+
+
+/* =========================================================
+   GAUGE
+========================================================= */
+
+function updateGauge(
+  score
+) {
+
+  var progress =
+    document.getElementById(
+      "dash-gauge-progress"
+    );
+
+
+  if (!progress) {
+
+    return;
+
+  }
+
+
+  var circumference =
+    364.4;
+
+
+  var safeScore =
+    Math.max(
+      0,
+      Math.min(
+        100,
+        Number(score) || 0
+      )
+    );
+
+
+  var offset =
+    circumference -
+    (
+      circumference *
+      safeScore /
+      100
+    );
+
+
+  progress.style.strokeDasharray =
+    circumference;
+
+
+  progress.style.strokeDashoffset =
+    offset;
+
+
+  var label =
+    document.getElementById(
+      "dash-readiness-change"
+    );
+
+
+  if (!label) {
+
+    return;
+
+  }
+
+
+  if (safeScore >= 80) {
+
+    label.textContent =
+      "Strong progress";
+
+  } else if (
+    safeScore >= 60
+  ) {
+
+    label.textContent =
+      "Good progress";
+
+  } else if (
+    safeScore > 0
+  ) {
+
+    label.textContent =
+      "Keep building";
+
+  } else {
+
+    label.textContent =
+      "Complete your profile";
+
+  }
+
+}
+
+
+/* =========================================================
+   PIPELINE
+========================================================= */
+
+function updateJourneySteps(
+  profile,
+  recommendations,
+  skillGaps,
+  resumes,
+  interviews
+) {
+
+  var steps = [
+
+    "step-profile",
+    "step-career",
+    "step-skills",
+    "step-learning",
+    "step-opportunities",
+    "step-prep",
+    "step-readiness"
+
+  ];
+
+
+  steps.forEach(
+    function (id) {
+
+      var element =
+        document.getElementById(
+          id
+        );
+
+
+      if (element) {
+
+        element.classList.remove(
+          "completed",
+          "active-step"
+        );
+
       }
 
-      function updateJourneySteps(profile, recs, resume, interview) {
-        if (profile.fullName) markStep('step-profile', 'completed');
-        if (recs && recs.data) markStep('step-career', 'completed');
-        markStep('step-skills', 'completed');
-        markStep('step-learning', 'completed');
-        markStep('step-opportunities', 'active-step');
-        if (resume && resume.data) markStep('step-prep', 'completed');
-        markStep('step-readiness', 'active-step');
-      }
+    }
+  );
 
-      function markStep(id, cls) {
-        var el = document.getElementById(id);
-        if (el) el.classList.add(cls);
+
+  /*
+   * PROFILE
+   */
+
+  if (
+    profile &&
+    profile.fullName
+  ) {
+
+    markStep(
+      "step-profile",
+      "completed"
+    );
+
+  } else {
+
+    markStep(
+      "step-profile",
+      "active-step"
+    );
+
+    return;
+
+  }
+
+
+  /*
+   * CAREER
+   */
+
+  if (
+    recommendations &&
+    recommendations.data
+  ) {
+
+    markStep(
+      "step-career",
+      "completed"
+    );
+
+  } else {
+
+    markStep(
+      "step-career",
+      "active-step"
+    );
+
+    return;
+
+  }
+
+
+  /*
+   * SKILL GAP
+   */
+
+  if (
+    skillGaps &&
+    skillGaps.data
+  ) {
+
+    markStep(
+      "step-skills",
+      "completed"
+    );
+
+  } else {
+
+    markStep(
+      "step-skills",
+      "active-step"
+    );
+
+    return;
+
+  }
+
+
+  /*
+   * ROADMAP
+   */
+
+  markStep(
+    "step-learning",
+    "active-step"
+  );
+
+
+  /*
+   * OPPORTUNITIES
+   */
+
+  markStep(
+    "step-opportunities",
+    "active-step"
+  );
+
+
+  /*
+   * RESUME
+   */
+
+  if (
+    resumes &&
+    resumes.data
+  ) {
+
+    markStep(
+      "step-prep",
+      "completed"
+    );
+
+  } else {
+
+    markStep(
+      "step-prep",
+      "active-step"
+    );
+
+  }
+
+
+  /*
+   * INTERVIEW
+   */
+
+  if (
+    interviews &&
+    (
+      interviews.averageScore ||
+      interviews.data
+    )
+  ) {
+
+    markStep(
+      "step-readiness",
+      "completed"
+    );
+
+  } else {
+
+    markStep(
+      "step-readiness",
+      "active-step"
+    );
+
+  }
+
+}
+
+
+/* =========================================================
+   MARK STEP
+========================================================= */
+
+function markStep(
+  id,
+  className
+) {
+
+  var element =
+    document.getElementById(
+      id
+    );
+
+
+  if (element) {
+
+    element.classList.add(
+      className
+    );
+
+  }
+
+}
+
+
+/* =========================================================
+   ACTIVE SIDEBAR
+========================================================= */
+
+function setActiveNavigation() {
+
+  var currentPage =
+    window.location.pathname
+      .split("/")
+      .pop()
+      .toLowerCase();
+
+
+  if (!currentPage) {
+
+    currentPage =
+      "dashboard.html";
+
+  }
+
+
+  document
+    .querySelectorAll(
+      ".sidebar-nav .nav-item"
+    )
+    .forEach(
+      function (link) {
+
+        var href =
+          link.getAttribute(
+            "href"
+          ) || "";
+
+
+        var page =
+          href
+            .split("/")
+            .pop()
+            .toLowerCase();
+
+
+        link.classList.remove(
+          "active"
+        );
+
+
+        if (
+          page ===
+          currentPage
+        ) {
+
+          link.classList.add(
+            "active"
+          );
+
+        }
+
       }
-    });
-  </script>
+    );
+
+}
+
+</script>
+
 </body>
 </html>

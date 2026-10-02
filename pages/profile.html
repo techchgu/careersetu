@@ -3,57 +3,146 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Student Profile Setup / Onboarding — CareerSetu AI</title>
+
+  <title>My Profile — CareerSetu AI</title>
+
+  <!-- Existing Project CSS -->
   <link rel="stylesheet" href="../css/style.css">
   <link rel="stylesheet" href="../css/dashboard.css">
   <link rel="stylesheet" href="../css/responsive.css">
 
-  <!-- CareerSetu Universal Core (Instant 0ms Load) -->
+  <!-- Firebase Compat -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+
+  <!-- CareerSetu Core -->
   <script src="../js/careersetu-core.js"></script>
-  <!-- Optional Background Firebase SDK -->
-  <script defer src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-  <script defer src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
-  <script defer src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+
+  <!-- PDF Generator -->
+  <script
+    src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js">
+  </script>
 
   <style>
-    /* Multi-Step Stepper Layout matching Screenshot */
+    /* =========================================================
+       PROFILE PAGE — GLOBAL
+    ========================================================= */
+
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      width: 100%;
+      max-width: 100%;
+      overflow-x: hidden;
+    }
+
+    body {
+      margin: 0;
+      background: #f8fafc;
+    }
+
+    .profile-page-container {
+      width: 100%;
+      max-width: 1180px;
+      margin: 0 auto;
+    }
+
+    .profile-main-card {
+      width: 100%;
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 20px;
+      box-shadow: 0 10px 35px rgba(15, 23, 42, 0.06);
+      overflow: hidden;
+    }
+
+    /* =========================================================
+       TOP STATUS
+    ========================================================= */
+
+    .profile-status-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      padding: 12px 18px;
+      background: #f8fafc;
+      border-bottom: 1px solid #e2e8f0;
+      flex-wrap: wrap;
+    }
+
+    .profile-status-left {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: #475569;
+    }
+
+    .profile-save-dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: #10b981;
+      box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.12);
+    }
+
+    .profile-save-dot.saving {
+      background: #f59e0b;
+      box-shadow: 0 0 0 4px rgba(245, 158, 11, 0.12);
+    }
+
+    .profile-save-dot.error {
+      background: #ef4444;
+      box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.12);
+    }
+
+    /* =========================================================
+       ONBOARDING LAYOUT
+    ========================================================= */
+
     .onboarding-card-grid {
       display: grid;
-      grid-template-columns: 240px 1fr;
-      gap: 2rem;
-      background: #ffffff;
-      border-radius: var(--radius-xl);
-      border: 1px solid var(--border-color);
-      box-shadow: var(--shadow-md);
-      overflow: hidden;
-      min-height: 560px;
+      grid-template-columns: 240px minmax(0, 1fr);
+      width: 100%;
+      min-height: 700px;
     }
 
     .onboarding-sidebar {
       background: #fcfdfe;
-      border-right: 1px solid var(--border-color);
-      padding: 2rem 1.25rem;
+      border-right: 1px solid #e2e8f0;
+      padding: 28px 18px;
     }
 
     .step-nav-list {
-      list-style: none;
       display: flex;
       flex-direction: column;
-      gap: 0.75rem;
+      gap: 9px;
+      list-style: none;
+      margin: 0;
+      padding: 0;
     }
 
     .step-nav-item {
       display: flex;
       align-items: center;
-      gap: 0.85rem;
-      padding: 0.75rem 1rem;
-      border-radius: var(--radius-full);
-      font-size: 0.92rem;
-      font-weight: 600;
+      gap: 12px;
+      width: 100%;
+      padding: 10px 12px;
+      border-radius: 12px;
       color: #64748b;
+      font-size: 0.9rem;
+      font-weight: 700;
       cursor: pointer;
-      transition: var(--transition);
       user-select: none;
+      transition: 0.2s ease;
     }
 
     .step-nav-item:hover {
@@ -64,7 +153,6 @@
     .step-nav-item.active {
       background: #eef2ff;
       color: #4f46e5;
-      font-weight: 700;
     }
 
     .step-nav-item.completed {
@@ -72,17 +160,17 @@
     }
 
     .step-badge-num {
-      width: 26px;
-      height: 26px;
+      width: 30px;
+      height: 30px;
+      min-width: 30px;
       border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
       background: #e2e8f0;
       color: #475569;
-      font-size: 0.8rem;
-      font-weight: 700;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: var(--transition);
+      font-size: 0.78rem;
+      font-weight: 800;
     }
 
     .step-nav-item.active .step-badge-num {
@@ -95,1118 +183,7072 @@
       color: #ffffff;
     }
 
+    /* =========================================================
+       CONTENT
+    ========================================================= */
+
     .onboarding-content-panel {
-      padding: 2.25rem 2.5rem;
+      min-width: 0;
+      padding: 32px;
+      overflow: hidden;
     }
 
     .step-pane {
       display: none;
-      animation: fadeIn 0.15s ease-in-out;
+      width: 100%;
+      min-width: 0;
+      animation: profileFade 0.18s ease;
     }
 
     .step-pane.active {
       display: block;
     }
 
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(4px); }
-      to { opacity: 1; transform: translateY(0); }
+    @keyframes profileFade {
+      from {
+        opacity: 0;
+        transform: translateY(4px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
 
     .step-header {
-      margin-bottom: 1.75rem;
-      border-bottom: 1px solid var(--border-color);
-      padding-bottom: 1rem;
+      margin-bottom: 24px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid #e2e8f0;
     }
 
     .step-header h2 {
-      font-size: 1.55rem;
-      font-weight: 800;
+      margin: 0 0 6px;
+      font-size: 1.5rem;
       color: #0f172a;
-      letter-spacing: -0.02em;
-      margin-bottom: 0.35rem;
+      font-weight: 800;
     }
 
     .step-header p {
-      font-size: 0.9rem;
-      color: var(--text-muted);
+      margin: 0;
+      color: #64748b;
+      font-size: 0.88rem;
+      line-height: 1.55;
     }
+
+    /* =========================================================
+       FORM
+    ========================================================= */
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .form-group {
+      margin-bottom: 16px;
+      min-width: 0;
+    }
+
+    .form-label {
+      display: block;
+      margin-bottom: 7px;
+      color: #334155;
+      font-size: 0.82rem;
+      font-weight: 700;
+    }
+
+    .form-control {
+      width: 100%;
+      min-height: 44px;
+      padding: 10px 12px;
+      border: 1px solid #cbd5e1;
+      border-radius: 10px;
+      background: #ffffff;
+      color: #0f172a;
+      outline: none;
+      font-size: 0.88rem;
+      transition: 0.2s ease;
+    }
+
+    textarea.form-control {
+      min-height: 110px;
+      resize: vertical;
+    }
+
+    .form-control:focus {
+      border-color: #818cf8;
+      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+    }
+
+    /* =========================================================
+       ACTION BAR
+    ========================================================= */
 
     .step-action-bar {
       display: flex;
-      justify-content: space-between;
       align-items: center;
-      margin-top: 2rem;
-      padding-top: 1.25rem;
-      border-top: 1px solid var(--border-color);
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 26px;
+      padding-top: 18px;
+      border-top: 1px solid #e2e8f0;
     }
 
-    /* Skill & Interest Chips */
+    .profile-actions-right {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    /* =========================================================
+       AVATAR
+    ========================================================= */
+
+    .avatar-uploader-card {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      padding: 16px;
+      margin-bottom: 20px;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 16px;
+    }
+
+    .avatar-ring {
+      position: relative;
+      width: 96px;
+      height: 96px;
+      padding: 3px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #4f46e5, #38bdf8);
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+
+    .avatar-inner {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      background: #ffffff;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .avatar-image {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .avatar-fallback {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #eef2ff;
+      color: #4f46e5;
+      font-size: 2rem;
+      font-weight: 800;
+    }
+
+    .camera-badge {
+      position: absolute;
+      right: -2px;
+      bottom: -2px;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      border: 1px solid #dbe4ee;
+      background: #ffffff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 12px rgba(15, 23, 42, 0.12);
+    }
+
+    .avatar-info h3 {
+      margin: 0;
+      color: #0f172a;
+      font-size: 1rem;
+      font-weight: 800;
+    }
+
+    .avatar-info p {
+      margin: 4px 0 10px;
+      color: #64748b;
+      font-size: 0.78rem;
+      line-height: 1.45;
+    }
+
+    .avatar-buttons {
+      display: flex;
+      gap: 7px;
+      flex-wrap: wrap;
+    }
+
+    .preset-row {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      margin-top: 9px;
+    }
+
+    .preset-chip {
+      border: 1px solid #dbe4ee;
+      background: #ffffff;
+      color: #334155;
+      border-radius: 999px;
+      padding: 5px 9px;
+      cursor: pointer;
+      font-size: 0.7rem;
+      font-weight: 700;
+    }
+
+    .preset-chip:hover {
+      background: #eef2ff;
+      border-color: #c7d2fe;
+    }
+
+    /* =========================================================
+       SKILLS
+    ========================================================= */
+
     .chip-container {
       display: flex;
       flex-wrap: wrap;
-      gap: 0.5rem;
-      margin-top: 0.5rem;
+      gap: 7px;
+      margin-top: 8px;
     }
 
     .skill-chip {
-      padding: 0.4rem 0.85rem;
-      background: #f1f5f9;
       border: 1px solid #cbd5e1;
-      border-radius: var(--radius-full);
-      font-size: 0.82rem;
-      font-weight: 600;
+      background: #f8fafc;
       color: #334155;
+      border-radius: 999px;
+      padding: 6px 10px;
+      font-size: 0.74rem;
+      font-weight: 700;
       cursor: pointer;
-      transition: var(--transition);
-      user-select: none;
+      transition: 0.2s ease;
     }
 
     .skill-chip:hover {
-      background: #e2e8f0;
+      border-color: #a5b4fc;
     }
 
     .skill-chip.selected {
       background: #4f46e5;
-      color: #ffffff;
       border-color: #4f46e5;
+      color: #ffffff;
     }
 
-    /* Target Career Selection Cards */
-    .target-role-card {
-      background: #f8fafc;
-      border: 1.5px solid var(--border-color);
-      border-radius: var(--radius-lg);
-      padding: 1.25rem;
-      cursor: pointer;
-      transition: var(--transition);
+    /* =========================================================
+       INTEREST CARDS
+    ========================================================= */
+
+    .interest-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .interest-card {
       display: flex;
-      flex-direction: column;
-      gap: 0.4rem;
+      align-items: center;
+      gap: 9px;
+      padding: 12px;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+
+    .interest-card input {
+      accent-color: #4f46e5;
+    }
+
+    .interest-card span {
+      color: #334155;
+      font-size: 0.79rem;
+      font-weight: 700;
+      line-height: 1.35;
+    }
+
+    /* =========================================================
+       CAREER CARDS
+    ========================================================= */
+
+    .target-role-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .target-role-card {
+      padding: 16px;
+      border: 1.5px solid #dbe4ee;
+      border-radius: 14px;
+      background: #f8fafc;
+      cursor: pointer;
+      transition: 0.2s ease;
     }
 
     .target-role-card:hover {
-      border-color: #93c5fd;
-      background: #f0f7ff;
       transform: translateY(-2px);
+      border-color: #a5b4fc;
+      background: #f5f7ff;
     }
 
     .target-role-card.selected {
       border-color: #4f46e5;
       background: #eef2ff;
-      box-shadow: 0 4px 12px rgba(79, 70, 229, 0.15);
+      box-shadow: 0 7px 18px rgba(79, 70, 229, 0.12);
     }
 
-    .role-card-title {
-      font-size: 1.05rem;
-      font-weight: 700;
+    .role-title {
       color: #0f172a;
+      font-size: 0.95rem;
+      font-weight: 800;
+    }
+
+    .role-tag {
+      margin-top: 5px;
+      color: #059669;
+      font-size: 0.72rem;
+      font-weight: 800;
+    }
+
+    .role-description {
+      margin: 7px 0 0;
+      color: #64748b;
+      font-size: 0.76rem;
+      line-height: 1.45;
+    }
+
+    /* =========================================================
+       RESUME BUILDER
+    ========================================================= */
+
+    .resume-builder {
+      margin-top: 12px;
+    }
+
+    .resume-builder-title {
+      margin-bottom: 14px;
+    }
+
+    .resume-builder-title h3 {
+      margin: 0;
+      color: #0f172a;
+      font-size: 1.15rem;
+      font-weight: 800;
+    }
+
+    .resume-builder-title p {
+      margin: 5px 0 0;
+      color: #64748b;
+      font-size: 0.82rem;
+      line-height: 1.45;
+    }
+
+    .resume-template-grid {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .resume-template-card {
+      position: relative;
+      padding: 8px;
+      border: 1.5px solid #dbe4ee;
+      border-radius: 13px;
+      background: #ffffff;
+      cursor: pointer;
+      transition: 0.2s ease;
+    }
+
+    .resume-template-card:hover {
+      transform: translateY(-3px);
+      border-color: #a5b4fc;
+      box-shadow: 0 10px 25px rgba(15, 23, 42, 0.08);
+    }
+
+    .resume-template-card.selected {
+      border-color: #4f46e5;
+      box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.12);
+    }
+
+    .template-check {
+      position: absolute;
+      top: 7px;
+      right: 7px;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
       display: flex;
       align-items: center;
-      gap: 0.5rem;
-    }
-
-    .role-card-salary {
-      font-size: 0.8rem;
-      font-weight: 600;
-      color: #059669;
-    }
-
-    .role-card-desc {
-      font-size: 0.82rem;
-      color: #64748b;
-      line-height: 1.4;
-    }
-
-    /* Resume Preview Card */
-    .resume-preview-sheet {
+      justify-content: center;
       background: #ffffff;
       border: 1px solid #cbd5e1;
-      border-radius: 12px;
-      padding: 2rem;
-      box-shadow: var(--shadow-sm);
-      font-family: 'Inter', sans-serif;
-      color: #1e293b;
+      color: transparent;
+      font-size: 0.7rem;
+      font-weight: 800;
+      z-index: 2;
     }
 
-    .resume-header {
-      border-bottom: 2px solid #3b82f6;
-      padding-bottom: 1rem;
-      margin-bottom: 1.25rem;
+    .resume-template-card.selected .template-check {
+      background: #4f46e5;
+      border-color: #4f46e5;
+      color: #ffffff;
+    }
+
+    .mini-preview {
+      height: 150px;
+      padding: 8px;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .mini-color-bar {
+      height: 24px;
+      border-radius: 4px;
+      margin-bottom: 8px;
+      background: #4f46e5;
+    }
+
+    .mini-name {
+      height: 6px;
+      width: 64%;
+      background: #334155;
+      border-radius: 20px;
+      margin-bottom: 5px;
+    }
+
+    .mini-small {
+      height: 4px;
+      width: 44%;
+      background: #cbd5e1;
+      border-radius: 20px;
+      margin-bottom: 8px;
+    }
+
+    .mini-columns {
+      display: grid;
+      grid-template-columns: 30% 1fr;
+      gap: 5px;
+      height: 94px;
+    }
+
+    .mini-left {
+      background: #e0e7ff;
+      border-radius: 4px;
+    }
+
+    .mini-right {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .mini-line {
+      height: 4px;
+      width: 100%;
+      background: #cbd5e1;
+      border-radius: 20px;
+    }
+
+    .mini-line.short {
+      width: 60%;
+    }
+
+    .mini-line.medium {
+      width: 76%;
+    }
+
+    .template-name {
+      margin-top: 7px;
+      color: #0f172a;
+      font-size: 0.78rem;
+      font-weight: 800;
+    }
+
+    .template-desc {
+      margin-top: 3px;
+      color: #64748b;
+      font-size: 0.65rem;
+      line-height: 1.35;
+    }
+
+    .modern-mini .mini-color-bar {
+      background: linear-gradient(135deg, #4f46e5, #2563eb);
+    }
+
+    .ats-mini .mini-color-bar {
+      background: #111827;
+    }
+
+    .fresher-mini .mini-color-bar {
+      background: #0f766e;
+    }
+
+    .creative-mini .mini-color-bar {
+      background: linear-gradient(135deg, #ec4899, #8b5cf6);
+    }
+
+    .minimal-mini .mini-color-bar {
+      background: #475569;
+    }
+
+    /* =========================================================
+       RESUME TOOLBAR
+    ========================================================= */
+
+    .resume-toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin: 15px 0 10px;
+      flex-wrap: wrap;
+    }
+
+    .selected-design-text {
+      color: #475569;
+      font-size: 0.84rem;
+      font-weight: 700;
+    }
+
+    .selected-design-text strong {
+      color: #4f46e5;
+    }
+
+    .resume-download-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      min-height: 42px;
+      padding: 10px 15px;
+      border: 0;
+      border-radius: 10px;
+      background: linear-gradient(135deg, #4f46e5, #2563eb);
+      color: #ffffff;
+      font-size: 0.82rem;
+      font-weight: 800;
+      cursor: pointer;
+      box-shadow: 0 8px 18px rgba(37, 99, 235, 0.16);
+    }
+
+    .resume-download-btn:hover {
+      transform: translateY(-1px);
+    }
+
+    .resume-download-btn:disabled {
+      opacity: 0.6;
+      cursor: wait;
+      transform: none;
+    }
+
+    /* =========================================================
+       RESUME PREVIEW
+    ========================================================= */
+
+    .resume-preview-shell {
+      width: 100%;
+      padding: 12px;
+      background: #eef2f7;
+      border: 1px solid #dbe4ee;
+      border-radius: 14px;
+      overflow-x: auto;
+    }
+
+    .resume-sheet {
+      width: 794px;
+      min-height: 1123px;
+      margin: 0 auto;
+      padding: 56px;
+      position: relative;
+      overflow: hidden;
+      background: #ffffff;
+      color: #111827;
+      font-family: Arial, Helvetica, sans-serif;
+      box-shadow: 0 16px 45px rgba(15, 23, 42, 0.12);
+    }
+
+    .resume-sheet-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 20px;
     }
 
     .resume-name {
-      font-size: 1.6rem;
-      font-weight: 800;
+      margin: 0;
       color: #0f172a;
+      font-size: 31px;
+      line-height: 1.08;
+      font-weight: 800;
+    }
+
+    .resume-target {
+      margin-top: 7px;
+      color: #4f46e5;
+      font-size: 13px;
+      font-weight: 800;
     }
 
     .resume-contact {
-      font-size: 0.85rem;
-      color: #64748b;
       display: flex;
-      gap: 1rem;
+      align-items: center;
       flex-wrap: wrap;
-      margin-top: 0.35rem;
+      gap: 7px 12px;
+      margin-top: 9px;
+      color: #475569;
+      font-size: 10.5px;
+    }
+
+    .resume-photo,
+    .resume-initial {
+      width: 80px;
+      height: 80px;
+      min-width: 80px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+
+    .resume-photo {
+      border: 3px solid #e2e8f0;
+    }
+
+    .resume-initial {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #eef2ff;
+      color: #4f46e5;
+      border: 3px solid #dbeafe;
+      font-size: 29px;
+      font-weight: 800;
+    }
+
+    .resume-divider {
+      width: 100%;
+      height: 2px;
+      margin: 18px 0 15px;
+      background: #e2e8f0;
+    }
+
+    .resume-section {
+      margin-bottom: 17px;
     }
 
     .resume-section-title {
-      font-size: 0.95rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
+      margin-bottom: 7px;
+      padding-bottom: 4px;
       color: #1e40af;
-      margin-bottom: 0.5rem;
       border-bottom: 1px solid #e2e8f0;
-      padding-bottom: 0.25rem;
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
     }
 
-    /* Rec Hub Cards (Like Internshala/Unstop/Apna) */
-    .rec-item-card {
-      background: #ffffff;
-      border: 1px solid var(--border-color);
-      border-radius: 12px;
-      padding: 1rem;
-      transition: var(--transition);
+    .resume-section p,
+    .resume-section li {
+      margin: 0;
+      color: #334155;
+      font-size: 10.5px;
+      line-height: 1.6;
+    }
+
+    .resume-section ul {
+      margin: 5px 0 0 16px;
+      padding: 0;
+    }
+
+    .resume-two-column {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 215px;
+      gap: 18px;
+    }
+
+    .resume-side-box {
+      height: fit-content;
+      padding: 12px;
+      border: 1px solid #e2e8f0;
+      border-radius: 10px;
+      background: #f8fafc;
+    }
+
+    .resume-edu-row {
       display: flex;
+      align-items: flex-start;
       justify-content: space-between;
-      align-items: center;
-      gap: 1rem;
+      gap: 14px;
     }
 
-    .rec-item-card:hover {
-      box-shadow: var(--shadow-md);
+    .resume-edu-main {
+      color: #0f172a;
+      font-size: 11px;
+      font-weight: 800;
+    }
+
+    .resume-edu-sub {
+      margin-top: 3px;
+      color: #64748b;
+      font-size: 9.8px;
+    }
+
+    .resume-edu-score {
+      color: #475569;
+      font-size: 9.4px;
+      line-height: 1.5;
+      white-space: nowrap;
+      text-align: right;
+    }
+
+    .resume-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+      margin-top: 5px;
+    }
+
+    .resume-tag {
+      padding: 4px 7px;
+      border-radius: 999px;
+      border: 1px solid #dbe4ee;
+      background: #ffffff;
+      color: #334155;
+      font-size: 9px;
+      font-weight: 700;
+    }
+
+    .resume-project {
+      padding: 10px;
+      border: 1px solid #e2e8f0;
+      border-radius: 9px;
+      background: #ffffff;
+    }
+
+    .resume-project-title {
+      color: #0f172a;
+      font-size: 11px;
+      font-weight: 800;
+    }
+
+    .resume-project-desc {
+      margin-top: 5px !important;
+    }
+
+    .resume-footer {
+      position: absolute;
+      left: 56px;
+      right: 56px;
+      bottom: 25px;
+      padding-top: 8px;
+      border-top: 1px solid #e5e7eb;
+      color: #94a3b8;
+      font-size: 8px;
+      text-align: center;
+    }
+
+    /* ATS */
+    .resume-sheet.ats {
+      border-top: 0;
+      box-shadow: none;
+    }
+
+    .resume-sheet.ats .resume-sheet-header {
+      display: block;
+      text-align: center;
+    }
+
+    .resume-sheet.ats .resume-photo,
+    .resume-sheet.ats .resume-initial {
+      display: none;
+    }
+
+    .resume-sheet.ats .resume-name {
+      font-size: 28px;
+      text-transform: uppercase;
+    }
+
+    .resume-sheet.ats .resume-target {
+      color: #111827;
+    }
+
+    .resume-sheet.ats .resume-contact {
+      justify-content: center;
+    }
+
+    .resume-sheet.ats .resume-divider {
+      height: 1px;
+      background: #111827;
+    }
+
+    .resume-sheet.ats .resume-section-title {
+      color: #111827;
+    }
+
+    /* Fresher */
+    .resume-sheet.fresher {
+      border-left: 11px solid #0f766e;
+    }
+
+    .resume-sheet.fresher .resume-target,
+    .resume-sheet.fresher .resume-section-title {
+      color: #0f766e;
+    }
+
+    .resume-sheet.fresher .resume-side-box {
+      background: #f0fdfa;
+      border-color: #ccfbf1;
+    }
+
+    /* Creative */
+    .resume-sheet.creative {
+      padding: 0;
+    }
+
+    .creative-head {
+      padding: 45px 56px;
+      background: linear-gradient(135deg, #ec4899, #8b5cf6);
+    }
+
+    .creative-head .resume-name {
+      color: #ffffff;
+    }
+
+    .creative-head .resume-target {
+      color: #fdf4ff;
+    }
+
+    .creative-head .resume-contact {
+      color: #fce7f3;
+    }
+
+    .creative-head .resume-photo {
+      border-color: rgba(255, 255, 255, 0.85);
+    }
+
+    .creative-head .resume-initial {
+      color: #ffffff;
+      background: rgba(255, 255, 255, 0.15);
+      border-color: rgba(255, 255, 255, 0.55);
+    }
+
+    .creative-body {
+      padding: 28px 56px 60px;
+    }
+
+    .resume-sheet.creative .resume-section-title {
+      color: #7c3aed;
+    }
+
+    /* Minimal */
+    .resume-sheet.minimal {
+      border: 0;
+      box-shadow: none;
+    }
+
+    .resume-sheet.minimal .resume-target {
+      color: #334155;
+    }
+
+    .resume-sheet.minimal .resume-divider {
+      height: 1px;
+    }
+
+    .resume-sheet.minimal .resume-section-title {
+      color: #334155;
+    }
+
+    /* =========================================================
+       RECOMMENDATION CARDS
+    ========================================================= */
+
+    .recommendation-section {
+      margin-top: 25px;
+    }
+
+    .recommendation-section h3 {
+      margin: 0;
+      color: #0f172a;
+      font-size: 1.1rem;
+      font-weight: 800;
+    }
+
+    .recommendation-section > p {
+      margin: 5px 0 14px;
+      color: #64748b;
+      font-size: 0.8rem;
+    }
+
+    .recommendation-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .recommendation-card {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      padding: 13px;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      background: #ffffff;
+    }
+
+    .recommendation-card:hover {
       border-color: #bfdbfe;
+      box-shadow: 0 7px 20px rgba(15, 23, 42, 0.05);
+    }
+
+    .recommendation-left {
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      min-width: 0;
+    }
+
+    .recommendation-icon {
+      width: 46px;
+      height: 46px;
+      border-radius: 11px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #eef2ff;
+      font-size: 1.25rem;
+      flex-shrink: 0;
+    }
+
+    .recommendation-info strong {
+      color: #0f172a;
+      font-size: 0.85rem;
+    }
+
+    .recommendation-info p {
+      margin: 3px 0 0;
+      color: #64748b;
+      font-size: 0.74rem;
+      line-height: 1.35;
+    }
+
+    /* =========================================================
+       ALERT
+    ========================================================= */
+
+    .profile-alert {
+      margin-bottom: 14px;
+      padding: 11px 13px;
+      border-radius: 10px;
+      border: 1px solid #bfdbfe;
+      background: #eff6ff;
+      color: #1e40af;
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+
+    .profile-alert.success {
+      border-color: #a7f3d0;
+      background: #ecfdf5;
+      color: #047857;
+    }
+
+    .profile-alert.error {
+      border-color: #fecdd3;
+      background: #fff1f2;
+      color: #b91c1c;
+    }
+
+    /* =========================================================
+       RESPONSIVE
+    ========================================================= */
+
+    @media (max-width: 1100px) {
+
+      .resume-template-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
     }
 
     @media (max-width: 860px) {
+
       .onboarding-card-grid {
         grid-template-columns: 1fr;
       }
+
       .onboarding-sidebar {
         border-right: none;
-        border-bottom: 1px solid var(--border-color);
-        padding: 1.25rem;
+        border-bottom: 1px solid #e2e8f0;
+        padding: 12px;
       }
+
       .step-nav-list {
         flex-direction: row;
         overflow-x: auto;
+        padding-bottom: 3px;
       }
+
+      .step-nav-item {
+        min-width: max-content;
+      }
+
       .onboarding-content-panel {
-        padding: 1.5rem;
+        padding: 20px;
       }
+
+      .grid-2,
+      .grid-3,
+      .interest-grid,
+      .target-role-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .resume-template-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .resume-two-column {
+        grid-template-columns: 1fr;
+      }
+
+      .resume-preview-shell {
+        padding: 8px;
+      }
+
+      .recommendation-card {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+    }
+
+    @media (max-width: 600px) {
+
+      .avatar-uploader-card {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .profile-actions-right {
+        width: 100%;
+      }
+
+      .profile-actions-right .btn {
+        flex: 1;
+      }
+
+      .resume-template-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .resume-toolbar {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .resume-download-btn {
+        width: 100%;
+      }
+
+      .resume-sheet {
+        margin: 0;
+      }
+
     }
   </style>
 </head>
+
 <body>
 
-  <div class="app-layout">
-    <!-- Dark Navy Sidebar (Poster) -->
-    <aside class="app-sidebar">
-      <div class="sidebar-brand">
-        <a href="../index.html" class="flex-align" style="gap: 0.5rem; text-decoration: none;">
-          <svg width="28" height="28" viewBox="0 0 64 64" fill="none">
-            <rect width="64" height="64" rx="14" fill="#4f46e5" />
-            <path d="M14 44 C22 28, 42 28, 50 44" stroke="#ffffff" stroke-width="4" stroke-linecap="round" />
-            <path d="M20 44 L20 35 M32 44 L32 30 M44 44 L44 35" stroke="#ffffff" stroke-width="3" stroke-linecap="round" />
-            <circle cx="32" cy="20" r="5" fill="#38bdf8" />
-          </svg>
-          <span class="brand-title">CareerSetu <span class="brand-badge">AI</span></span>
-        </a>
+<div class="app-layout">
+
+  <!-- ======================================================
+       SIDEBAR
+  ======================================================= -->
+
+  <aside class="app-sidebar">
+
+    <div class="sidebar-brand">
+
+      <a
+        href="../index.html"
+        class="flex-align"
+        style="gap:0.5rem;text-decoration:none;"
+      >
+
+        <svg
+          width="28"
+          height="28"
+          viewBox="0 0 64 64"
+          fill="none"
+        >
+          <rect
+            width="64"
+            height="64"
+            rx="14"
+            fill="#4f46e5"
+          />
+
+          <path
+            d="M14 44 C22 28,42 28,50 44"
+            stroke="#fff"
+            stroke-width="4"
+            stroke-linecap="round"
+          />
+
+          <path
+            d="M20 44 L20 35 M32 44 L32 30 M44 44 L44 35"
+            stroke="#fff"
+            stroke-width="3"
+            stroke-linecap="round"
+          />
+
+          <circle
+            cx="32"
+            cy="20"
+            r="5"
+            fill="#38bdf8"
+          />
+
+        </svg>
+
+        <span class="brand-title">
+          CareerSetu
+          <span class="brand-badge">AI</span>
+        </span>
+
+      </a>
+
+    </div>
+
+
+    <nav class="sidebar-nav">
+
+      <a
+        href="dashboard.html"
+        class="nav-item"
+      >
+        <span class="nav-icon">📊</span>
+        Dashboard
+      </a>
+
+      <a
+        href="profile.html"
+        class="nav-item active"
+      >
+        <span class="nav-icon">👤</span>
+        My Profile
+      </a>
+
+      <a
+        href="career.html"
+        class="nav-item"
+      >
+        <span class="nav-icon">🧭</span>
+        My Career
+      </a>
+
+      <a
+        href="skill-gap.html"
+        class="nav-item"
+      >
+        <span class="nav-icon">📈</span>
+        Skill Gap
+      </a>
+
+      <a
+        href="roadmap.html"
+        class="nav-item"
+      >
+        <span class="nav-icon">🗺️</span>
+        Roadmap
+      </a>
+
+      <a
+        href="opportunities.html"
+        class="nav-item"
+      >
+        <span class="nav-icon">💼</span>
+        Opportunities
+      </a>
+
+      <a
+        href="resume.html"
+        class="nav-item"
+      >
+        <span class="nav-icon">📄</span>
+        Resume AI
+      </a>
+
+      <a
+        href="interview.html"
+        class="nav-item"
+      >
+        <span class="nav-icon">🎙️</span>
+        Mock Interview
+      </a>
+
+      <a
+        href="progress.html"
+        class="nav-item"
+      >
+        <span class="nav-icon">🎯</span>
+        Progress
+      </a>
+
+    </nav>
+
+
+    <div class="sidebar-footer">
+
+      <div class="user-profile-summary">
+
+        <div
+          class="user-avatar"
+          id="sidebar-user-avatar"
+        >
+          S
+        </div>
+
+        <div class="user-info-text">
+
+          <p
+            class="user-name-label"
+            id="sidebar-user-name"
+          >
+            Student
+          </p>
+
+          <p
+            class="user-role-label"
+            id="sidebar-user-email"
+          >
+            Loading...
+          </p>
+
+        </div>
+
+        <button
+          id="logout-btn"
+          class="btn btn-sm btn-secondary"
+          title="Log Out"
+          style="padding:0.25rem 0.5rem;font-size:0.75rem;"
+        >
+          ⏻
+        </button>
+
       </div>
 
-      <nav class="sidebar-nav">
-        <a href="dashboard.html" class="nav-item"><span class="nav-icon">📊</span> Dashboard</a>
-        <a href="profile.html" class="nav-item active"><span class="nav-icon">👤</span> My Profile</a>
-        <a href="career.html" class="nav-item"><span class="nav-icon">🧭</span> My Career</a>
-        <a href="skill-gap.html" class="nav-item"><span class="nav-icon">📈</span> Skill Gap</a>
-        <a href="roadmap.html" class="nav-item"><span class="nav-icon">🗺️</span> Roadmap</a>
-        <a href="opportunities.html" class="nav-item"><span class="nav-icon">💼</span> Opportunities</a>
-        <a href="resume.html" class="nav-item"><span class="nav-icon">📄</span> Resume AI</a>
-        <a href="interview.html" class="nav-item"><span class="nav-icon">🎙️</span> Mock Interview</a>
-        <a href="progress.html" class="nav-item"><span class="nav-icon">🎯</span> Progress</a>
-      </nav>
+    </div>
 
-      <div class="sidebar-footer">
-        <div class="user-profile-summary">
-          <div class="user-avatar" id="sidebar-user-avatar">H</div>
-          <div class="user-info-text">
-            <p class="user-name-label" id="sidebar-user-name">Himanshu Sahani</p>
-            <p class="user-role-label" id="sidebar-user-email">himanshu@gmail.com</p>
-          </div>
-          <button id="logout-btn" class="btn btn-sm btn-secondary" title="Log Out" style="padding: 0.25rem 0.5rem; font-size: 0.75rem;">⏻</button>
+  </aside>
+
+
+  <!-- ======================================================
+       MAIN
+  ======================================================= -->
+
+  <div class="app-main">
+
+    <header class="app-topbar">
+
+      <div class="flex-align">
+
+        <button
+          class="mobile-menu-btn"
+          id="mobile-menu-toggle"
+        >
+          ☰
+        </button>
+
+        <div class="topbar-breadcrumbs">
+
+          <span>Student Profile</span>
+
+          <span>/</span>
+
+          <span
+            class="text-primary"
+            style="font-weight:600;"
+          >
+            Onboarding
+          </span>
+
         </div>
+
       </div>
-    </aside>
 
-    <div class="app-main">
-      <header class="app-topbar">
-        <div class="flex-align">
-          <button class="mobile-menu-btn" id="mobile-menu-toggle">☰</button>
-          <div class="topbar-breadcrumbs">
-            <span>Student Profile Setup</span>
-            <span>/</span>
-            <span class="text-primary" style="font-weight: 600;">Onboarding</span>
+
+      <div class="topbar-actions">
+
+        <button
+          id="quick-fill-btn"
+          type="button"
+          class="btn btn-secondary btn-sm"
+        >
+          ⚡ Quick Fill Demo
+        </button>
+
+      </div>
+
+    </header>
+
+
+    <main class="page-content">
+
+      <div class="profile-page-container">
+
+
+        <!-- ==================================================
+             STATUS BAR
+        =================================================== -->
+
+        <div class="profile-status-bar">
+
+          <div class="profile-status-left">
+
+            <span
+              id="save-status-dot"
+              class="profile-save-dot"
+            ></span>
+
+            <span id="save-status-text">
+              Loading profile...
+            </span>
+
           </div>
+
+          <div
+            id="profile-user-status"
+            style="
+              color:#64748b;
+              font-size:0.78rem;
+              font-weight:700;
+            "
+          >
+            Secure Student Profile
+          </div>
+
         </div>
 
-        <div class="topbar-actions">
-          <button class="btn btn-secondary btn-sm" id="prefill-demo-btn">
-            ⚡ Quick-Fill Profile (Himanshu Sahani)
-          </button>
-        </div>
-      </header>
 
-      <main class="page-content">
-        <div class="container" style="max-width: 1060px;">
-          
-          <div id="alert-container"></div>
+        <div class="profile-main-card">
 
-          <!-- Multi-Step Onboarding Wizard Container -->
+
+          <!-- ==================================================
+               ALERT
+          =================================================== -->
+
+          <div
+            id="alert-container"
+            style="padding:14px 18px 0;"
+          ></div>
+
+
           <div class="onboarding-card-grid">
-            
-            <!-- Left Stepper List (Steps 1 to 6) -->
+
+
+            <!-- ==================================================
+                 STEPPER
+            =================================================== -->
+
             <div class="onboarding-sidebar">
-              <ul class="step-nav-list" id="step-nav-list">
-                <li class="step-nav-item active" data-step="1">
+
+              <ul
+                class="step-nav-list"
+                id="step-nav-list"
+              >
+
+                <li
+                  class="step-nav-item active"
+                  data-step="1"
+                >
                   <span class="step-badge-num">1</span>
                   <span>Basic Info</span>
                 </li>
-                <li class="step-nav-item" data-step="2">
+
+                <li
+                  class="step-nav-item"
+                  data-step="2"
+                >
                   <span class="step-badge-num">2</span>
                   <span>Academics</span>
                 </li>
-                <li class="step-nav-item" data-step="3">
+
+                <li
+                  class="step-nav-item"
+                  data-step="3"
+                >
                   <span class="step-badge-num">3</span>
                   <span>Skills</span>
                 </li>
-                <li class="step-nav-item" data-step="4">
+
+                <li
+                  class="step-nav-item"
+                  data-step="4"
+                >
                   <span class="step-badge-num">4</span>
                   <span>Interests</span>
                 </li>
-                <li class="step-nav-item" data-step="5">
+
+                <li
+                  class="step-nav-item"
+                  data-step="5"
+                >
                   <span class="step-badge-num">5</span>
                   <span>Target Career</span>
                 </li>
-                <li class="step-nav-item" data-step="6">
+
+                <li
+                  class="step-nav-item"
+                  data-step="6"
+                >
                   <span class="step-badge-num">6</span>
                   <span>Resume & Hub</span>
                 </li>
+
               </ul>
+
             </div>
 
-            <!-- Right Content Form Panels -->
+
+            <!-- ==================================================
+                 FORM CONTENT
+            =================================================== -->
+
             <div class="onboarding-content-panel">
 
-              <!-- ==============================================
-                   STEP 1: BASIC INFORMATION
-                   ============================================== -->
-              <div class="step-pane active" id="pane-step-1">
+
+              <!-- ==================================================
+                   STEP 1
+              =================================================== -->
+
+              <section
+                class="step-pane active"
+                id="pane-step-1"
+              >
+
                 <div class="step-header">
-                  <h2>Basic Information</h2>
-                  <p>Enter your personal contact details to start your career readiness journey.</p>
-                </div>
 
-                <!-- Instagram-style Profile Avatar Uploader Card -->
-                <div class="insta-avatar-uploader">
-                  <div class="insta-avatar-ring" id="insta-ring" title="Click to Change Profile Photo" onclick="document.getElementById('avatarFileInput').click()">
-                    <div class="insta-avatar-inner" id="insta-avatar-container">
-                      <div class="insta-avatar-fallback" id="insta-avatar-fallback">H</div>
-                    </div>
-                    <div class="insta-camera-badge">📷</div>
-                  </div>
-                  <input type="file" id="avatarFileInput" accept="image/*" style="display: none;">
+                  <h2>
+                    Basic Information
+                  </h2>
 
-                  <div class="insta-avatar-controls">
-                    <div class="insta-avatar-title">Profile Photo</div>
-                    <p class="insta-avatar-desc">
-                      Upload your real photo or pick a quick avatar. It saves permanently and syncs across your sidebar, dashboard & generated resume!
-                    </p>
-                    <div class="insta-btn-group">
-                      <button type="button" class="btn btn-sm btn-primary btn-pill" onclick="document.getElementById('avatarFileInput').click()">
-                        📷 Upload Photo
-                      </button>
-                      <button type="button" class="btn btn-sm btn-secondary btn-pill" id="remove-photo-btn">
-                        ✕ Remove
-                      </button>
-                    </div>
-
-                    <!-- Quick Preset Avatars -->
-                    <div class="insta-preset-container">
-                      <span style="font-size: 0.75rem; color: #64748b; font-weight: 600;">Quick Presets:</span>
-                      <button type="button" class="insta-preset-chip" onclick="applyPresetAvatar('coder')">
-                        👨‍💻 Coder
-                      </button>
-                      <button type="button" class="insta-preset-chip" onclick="applyPresetAvatar('engineer')">
-                        🚀 Techie
-                      </button>
-                      <button type="button" class="insta-preset-chip" onclick="applyPresetAvatar('ai')">
-                        🤖 AI Bot
-                      </button>
-                      <button type="button" class="insta-preset-chip" onclick="applyPresetAvatar('scholar')">
-                        🎓 Scholar
-                      </button>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="grid-2">
-                  <div class="form-group">
-                    <label class="form-label" for="fullName">Full Name</label>
-                    <input type="text" id="fullName" class="form-control" placeholder="Himanshu Sahani" required>
-                  </div>
-                  <div class="form-group">
-                    <label class="form-label" for="email">Email Address</label>
-                    <input type="email" id="email" class="form-control" placeholder="himanshu@gmail.com" required>
-                  </div>
-                </div>
-
-                <div class="grid-2">
-                  <div class="form-group">
-                    <label class="form-label" for="phone">Phone Number</label>
-                    <input type="tel" id="phone" class="form-control" placeholder="+91 98765 43210">
-                  </div>
-                  <div class="form-group">
-                    <label class="form-label" for="location">Current City / Location</label>
-                    <input type="text" id="location" class="form-control" placeholder="Bhopal, Madhya Pradesh">
-                  </div>
-                </div>
-
-                <div class="grid-2">
-                  <div class="form-group">
-                    <label class="form-label" for="linkedinUrl">LinkedIn Profile URL</label>
-                    <input type="url" id="linkedinUrl" class="form-control" placeholder="https://linkedin.com/in/himanshu-sahani">
-                  </div>
-                  <div class="form-group">
-                    <label class="form-label" for="githubUrl">GitHub / Portfolio URL</label>
-                    <input type="url" id="githubUrl" class="form-control" placeholder="https://github.com/himanshusahani">
-                  </div>
-                </div>
-
-                <div class="step-action-bar">
-                  <div></div>
-                  <button type="button" class="btn btn-primary btn-pill" onclick="goToStep(2)">
-                    Next: Academics →
-                  </button>
-                </div>
-              </div>
-
-              <!-- ==============================================
-                   STEP 2: ACADEMICS & EDUCATION
-                   ============================================== -->
-              <div class="step-pane" id="pane-step-2">
-                <div class="step-header">
-                  <h2>Academic Details</h2>
-                  <p>Provide your university, graduation stream, semester, and academic scoring.</p>
-                </div>
-
-                <div class="grid-2">
-                  <div class="form-group">
-                    <label class="form-label" for="college">College / University Name</label>
-                    <input type="text" id="college" class="form-control" placeholder="RGPV Bhopal" value="RGPV Bhopal" required>
-                  </div>
-                  <div class="form-group">
-                    <label class="form-label" for="educationLevel">Degree / Program</label>
-                    <select id="educationLevel" class="form-control">
-                      <option value="B.Tech">B.Tech / B.E (Engineering)</option>
-                      <option value="BCA">BCA (Computer Applications)</option>
-                      <option value="MCA">MCA (Master of Computer Apps)</option>
-                      <option value="B.Sc">B.Sc / M.Sc (Computer Science / IT)</option>
-                      <option value="Diploma">Polytechnic / Diploma</option>
-                    </select>
-                  </div>
-                </div>
-
-                <div class="grid-3">
-                  <div class="form-group">
-                    <label class="form-label" for="branch">Specialization / Branch</label>
-                    <input type="text" id="branch" class="form-control" placeholder="Computer Science & Engineering" value="Computer Science & Engineering">
-                  </div>
-                  <div class="form-group">
-                    <label class="form-label" for="gradYear">Graduation Year</label>
-                    <input type="number" id="gradYear" class="form-control" placeholder="2027" value="2027">
-                  </div>
-                  <div class="form-group">
-                    <label class="form-label" for="cgpa">CGPA / Percentage</label>
-                    <input type="text" id="cgpa" class="form-control" placeholder="8.5 / 10" value="8.5">
-                  </div>
-                </div>
-
-                <div class="grid-2">
-                  <div class="form-group">
-                    <label class="form-label" for="currentSemester">Current Semester / Year</label>
-                    <select id="currentSemester" class="form-control">
-                      <option value="6th Semester (3rd Year)">6th Semester (3rd Year)</option>
-                      <option value="7th / 8th Semester (Final Year)">7th / 8th Semester (Final Year)</option>
-                      <option value="4th Semester (2nd Year)">4th Semester (2nd Year)</option>
-                      <option value="Recent Graduate">Recent Graduate (2025/2026)</option>
-                    </select>
-                  </div>
-                  <div class="form-group">
-                    <label class="form-label" for="higherSecondary">Class 12th / Diploma %</label>
-                    <input type="text" id="higherSecondary" class="form-control" placeholder="88.4%" value="88.4%">
-                  </div>
-                </div>
-
-                <div class="step-action-bar">
-                  <button type="button" class="btn btn-secondary btn-pill" onclick="goToStep(1)">
-                    ← Back
-                  </button>
-                  <button type="button" class="btn btn-primary btn-pill" onclick="goToStep(3)">
-                    Next: Skills & Projects →
-                  </button>
-                </div>
-              </div>
-
-              <!-- ==============================================
-                   STEP 3: SKILLS & FEATURED PROJECTS
-                   ============================================== -->
-              <div class="step-pane" id="pane-step-3">
-                <div class="step-header">
-                  <h2>Skills & Projects</h2>
-                  <p>Add technical and soft skills, plus your highlight project.</p>
-                </div>
-
-                <div class="form-group">
-                  <label class="form-label" for="technicalSkills">Technical Skills (Type or click quick-add chips)</label>
-                  <input type="text" id="technicalSkills" class="form-control" placeholder="Python, SQL, React, HTML5, CSS3, JavaScript" value="Python, SQL, React, HTML5, CSS3, JavaScript">
-                  
-                  <div class="chip-container" id="tech-chips">
-                    <span class="skill-chip selected" onclick="toggleSkillChip(this, 'Python')">+ Python</span>
-                    <span class="skill-chip selected" onclick="toggleSkillChip(this, 'React')">+ React</span>
-                    <span class="skill-chip selected" onclick="toggleSkillChip(this, 'SQL')">+ SQL</span>
-                    <span class="skill-chip selected" onclick="toggleSkillChip(this, 'JavaScript')">+ JavaScript</span>
-                    <span class="skill-chip" onclick="toggleSkillChip(this, 'Node.js')">+ Node.js</span>
-                    <span class="skill-chip" onclick="toggleSkillChip(this, 'FastAPI')">+ FastAPI</span>
-                    <span class="skill-chip" onclick="toggleSkillChip(this, 'Machine Learning')">+ Machine Learning</span>
-                    <span class="skill-chip" onclick="toggleSkillChip(this, 'Docker')">+ Docker</span>
-                    <span class="skill-chip" onclick="toggleSkillChip(this, 'Git')">+ Git</span>
-                    <span class="skill-chip" onclick="toggleSkillChip(this, 'Cloud / AWS')">+ Cloud / AWS</span>
-                  </div>
-                </div>
-
-                <div class="form-group">
-                  <label class="form-label" for="softSkills">Soft Skills</label>
-                  <input type="text" id="softSkills" class="form-control" placeholder="Problem Solving, Analytical Thinking, Team Collaboration" value="Problem Solving, Analytical Thinking, Team Collaboration">
-                </div>
-
-                <div class="form-group">
-                  <label class="form-label" for="projectName">Featured Project Title</label>
-                  <input type="text" id="projectName" class="form-control" placeholder="Kisan Saathi Agricultural Advisory Portal" value="Kisan Saathi Agricultural Advisory Portal">
-                </div>
-
-                <div class="form-group">
-                  <label class="form-label" for="projectDesc">Project Description & Impact</label>
-                  <textarea id="projectDesc" class="form-control" rows="3" placeholder="Engineered Kisan Saathi crop disease detection and farmer market advisory platform utilizing Python, modern JavaScript, and Cloud Firestore.">Engineered Kisan Saathi crop disease detection and farmer market advisory platform utilizing Python, modern JavaScript, and Cloud Firestore.</textarea>
-                </div>
-
-                <div class="step-action-bar">
-                  <button type="button" class="btn btn-secondary btn-pill" onclick="goToStep(2)">
-                    ← Back
-                  </button>
-                  <button type="button" class="btn btn-primary btn-pill" onclick="goToStep(4)">
-                    Next: Interests & Preferences →
-                  </button>
-                </div>
-              </div>
-
-              <!-- ==============================================
-                   STEP 4: INTERESTS & WORK PREFERENCES
-                   ============================================== -->
-              <div class="step-pane" id="pane-step-4">
-                <div class="step-header">
-                  <h2>Interests & Work Preferences</h2>
-                  <p>Tell us what types of technology domains and work environments excite you.</p>
-                </div>
-
-                <div class="form-group">
-                  <label class="form-label">Primary Technology Domains of Interest</label>
-                  <div class="grid-2" style="gap: 0.6rem;">
-                    <label class="flex-align" style="background: #f8fafc; padding: 0.65rem 0.85rem; border-radius: 8px; cursor: pointer;">
-                      <input type="checkbox" name="interest_domain" value="ai_ml" checked style="accent-color: #4f46e5;">
-                      <span style="font-size: 0.88rem; font-weight: 600;">🤖 Artificial Intelligence & Machine Learning</span>
-                    </label>
-                    <label class="flex-align" style="background: #f8fafc; padding: 0.65rem 0.85rem; border-radius: 8px; cursor: pointer;">
-                      <input type="checkbox" name="interest_domain" value="fullstack" checked style="accent-color: #4f46e5;">
-                      <span style="font-size: 0.88rem; font-weight: 600;">🌐 Full Stack Web Development</span>
-                    </label>
-                    <label class="flex-align" style="background: #f8fafc; padding: 0.65rem 0.85rem; border-radius: 8px; cursor: pointer;">
-                      <input type="checkbox" name="interest_domain" value="data_science" checked style="accent-color: #4f46e5;">
-                      <span style="font-size: 0.88rem; font-weight: 600;">📊 Data Science & Business Analytics</span>
-                    </label>
-                    <label class="flex-align" style="background: #f8fafc; padding: 0.65rem 0.85rem; border-radius: 8px; cursor: pointer;">
-                      <input type="checkbox" name="interest_domain" value="gov_psu" checked style="accent-color: #4f46e5;">
-                      <span style="font-size: 0.88rem; font-weight: 600;">🏛️ Government & PSU Engineering (ISRO, CDAC, NIC)</span>
-                    </label>
-                  </div>
-                </div>
-
-                <div class="grid-2">
-                  <div class="form-group">
-                    <label class="form-label" for="preferredJobType">Preferred Opportunity Type</label>
-                    <select id="preferredJobType" class="form-control">
-                      <option value="Internship leading to PPO">Internship leading to PPO</option>
-                      <option value="Full-time Fresher Role">Full-time Fresher Role</option>
-                      <option value="Remote Project Fellowship">Remote Project Fellowship</option>
-                    </select>
-                  </div>
-                  <div class="form-group">
-                    <label class="form-label" for="weeklyHours">Dedicated Weekly Hours for Prep</label>
-                    <select id="weeklyHours" class="form-control">
-                      <option value="15-20 hrs/week (Recommended)">15 - 20 hrs/week (Fast Track)</option>
-                      <option value="10-15 hrs/week">10 - 15 hrs/week (Regular)</option>
-                      <option value="25+ hrs/week">25+ hrs/week (Intensive Bootcamp)</option>
-                    </select>
-                  </div>
-                </div>
-
-                <div class="form-group">
-                  <label class="form-label" for="preferredLocations">Preferred Work Locations</label>
-                  <input type="text" id="preferredLocations" class="form-control" placeholder="Bhopal, Remote, Bengaluru, Pune" value="Bhopal, Remote, Bengaluru, Pune">
-                </div>
-
-                <div class="step-action-bar">
-                  <button type="button" class="btn btn-secondary btn-pill" onclick="goToStep(3)">
-                    ← Back
-                  </button>
-                  <button type="button" class="btn btn-primary btn-pill" onclick="goToStep(5)">
-                    Next: Choose Target Career →
-                  </button>
-                </div>
-              </div>
-
-              <!-- ==============================================
-                   STEP 5: TARGET CAREER TRACK SELECTION
-                   ============================================== -->
-              <div class="step-pane" id="pane-step-5">
-                <div class="step-header">
-                  <h2>Choose Target Career Track</h2>
-                  <p>Manually select your primary career goal. AI will customize all certifications, jobs, mock tests, and roadmaps for this choice.</p>
-                </div>
-
-                <input type="hidden" id="targetCareer" value="AI / ML Engineer">
-
-                <div class="grid-2" style="gap: 1rem; margin-bottom: 1.5rem;" id="target-roles-grid">
-                  
-                  <div class="target-role-card selected" onclick="selectTargetRole(this, 'AI / ML Engineer')">
-                    <div class="role-card-title">
-                      <span>🤖</span> AI / Machine Learning Engineer
-                    </div>
-                    <div class="role-card-salary">Avg. Fresher Package: ₹8 - 18 LPA</div>
-                    <p class="role-card-desc">Model architecture, Python PyTorch, RAG Pipelines, Vector DBs and intelligent agents.</p>
-                  </div>
-
-                  <div class="target-role-card" onclick="selectTargetRole(this, 'Full Stack Web Developer')">
-                    <div class="role-card-title">
-                      <span>🌐</span> Full Stack Developer (React/Node)
-                    </div>
-                    <div class="role-card-salary">Avg. Fresher Package: ₹6 - 15 LPA</div>
-                    <p class="role-card-desc">Modern frontend UI, RESTful APIs, database indexing, and cloud deployment.</p>
-                  </div>
-
-                  <div class="target-role-card" onclick="selectTargetRole(this, 'Data Analyst & BI Specialist')">
-                    <div class="role-card-title">
-                      <span>📊</span> Data Analyst & BI Specialist
-                    </div>
-                    <div class="role-card-salary">Avg. Fresher Package: ₹5 - 12 LPA</div>
-                    <p class="role-card-desc">Advanced SQL window functions, statistical analytics, PowerBI/Tableau dashboards.</p>
-                  </div>
-
-                  <div class="target-role-card" onclick="selectTargetRole(this, 'PSU & Govt Junior Engineer')">
-                    <div class="role-card-title">
-                      <span>🏛️</span> PSU & Govt Engineer (ISRO/NIC/CDAC)
-                    </div>
-                    <div class="role-card-salary">Govt Pay Scale: Level 7 - 10 (Gazetted)</div>
-                    <p class="role-card-desc">Scientific computing, state infrastructure networks, NIC/CDAC screening exams.</p>
-                  </div>
-
-                </div>
-
-                <div class="step-action-bar">
-                  <button type="button" class="btn btn-secondary btn-pill" onclick="goToStep(4)">
-                    ← Back
-                  </button>
-                  <button type="button" class="btn btn-primary btn-pill" onclick="generateResumeAndHub()">
-                    ✨ Generate AI Resume & Recommendations →
-                  </button>
-                </div>
-              </div>
-
-              <!-- ==============================================
-                   STEP 6: AI-GENERATED RESUME & TAILORED HUB
-                   ============================================== -->
-              <div class="step-pane" id="pane-step-6">
-                <div class="step-header">
-                  <h2>AI Optimized Resume & Readiness Hub</h2>
-                  <p>Your profile data is saved. Below is your tailored resume & AI-matched recommendations (like Internshala, Unstop & Apna).</p>
-                </div>
-
-                <!-- ATS Live Resume Preview Card -->
-                <div class="resume-preview-sheet mb-2" id="resume-sheet">
-                  <div class="resume-header flex-between">
-                    <div class="flex-align" style="gap: 1.25rem;">
-                      <div id="res-avatar-preview" style="display: none;"></div>
-                      <div>
-                        <h3 class="resume-name" id="res-name">Himanshu Sahani</h3>
-                        <p style="color: #4f46e5; font-weight: 700; font-size: 0.95rem;" id="res-target-title">Target: AI / ML Engineer</p>
-                        <div class="resume-contact" id="res-contact">
-                          <span>📧 himanshu@gmail.com</span>
-                          <span>📱 +91 98765 43210</span>
-                          <span>📍 Bhopal, India</span>
-                        </div>
-                      </div>
-                    </div>
-                    <div style="text-align: right;">
-                      <span class="badge badge-emerald" style="font-size: 0.85rem; padding: 0.4rem 0.8rem;">
-                        ATS Match: 88%
-                      </span>
-                    </div>
-                  </div>
-
-                  <!-- Professional Summary -->
-                  <div style="margin-bottom: 1rem;">
-                    <div class="resume-section-title">Professional Summary</div>
-                    <p style="font-size: 0.88rem; line-height: 1.5;" id="res-summary">
-                      Passionate Computer Science undergraduate at RGPV Bhopal aiming for high-impact AI/ML engineering roles. Strong foundation in Python, SQL, React and Cloud Firestore with hands-on experience building production web applications.
-                    </p>
-                  </div>
-
-                  <!-- Education -->
-                  <div style="margin-bottom: 1rem;">
-                    <div class="resume-section-title">Education</div>
-                    <div class="flex-between">
-                      <strong style="font-size: 0.9rem;" id="res-college">RGPV Bhopal — B.Tech in CSE</strong>
-                      <span style="font-size: 0.85rem; color: #64748b;" id="res-year">Graduating 2027 | CGPA: 8.5</span>
-                    </div>
-                  </div>
-
-                  <!-- Technical Skills -->
-                  <div style="margin-bottom: 1rem;">
-                    <div class="resume-section-title">Technical Competencies</div>
-                    <p style="font-size: 0.88rem;" id="res-skills">
-                      <strong>Languages & Frameworks:</strong> Python, SQL, React, HTML5, CSS3, JavaScript, Node.js<br>
-                      <strong>Soft Skills:</strong> Problem Solving, Analytical Thinking, Team Collaboration
-                    </p>
-                  </div>
-
-                  <!-- Featured Project -->
-                  <div>
-                    <div class="resume-section-title">Academic & Portfolio Projects</div>
-                    <strong style="font-size: 0.9rem;" id="res-project-title">Kisan Saathi Agricultural Advisory Portal</strong>
-                    <p style="font-size: 0.85rem; color: #475569; margin-top: 0.2rem;" id="res-project-desc">
-                      Engineered Kisan Saathi crop disease detection and farmer market advisory platform utilizing Python, modern JavaScript, and Cloud Firestore.
-                    </p>
-                  </div>
-                </div>
-
-                <!-- AI Recommendations Section (Internships, Jobs, Certifications, Mock Tests) -->
-                <div style="margin-top: 2rem;">
-                  <h3 style="font-size: 1.25rem; font-weight: 800; color: #0f172a; margin-bottom: 0.5rem;">
-                    🎯 AI Matched Opportunities & Certifications For You
-                  </h3>
-                  <p class="text-muted" style="font-size: 0.85rem; margin-bottom: 1.25rem;">
-                    Curated live from portals like Internshala, Unstop, Apna and Official PSU Boards based on your target track.
+                  <p>
+                    Apni personal aur contact details add karo.
+                    Ye information tumhare profile, dashboard aur resume mein use hogi.
                   </p>
 
-                  <div style="display: flex; flex-direction: column; gap: 0.85rem;" id="recommendations-list">
-                    
-                    <!-- Item 1: Recommended Internship -->
-                    <div class="rec-item-card">
-                      <div class="flex-align" style="gap: 0.85rem;">
-                        <span style="font-size: 1.6rem; background: #eef2ff; padding: 0.5rem; border-radius: 10px;">💼</span>
-                        <div>
-                          <strong style="font-size: 0.95rem; color: #0f172a;">AI Engineering Trainee Intern</strong>
-                          <p style="font-size: 0.8rem; color: #64748b;">TechVentures Labs • Remote • Stipend: ₹25,000/month</p>
-                          <span class="badge badge-emerald" style="font-size: 0.72rem;">94% Skill Match</span>
-                        </div>
+                </div>
+
+
+                <!-- Avatar -->
+
+                <div class="avatar-uploader-card">
+
+                  <div
+                    class="avatar-ring"
+                    id="avatar-ring"
+                  >
+
+                    <div
+                      class="avatar-inner"
+                      id="avatar-container"
+                    >
+                      <div class="avatar-fallback">
+                        S
                       </div>
-                      <a href="opportunities.html" class="btn btn-sm btn-primary btn-pill">Apply Now →</a>
                     </div>
 
-                    <!-- Item 2: Recommended Govt Job Alert -->
-                    <div class="rec-item-card">
-                      <div class="flex-align" style="gap: 0.85rem;">
-                        <span style="font-size: 1.6rem; background: #f0fdf4; padding: 0.5rem; border-radius: 10px;">🏛️</span>
-                        <div>
-                          <strong style="font-size: 0.95rem; color: #0f172a;">NIC / CDAC Junior Scientific Officer</strong>
-                          <p style="font-size: 0.8rem; color: #64748b;">Ministry of Electronics & IT • Level 7 Pay Scale</p>
-                          <span class="badge badge-cyan" style="font-size: 0.72rem;">Govt PSU Alert</span>
-                        </div>
-                      </div>
-                      <a href="opportunities.html" class="btn btn-sm btn-outline btn-pill">View Eligibility →</a>
-                    </div>
-
-                    <!-- Item 3: Recommended Certification -->
-                    <div class="rec-item-card">
-                      <div class="flex-align" style="gap: 0.85rem;">
-                        <span style="font-size: 1.6rem; background: #fff7ed; padding: 0.5rem; border-radius: 10px;">🏆</span>
-                        <div>
-                          <strong style="font-size: 0.95rem; color: #0f172a;">DeepLearning.AI: Production Machine Learning Specialization</strong>
-                          <p style="font-size: 0.8rem; color: #64748b;">Boosts your ATS Resume score by +14% for your target career.</p>
-                          <span class="badge badge-amber" style="font-size: 0.72rem;">Top Rated Course</span>
-                        </div>
-                      </div>
-                      <a href="roadmap.html" class="btn btn-sm btn-secondary btn-pill">Add to Roadmap</a>
-                    </div>
-
-                    <!-- Item 4: AI Mock Test -->
-                    <div class="rec-item-card">
-                      <div class="flex-align" style="gap: 0.85rem;">
-                        <span style="font-size: 1.6rem; background: #fff1f2; padding: 0.5rem; border-radius: 10px;">🎙️</span>
-                        <div>
-                          <strong style="font-size: 0.95rem; color: #0f172a;">Live AI Technical Mock Interview Test</strong>
-                          <p style="font-size: 0.8rem; color: #64748b;">Practice 5 tailored questions with real-time feedback.</p>
-                        </div>
-                      </div>
-                      <a href="interview.html" class="btn btn-sm btn-primary btn-pill">Start Mock Test 🎙️</a>
+                    <div class="camera-badge">
+                      📷
                     </div>
 
                   </div>
+
+
+                  <input
+                    type="file"
+                    id="avatar-file"
+                    accept="image/*"
+                    hidden
+                  >
+
+
+                  <div class="avatar-info">
+
+                    <h3>
+                      Profile Photo
+                    </h3>
+
+                    <p>
+                      Photo upload karo. Ye sidebar, dashboard aur resume mein bhi show hogi.
+                    </p>
+
+
+                    <div class="avatar-buttons">
+
+                      <button
+                        type="button"
+                        class="btn btn-sm btn-primary"
+                        id="upload-photo-btn"
+                      >
+                        📷 Upload
+                      </button>
+
+                      <button
+                        type="button"
+                        class="btn btn-sm btn-secondary"
+                        id="remove-photo-btn"
+                      >
+                        ✕ Remove
+                      </button>
+
+                    </div>
+
+
+                    <div class="preset-row">
+
+                      <span
+                        style="
+                          color:#64748b;
+                          font-size:0.7rem;
+                          font-weight:700;
+                        "
+                      >
+                        Quick:
+                      </span>
+
+                      <button
+                        type="button"
+                        class="preset-chip"
+                        data-avatar="coder"
+                      >
+                        👨‍💻 Coder
+                      </button>
+
+                      <button
+                        type="button"
+                        class="preset-chip"
+                        data-avatar="engineer"
+                      >
+                        🚀 Techie
+                      </button>
+
+                      <button
+                        type="button"
+                        class="preset-chip"
+                        data-avatar="ai"
+                      >
+                        🤖 AI
+                      </button>
+
+                      <button
+                        type="button"
+                        class="preset-chip"
+                        data-avatar="scholar"
+                      >
+                        🎓 Scholar
+                      </button>
+
+                    </div>
+
+                  </div>
+
                 </div>
 
-                <div class="step-action-bar" style="margin-top: 2rem;">
-                  <button type="button" class="btn btn-secondary btn-pill" onclick="goToStep(5)">
-                    ← Back to Target Career
-                  </button>
-                  <a href="dashboard.html" class="btn btn-primary btn-lg btn-pill">
-                    🚀 Go To Dashboard & Track Progress →
-                  </a>
+
+                <div class="grid-2">
+
+                  <div class="form-group">
+
+                    <label
+                      class="form-label"
+                      for="fullName"
+                    >
+                      Full Name
+                    </label>
+
+                    <input
+                      id="fullName"
+                      type="text"
+                      class="form-control"
+                      placeholder="Your Full Name"
+                    >
+
+                  </div>
+
+
+                  <div class="form-group">
+
+                    <label
+                      class="form-label"
+                      for="email"
+                    >
+                      Email Address
+                    </label>
+
+                    <input
+                      id="email"
+                      type="email"
+                      class="form-control"
+                      placeholder="you@example.com"
+                    >
+
+                  </div>
+
                 </div>
-              </div>
+
+
+                <div class="grid-2">
+
+                  <div class="form-group">
+
+                    <label
+                      class="form-label"
+                      for="phone"
+                    >
+                      Phone Number
+                    </label>
+
+                    <input
+                      id="phone"
+                      type="tel"
+                      class="form-control"
+                      placeholder="+91 98765 43210"
+                    >
+
+                  </div>
+
+
+                  <div class="form-group">
+
+                    <label
+                      class="form-label"
+                      for="location"
+                    >
+                      Current City / Location
+                    </label>
+
+                    <input
+                      id="location"
+                      type="text"
+                      class="form-control"
+                      placeholder="Bhopal, Madhya Pradesh"
+                    >
+
+                  </div>
+
+                </div>
+
+
+                <div class="grid-2">
+
+                  <div class="form-group">
+
+                    <label
+                      class="form-label"
+                      for="linkedinUrl"
+                    >
+                      LinkedIn Profile URL
+                    </label>
+
+                    <input
+                      id="linkedinUrl"
+                      type="url"
+                      class="form-control"
+                      placeholder="https://linkedin.com/in/your-name"
+                    >
+
+                  </div>
+
+
+                  <div class="form-group">
+
+                    <label
+                      class="form-label"
+                      for="githubUrl"
+                    >
+                      GitHub / Portfolio URL
+                    </label>
+
+                    <input
+                      id="githubUrl"
+                      type="url"
+                      class="form-control"
+                      placeholder="https://github.com/your-name"
+                    >
+
+                  </div>
+
+                </div>
+
+
+                <div class="step-action-bar">
+
+                  <div></div>
+
+                  <button
+                    type="button"
+                    class="btn btn-primary btn-pill"
+                    data-next-step="2"
+                  >
+                    Next: Academics →
+                  </button>
+
+                </div>
+
+              </section>
+
+
+              <!-- ==================================================
+                   STEP 2
+              =================================================== -->
+
+              <section
+                class="step-pane"
+                id="pane-step-2"
+              >
+
+                <div class="step-header">
+
+                  <h2>
+                    Academic Details
+                  </h2>
+
+                  <p>
+                    Apni college, degree, branch aur academic details add karo.
+                  </p>
+
+                </div>
+
+
+                <div class="grid-2">
+
+                  <div class="form-group">
+
+                    <label
+                      class="form-label"
+                      for="college"
+                    >
+                      College / University
+                    </label>
+
+                    <input
+                      id="college"
+                      type="text"
+                      class="form-control"
+                      placeholder="Your College / University"
+                    >
+
+                  </div>
+
+
+                  <div class="form-group">
+
+                    <label
+                      class="form-label"
+                      for="educationLevel"
+                    >
+                      Degree / Program
+                    </label>
+
+                    <select
+                      id="educationLevel"
+                      class="form-control"
+                    >
+
+                      <option value="B.Tech">
+                        B.Tech / B.E
+                      </option>
+
+                      <option value="BCA">
+                        BCA
+                      </option>
+
+                      <option value="MCA">
+                        MCA
+                      </option>
+
+                      <option value="B.Sc">
+                        B.Sc / M.Sc
+                      </option>
+
+                      <option value="Diploma">
+                        Diploma / Polytechnic
+                      </option>
+
+                    </select>
+
+                  </div>
+
+                </div>
+
+
+                <div class="grid-3">
+
+                  <div class="form-group">
+
+                    <label
+                      class="form-label"
+                      for="branch"
+                    >
+                      Branch / Specialization
+                    </label>
+
+                    <input
+                      id="branch"
+                      type="text"
+                      class="form-control"
+                      placeholder="Computer Science & Engineering"
+                    >
+
+                  </div>
+
+
+                  <div class="form-group">
+
+                    <label
+                      class="form-label"
+                      for="gradYear"
+                    >
+                      Graduation Year
+                    </label>
+
+                    <input
+                      id="gradYear"
+                      type="number"
+                      class="form-control"
+                      placeholder="2028"
+                    >
+
+                  </div>
+
+
+                  <div class="form-group">
+
+                    <label
+                      class="form-label"
+                      for="cgpa"
+                    >
+                      CGPA / Percentage
+                    </label>
+
+                    <input
+                      id="cgpa"
+                      type="text"
+                      class="form-control"
+                      placeholder="8.5"
+                    >
+
+                  </div>
+
+                </div>
+
+
+                <div class="grid-2">
+
+                  <div class="form-group">
+
+                    <label
+                      class="form-label"
+                      for="currentSemester"
+                    >
+                      Current Semester / Year
+                    </label>
+
+                    <select
+                      id="currentSemester"
+                      class="form-control"
+                    >
+
+                      <option value="">
+                        Select Semester
+                      </option>
+
+                      <option value="1st Semester">
+                        1st Semester
+                      </option>
+
+                      <option value="2nd Semester">
+                        2nd Semester
+                      </option>
+
+                      <option value="3rd Semester">
+                        3rd Semester
+                      </option>
+
+                      <option value="4th Semester">
+                        4th Semester
+                      </option>
+
+                      <option value="5th Semester">
+                        5th Semester
+                      </option>
+
+                      <option value="6th Semester">
+                        6th Semester
+                      </option>
+
+                      <option value="7th Semester">
+                        7th Semester
+                      </option>
+
+                      <option value="8th Semester">
+                        8th Semester
+                      </option>
+
+                      <option value="Recent Graduate">
+                        Recent Graduate
+                      </option>
+
+                    </select>
+
+                  </div>
+
+
+                  <div class="form-group">
+
+                    <label
+                      class="form-label"
+                      for="higherSecondary"
+                    >
+                      Class 12th / Diploma %
+                    </label>
+
+                    <input
+                      id="higherSecondary"
+                      type="text"
+                      class="form-control"
+                      placeholder="88.4%"
+                    >
+
+                  </div>
+
+                </div>
+
+
+                <div class="step-action-bar">
+
+                  <button
+                    type="button"
+                    class="btn btn-secondary btn-pill"
+                    data-back-step="1"
+                  >
+                    ← Back
+                  </button>
+
+                  <button
+                    type="button"
+                    class="btn btn-primary btn-pill"
+                    data-next-step="3"
+                  >
+                    Next: Skills & Projects →
+                  </button>
+
+                </div>
+
+              </section>
+
+
+              <!-- ==================================================
+                   STEP 3
+              =================================================== -->
+
+              <section
+                class="step-pane"
+                id="pane-step-3"
+              >
+
+                <div class="step-header">
+
+                  <h2>
+                    Skills & Projects
+                  </h2>
+
+                  <p>
+                    Technical skills, soft skills aur featured project add karo.
+                  </p>
+
+                </div>
+
+
+                <div class="form-group">
+
+                  <label
+                    class="form-label"
+                    for="technicalSkills"
+                  >
+                    Technical Skills
+                  </label>
+
+                  <input
+                    id="technicalSkills"
+                    type="text"
+                    class="form-control"
+                    placeholder="Python, SQL, React, JavaScript"
+                  >
+
+
+                  <div
+                    class="chip-container"
+                    id="tech-chips"
+                  >
+
+                    <button
+                      type="button"
+                      class="skill-chip"
+                      data-skill="Python"
+                    >
+                      + Python
+                    </button>
+
+                    <button
+                      type="button"
+                      class="skill-chip"
+                      data-skill="React"
+                    >
+                      + React
+                    </button>
+
+                    <button
+                      type="button"
+                      class="skill-chip"
+                      data-skill="SQL"
+                    >
+                      + SQL
+                    </button>
+
+                    <button
+                      type="button"
+                      class="skill-chip"
+                      data-skill="JavaScript"
+                    >
+                      + JavaScript
+                    </button>
+
+                    <button
+                      type="button"
+                      class="skill-chip"
+                      data-skill="Node.js"
+                    >
+                      + Node.js
+                    </button>
+
+                    <button
+                      type="button"
+                      class="skill-chip"
+                      data-skill="Machine Learning"
+                    >
+                      + Machine Learning
+                    </button>
+
+                    <button
+                      type="button"
+                      class="skill-chip"
+                      data-skill="Git"
+                    >
+                      + Git
+                    </button>
+
+                    <button
+                      type="button"
+                      class="skill-chip"
+                      data-skill="Docker"
+                    >
+                      + Docker
+                    </button>
+
+                    <button
+                      type="button"
+                      class="skill-chip"
+                      data-skill="AWS"
+                    >
+                      + AWS
+                    </button>
+
+                  </div>
+
+                </div>
+
+
+                <div class="form-group">
+
+                  <label
+                    class="form-label"
+                    for="softSkills"
+                  >
+                    Soft Skills
+                  </label>
+
+                  <input
+                    id="softSkills"
+                    type="text"
+                    class="form-control"
+                    placeholder="Problem Solving, Communication, Teamwork"
+                  >
+
+                </div>
+
+
+                <div class="form-group">
+
+                  <label
+                    class="form-label"
+                    for="projectName"
+                  >
+                    Featured Project
+                  </label>
+
+                  <input
+                    id="projectName"
+                    type="text"
+                    class="form-control"
+                    placeholder="Your Project Name"
+                  >
+
+                </div>
+
+
+                <div class="form-group">
+
+                  <label
+                    class="form-label"
+                    for="projectDesc"
+                  >
+                    Project Description
+                  </label>
+
+                  <textarea
+                    id="projectDesc"
+                    class="form-control"
+                    placeholder="What did you build? Which technology did you use? What problem did it solve?"
+                  ></textarea>
+
+                </div>
+
+
+                <div class="step-action-bar">
+
+                  <button
+                    type="button"
+                    class="btn btn-secondary btn-pill"
+                    data-back-step="2"
+                  >
+                    ← Back
+                  </button>
+
+                  <button
+                    type="button"
+                    class="btn btn-primary btn-pill"
+                    data-next-step="4"
+                  >
+                    Next: Interests →
+                  </button>
+
+                </div>
+
+              </section>
+
+
+              <!-- ==================================================
+                   STEP 4
+              =================================================== -->
+
+              <section
+                class="step-pane"
+                id="pane-step-4"
+              >
+
+                <div class="step-header">
+
+                  <h2>
+                    Interests & Work Preferences
+                  </h2>
+
+                  <p>
+                    Career interests aur job preferences select karo.
+                  </p>
+
+                </div>
+
+
+                <div class="form-group">
+
+                  <label class="form-label">
+                    Technology Domains
+                  </label>
+
+
+                  <div class="interest-grid">
+
+                    <label class="interest-card">
+
+                      <input
+                        type="checkbox"
+                        name="interest_domain"
+                        value="ai_ml"
+                      >
+
+                      <span>
+                        🤖 AI & Machine Learning
+                      </span>
+
+                    </label>
+
+
+                    <label class="interest-card">
+
+                      <input
+                        type="checkbox"
+                        name="interest_domain"
+                        value="fullstack"
+                      >
+
+                      <span>
+                        🌐 Full Stack Development
+                      </span>
+
+                    </label>
+
+
+                    <label class="interest-card">
+
+                      <input
+                        type="checkbox"
+                        name="interest_domain"
+                        value="data_science"
+                      >
+
+                      <span>
+                        📊 Data Science & Analytics
+                      </span>
+
+                    </label>
+
+
+                    <label class="interest-card">
+
+                      <input
+                        type="checkbox"
+                        name="interest_domain"
+                        value="gov_psu"
+                      >
+
+                      <span>
+                        🏛️ Government / PSU
+                      </span>
+
+                    </label>
+
+                  </div>
+
+                </div>
+
+
+                <div class="grid-2">
+
+                  <div class="form-group">
+
+                    <label
+                      class="form-label"
+                      for="preferredJobType"
+                    >
+                      Preferred Opportunity
+                    </label>
+
+                    <select
+                      id="preferredJobType"
+                      class="form-control"
+                    >
+
+                      <option value="">
+                        Select
+                      </option>
+
+                      <option value="Internship">
+                        Internship
+                      </option>
+
+                      <option value="Internship leading to PPO">
+                        Internship leading to PPO
+                      </option>
+
+                      <option value="Full-time Fresher Role">
+                        Full-time Fresher Role
+                      </option>
+
+                      <option value="Remote Project Fellowship">
+                        Remote Project Fellowship
+                      </option>
+
+                    </select>
+
+                  </div>
+
+
+                  <div class="form-group">
+
+                    <label
+                      class="form-label"
+                      for="weeklyHours"
+                    >
+                      Weekly Preparation Time
+                    </label>
+
+                    <select
+                      id="weeklyHours"
+                      class="form-control"
+                    >
+
+                      <option value="">
+                        Select
+                      </option>
+
+                      <option value="10-15 hrs/week">
+                        10 - 15 hrs/week
+                      </option>
+
+                      <option value="15-20 hrs/week">
+                        15 - 20 hrs/week
+                      </option>
+
+                      <option value="25+ hrs/week">
+                        25+ hrs/week
+                      </option>
+
+                    </select>
+
+                  </div>
+
+                </div>
+
+
+                <div class="form-group">
+
+                  <label
+                    class="form-label"
+                    for="preferredLocations"
+                  >
+                    Preferred Work Locations
+                  </label>
+
+                  <input
+                    id="preferredLocations"
+                    type="text"
+                    class="form-control"
+                    placeholder="Bhopal, Remote, Bengaluru, Pune"
+                  >
+
+                </div>
+
+
+                <div class="step-action-bar">
+
+                  <button
+                    type="button"
+                    class="btn btn-secondary btn-pill"
+                    data-back-step="3"
+                  >
+                    ← Back
+                  </button>
+
+                  <button
+                    type="button"
+                    class="btn btn-primary btn-pill"
+                    data-next-step="5"
+                  >
+                    Next: Target Career →
+                  </button>
+
+                </div>
+
+              </section>
+
+
+              <!-- ==================================================
+                   STEP 5
+              =================================================== -->
+
+              <section
+                class="step-pane"
+                id="pane-step-5"
+              >
+
+                <div class="step-header">
+
+                  <h2>
+                    Choose Target Career
+                  </h2>
+
+                  <p>
+                    Apna primary target role choose karo. Resume aur recommendations isi track ko use karenge.
+                  </p>
+
+                </div>
+
+
+                <input
+                  type="hidden"
+                  id="targetCareer"
+                  value="AI / ML Engineer"
+                >
+
+
+                <div
+                  class="target-role-grid"
+                  id="target-roles-grid"
+                >
+
+                  <div
+                    class="target-role-card"
+                    data-role="AI / ML Engineer"
+                  >
+
+                    <div class="role-title">
+                      🤖 AI / ML Engineer
+                    </div>
+
+                    <div class="role-tag">
+                      AI / ML Track
+                    </div>
+
+                    <p class="role-description">
+                      Python, Machine Learning, RAG, AI applications aur intelligent systems.
+                    </p>
+
+                  </div>
+
+
+                  <div
+                    class="target-role-card"
+                    data-role="Full Stack Web Developer"
+                  >
+
+                    <div class="role-title">
+                      🌐 Full Stack Developer
+                    </div>
+
+                    <div class="role-tag">
+                      Web Development Track
+                    </div>
+
+                    <p class="role-description">
+                      Frontend, backend, APIs, databases aur deployment.
+                    </p>
+
+                  </div>
+
+
+                  <div
+                    class="target-role-card"
+                    data-role="Data Analyst & BI Specialist"
+                  >
+
+                    <div class="role-title">
+                      📊 Data Analyst
+                    </div>
+
+                    <div class="role-tag">
+                      Data Track
+                    </div>
+
+                    <p class="role-description">
+                      SQL, dashboards, analytics and visualization.
+                    </p>
+
+                  </div>
+
+
+                  <div
+                    class="target-role-card"
+                    data-role="PSU & Govt Junior Engineer"
+                  >
+
+                    <div class="role-title">
+                      🏛️ PSU / Govt Engineer
+                    </div>
+
+                    <div class="role-tag">
+                      Government Track
+                    </div>
+
+                    <p class="role-description">
+                      Technical preparation, engineering exams and public-sector roles.
+                    </p>
+
+                  </div>
+
+                </div>
+
+
+                <div class="step-action-bar">
+
+                  <button
+                    type="button"
+                    class="btn btn-secondary btn-pill"
+                    data-back-step="4"
+                  >
+                    ← Back
+                  </button>
+
+
+                  <button
+                    type="button"
+                    class="btn btn-primary btn-pill"
+                    id="generate-resume-btn"
+                  >
+                    ✨ Generate Resume →
+                  </button>
+
+                </div>
+
+              </section>
+
+
+              <!-- ==================================================
+                   STEP 6 — RESUME
+              =================================================== -->
+
+              <section
+                class="step-pane"
+                id="pane-step-6"
+              >
+
+                <div class="step-header">
+
+                  <h2>
+                    Resume Builder & Career Hub
+                  </h2>
+
+                  <p>
+                    5 professional designs mein se ek choose karo, preview dekho aur PDF download karo.
+                  </p>
+
+                </div>
+
+
+                <div class="resume-builder">
+
+                  <div class="resume-builder-title">
+
+                    <h3>
+                      🎨 Choose Resume Design
+                    </h3>
+
+                    <p>
+                      Tumhari saved profile details automatically selected resume mein show hongi.
+                    </p>
+
+                  </div>
+
+
+                  <div
+                    class="resume-template-grid"
+                    id="resume-template-grid"
+                  >
+
+
+                    <!-- MODERN -->
+
+                    <div
+                      class="resume-template-card selected"
+                      data-template="modern"
+                    >
+
+                      <div class="template-check">
+                        ✓
+                      </div>
+
+                      <div class="mini-preview modern-mini">
+
+                        <div class="mini-color-bar"></div>
+
+                        <div class="mini-name"></div>
+
+                        <div class="mini-small"></div>
+
+                        <div class="mini-columns">
+
+                          <div class="mini-left"></div>
+
+                          <div class="mini-right">
+
+                            <div class="mini-line"></div>
+                            <div class="mini-line medium"></div>
+                            <div class="mini-line"></div>
+                            <div class="mini-line short"></div>
+
+                          </div>
+
+                        </div>
+
+                      </div>
+
+
+                      <div class="template-name">
+                        Modern Professional
+                      </div>
+
+                      <div class="template-desc">
+                        Clean professional format
+                      </div>
+
+                    </div>
+
+
+                    <!-- ATS -->
+
+                    <div
+                      class="resume-template-card"
+                      data-template="ats"
+                    >
+
+                      <div class="template-check">
+                        ✓
+                      </div>
+
+                      <div class="mini-preview ats-mini">
+
+                        <div class="mini-color-bar"></div>
+
+                        <div class="mini-name"></div>
+
+                        <div class="mini-small"></div>
+
+                        <div class="mini-line"></div>
+                        <div class="mini-line"></div>
+                        <div class="mini-line medium"></div>
+                        <div class="mini-line"></div>
+                        <div class="mini-line short"></div>
+
+                      </div>
+
+
+                      <div class="template-name">
+                        ATS Friendly
+                      </div>
+
+                      <div class="template-desc">
+                        Simple job application format
+                      </div>
+
+                    </div>
+
+
+                    <!-- FRESHER -->
+
+                    <div
+                      class="resume-template-card"
+                      data-template="fresher"
+                    >
+
+                      <div class="template-check">
+                        ✓
+                      </div>
+
+                      <div class="mini-preview fresher-mini">
+
+                        <div class="mini-color-bar"></div>
+
+                        <div class="mini-columns">
+
+                          <div class="mini-left"></div>
+
+                          <div class="mini-right">
+
+                            <div class="mini-name"></div>
+                            <div class="mini-small"></div>
+                            <div class="mini-line"></div>
+                            <div class="mini-line medium"></div>
+                            <div class="mini-line short"></div>
+
+                          </div>
+
+                        </div>
+
+                      </div>
+
+
+                      <div class="template-name">
+                        Student / Fresher
+                      </div>
+
+                      <div class="template-desc">
+                        Education & projects focused
+                      </div>
+
+                    </div>
+
+
+                    <!-- CREATIVE -->
+
+                    <div
+                      class="resume-template-card"
+                      data-template="creative"
+                    >
+
+                      <div class="template-check">
+                        ✓
+                      </div>
+
+                      <div class="mini-preview creative-mini">
+
+                        <div class="mini-color-bar"></div>
+
+                        <div class="mini-name"></div>
+
+                        <div class="mini-small"></div>
+
+                        <div class="mini-line"></div>
+                        <div class="mini-line medium"></div>
+                        <div class="mini-line"></div>
+                        <div class="mini-line short"></div>
+
+                      </div>
+
+
+                      <div class="template-name">
+                        Creative
+                      </div>
+
+                      <div class="template-desc">
+                        Modern visual portfolio style
+                      </div>
+
+                    </div>
+
+
+                    <!-- MINIMAL -->
+
+                    <div
+                      class="resume-template-card"
+                      data-template="minimal"
+                    >
+
+                      <div class="template-check">
+                        ✓
+                      </div>
+
+                      <div class="mini-preview minimal-mini">
+
+                        <div class="mini-color-bar"></div>
+
+                        <div class="mini-name"></div>
+
+                        <div class="mini-small"></div>
+
+                        <div class="mini-line"></div>
+                        <div class="mini-line medium"></div>
+                        <div class="mini-line"></div>
+                        <div class="mini-line short"></div>
+
+                      </div>
+
+
+                      <div class="template-name">
+                        Minimal Premium
+                      </div>
+
+                      <div class="template-desc">
+                        Elegant and readable
+                      </div>
+
+                    </div>
+
+
+                  </div>
+
+
+                  <!-- TOOLBAR -->
+
+                  <div class="resume-toolbar">
+
+                    <div
+                      class="selected-design-text"
+                      id="selected-design-text"
+                    >
+                      Selected Design:
+                      <strong>
+                        Modern Professional
+                      </strong>
+                    </div>
+
+
+                    <button
+                      type="button"
+                      class="resume-download-btn"
+                      id="download-resume-btn"
+                    >
+                      📥 Download Resume PDF
+                    </button>
+
+                  </div>
+
+
+                  <!-- PREVIEW -->
+
+                  <div class="resume-preview-shell">
+
+                    <div
+                      id="resume-sheet"
+                      class="resume-sheet"
+                    ></div>
+
+                  </div>
+
+
+                  <!-- RECOMMENDATIONS -->
+
+                  <div class="recommendation-section">
+
+                    <h3>
+                      🎯 Career Hub
+                    </h3>
+
+                    <p>
+                      Continue improving your profile and career readiness.
+                    </p>
+
+
+                    <div class="recommendation-list">
+
+
+                      <div class="recommendation-card">
+
+                        <div class="recommendation-left">
+
+                          <div
+                            class="recommendation-icon"
+                          >
+                            💼
+                          </div>
+
+                          <div class="recommendation-info">
+
+                            <strong>
+                              Opportunities
+                            </strong>
+
+                            <p>
+                              Explore internships, fresher roles and other opportunities.
+                            </p>
+
+                          </div>
+
+                        </div>
+
+
+                        <a
+                          href="opportunities.html"
+                          class="btn btn-sm btn-primary btn-pill"
+                        >
+                          Explore →
+                        </a>
+
+                      </div>
+
+
+                      <div class="recommendation-card">
+
+                        <div class="recommendation-left">
+
+                          <div class="recommendation-icon">
+                            📈
+                          </div>
+
+                          <div class="recommendation-info">
+
+                            <strong>
+                              Skill Gap
+                            </strong>
+
+                            <p>
+                              Check which skills you should improve for your target career.
+                            </p>
+
+                          </div>
+
+                        </div>
+
+
+                        <a
+                          href="skill-gap.html"
+                          class="btn btn-sm btn-secondary btn-pill"
+                        >
+                          View →
+                        </a>
+
+                      </div>
+
+
+                      <div class="recommendation-card">
+
+                        <div class="recommendation-left">
+
+                          <div class="recommendation-icon">
+                            🎙️
+                          </div>
+
+                          <div class="recommendation-info">
+
+                            <strong>
+                              AI Mock Interview
+                            </strong>
+
+                            <p>
+                              Practice interview questions for your selected career.
+                            </p>
+
+                          </div>
+
+                        </div>
+
+
+                        <a
+                          href="interview.html"
+                          class="btn btn-sm btn-primary btn-pill"
+                        >
+                          Start →
+                        </a>
+
+                      </div>
+
+
+                    </div>
+
+                  </div>
+
+
+                  <!-- FINAL ACTIONS -->
+
+                  <div class="step-action-bar">
+
+                    <button
+                      type="button"
+                      class="btn btn-secondary btn-pill"
+                      data-back-step="5"
+                    >
+                      ← Back to Career
+                    </button>
+
+
+                    <div class="profile-actions-right">
+
+                      <button
+                        type="button"
+                        class="resume-download-btn"
+                        id="download-resume-bottom"
+                      >
+                        📄 Download My Resume
+                      </button>
+
+
+                      <a
+                        href="dashboard.html"
+                        class="btn btn-secondary btn-pill"
+                      >
+                        📊 Dashboard
+                      </a>
+
+                    </div>
+
+                  </div>
+
+                </div>
+
+              </section>
+
 
             </div>
           </div>
+
         </div>
-      </main>
-    </div>
+
+      </div>
+
+    </main>
+
   </div>
 
-  <script>
-    var currentStep = 1;
+</div>
 
-    document.addEventListener('DOMContentLoaded', async function () {
-      if (!window.CareerSetu || !CareerSetu.checkAuthGuard()) return;
-      CareerSetu.renderUserProfileWidget();
 
-      var user = CareerSetu.getCurrentUser();
-      var alertContainer = document.getElementById('alert-container');
-      var prefillBtn = document.getElementById('prefill-demo-btn');
-      var avatarInput = document.getElementById('avatarFileInput');
-      var removePhotoBtn = document.getElementById('remove-photo-btn');
+<script>
+(function () {
 
-      // Hydrate from existing profile cache instantly
-      try {
-        var existing = await CareerSetu.getUserData('profiles');
-        if (existing) {
-          populateFields(existing);
-        } else if (user) {
-          if (document.getElementById('fullName') && user.displayName) {
-            document.getElementById('fullName').value = user.displayName;
-          }
-          if (document.getElementById('email') && user.email) {
-            document.getElementById('email').value = user.email;
-          }
-        }
+  'use strict';
 
-        // Initialize Avatar Preview
-        var currentPhoto = (existing && existing.photoURL) || (user && user.photoURL) || '';
-        updateAvatarUI(currentPhoto);
-      } catch (e) {}
 
-      // Avatar File Upload Handler
-      if (avatarInput) {
-        avatarInput.addEventListener('change', function (e) {
-          if (e.target.files && e.target.files[0]) {
-            handleAvatarFileUpload(e.target.files[0]);
-          }
-        });
+  /* =========================================================
+     STATE
+  ========================================================= */
+
+  let currentStep = 1;
+
+  let profileHydrated = false;
+
+  let profileDirty = false;
+
+  let saveTimer = null;
+
+  let currentProfilePhoto = '';
+
+  let selectedResumeTemplate = 'modern';
+
+
+  const TEMPLATE_NAMES = {
+    modern: 'Modern Professional',
+    ats: 'ATS Friendly',
+    fresher: 'Student / Fresher',
+    creative: 'Creative',
+    minimal: 'Minimal Premium'
+  };
+
+
+  /* =========================================================
+     DOM READY
+  ========================================================= */
+
+  document.addEventListener(
+    'DOMContentLoaded',
+    async function () {
+
+      /* ----------------------------------------------
+         AUTH
+      ---------------------------------------------- */
+
+      if (
+        !window.CareerSetu ||
+        !CareerSetu.checkAuthGuard()
+      ) {
+
+        return;
+
       }
 
-      // Avatar Remove Button Handler
-      if (removePhotoBtn) {
-        removePhotoBtn.addEventListener('click', async function () {
-          await CareerSetu.removeUserAvatar();
-          updateAvatarUI('');
-          showAlert('Profile photo removed. Showing letter avatar.', 'info');
-        });
-      }
 
-      // Clickable Step Navigation on Sidebar
-      var stepItems = document.querySelectorAll('.step-nav-item');
-      stepItems.forEach(function (item) {
-        item.addEventListener('click', function () {
-          var targetStep = parseInt(this.getAttribute('data-step'));
-          goToStep(targetStep);
-        });
-      });
+      const user =
+        CareerSetu.getCurrentUser();
 
-      // Quick-Fill Demo Button
-      if (prefillBtn) {
-        prefillBtn.addEventListener('click', function () {
-          var demoData = {
-            fullName: user && user.displayName ? user.displayName : 'Himanshu Sahani',
-            email: user && user.email ? user.email : 'himanshu@gmail.com',
-            phone: '+91 98765 43210',
-            location: 'Bhopal, Madhya Pradesh',
-            linkedinUrl: 'https://linkedin.com/in/himanshu-sahani',
-            githubUrl: 'https://github.com/himanshusahani',
-            college: 'RGPV Bhopal',
-            educationLevel: 'B.Tech',
-            branch: 'Computer Science & Engineering',
-            gradYear: '2027',
-            cgpa: '8.5',
-            technicalSkills: 'Python, SQL, React, HTML5, CSS3, JavaScript',
-            softSkills: 'Problem Solving, Analytical Thinking, Team Collaboration',
-            projectName: 'Kisan Saathi Agricultural Advisory Portal',
-            projectDesc: 'Engineered Kisan Saathi crop disease detection and farmer market advisory platform utilizing Python, modern JavaScript, and Cloud Firestore.',
-            targetCareer: 'AI / ML Engineer',
-            preferredLocations: 'Bhopal, Remote, Bengaluru, Pune'
-          };
-          populateFields(demoData);
-          saveCurrentDataSilently();
-          showAlert('Demo profile loaded! You can click through steps or generate resume.', 'info');
-        });
-      }
-    });
 
-    // Handle Image Upload & Canvas Compression (Fast & Permanent)
-    function handleAvatarFileUpload(file) {
-      if (!file || !file.type.startsWith('image/')) {
-        showAlert('Please choose a valid image file (JPG, PNG, WebP).', 'error');
+      if (!user) {
         return;
       }
 
-      var reader = new FileReader();
-      reader.onload = function (e) {
-        var img = new Image();
-        img.onload = function () {
-          var canvas = document.createElement('canvas');
-          var maxDim = 256;
-          var width = img.width;
-          var height = img.height;
 
-          if (width > height) {
-            if (width > maxDim) {
-              height = Math.round((height * maxDim) / width);
-              width = maxDim;
-            }
-          } else {
-            if (height > maxDim) {
-              width = Math.round((width * maxDim) / height);
-              height = maxDim;
-            }
-          }
+      /* ----------------------------------------------
+         SIDEBAR
+      ---------------------------------------------- */
 
-          canvas.width = width;
-          canvas.height = height;
-          var ctx = canvas.getContext('2d');
-          ctx.drawImage(img, 0, 0, width, height);
+      try {
+        await CareerSetu.renderUserProfileWidget();
+      } catch (error) {
+        console.warn(
+          'Profile widget:',
+          error
+        );
+      }
 
-          var compressedDataUrl = canvas.toDataURL('image/jpeg', 0.88);
-          updateAvatarUI(compressedDataUrl);
-          CareerSetu.saveUserAvatar(compressedDataUrl);
-          showAlert('📸 Profile photo successfully updated and saved!', 'success');
-        };
-        img.src = e.target.result;
-      };
-      reader.readAsDataURL(file);
-    }
 
-    // Apply Quick Preset Avatar
-    function applyPresetAvatar(type) {
-      var svgMap = {
-        coder: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><linearGradient id="g1" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#4f46e5"/><stop offset="100%" stop-color="#06b6d4"/></linearGradient></defs><circle cx="50" cy="50" r="50" fill="url(#g1)"/><circle cx="50" cy="38" r="18" fill="#ffffff"/><path d="M22 84 C22 66, 36 60, 50 60 C64 60, 78 66, 78 84 Z" fill="#ffffff"/><text x="50" y="44" font-size="18" text-anchor="middle" fill="#4f46e5" font-family="sans-serif">💻</text></svg>',
-        engineer: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><linearGradient id="g2" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#f59e0b"/><stop offset="100%" stop-color="#ef4444"/></linearGradient></defs><circle cx="50" cy="50" r="50" fill="url(#g2)"/><circle cx="50" cy="38" r="18" fill="#ffffff"/><path d="M22 84 C22 66, 36 60, 50 60 C64 60, 78 66, 78 84 Z" fill="#ffffff"/><text x="50" y="44" font-size="18" text-anchor="middle" fill="#f59e0b" font-family="sans-serif">🚀</text></svg>',
-        ai: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><linearGradient id="g3" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#8b5cf6"/><stop offset="100%" stop-color="#ec4899"/></linearGradient></defs><circle cx="50" cy="50" r="50" fill="url(#g3)"/><circle cx="50" cy="38" r="18" fill="#ffffff"/><path d="M22 84 C22 66, 36 60, 50 60 C64 60, 78 66, 78 84 Z" fill="#ffffff"/><text x="50" y="44" font-size="18" text-anchor="middle" fill="#8b5cf6" font-family="sans-serif">🤖</text></svg>',
-        scholar: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><linearGradient id="g4" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#10b981"/><stop offset="100%" stop-color="#0284c7"/></linearGradient></defs><circle cx="50" cy="50" r="50" fill="url(#g4)"/><circle cx="50" cy="38" r="18" fill="#ffffff"/><path d="M22 84 C22 66, 36 60, 50 60 C64 60, 78 66, 78 84 Z" fill="#ffffff"/><text x="50" y="44" font-size="18" text-anchor="middle" fill="#10b981" font-family="sans-serif">🎓</text></svg>'
-      };
+      updateUserStatus(
+        user
+      );
 
-      var svg = svgMap[type] || svgMap.coder;
-      var dataUrl = 'data:image/svg+xml;utf8,' + encodeURIComponent(svg);
-      
-      updateAvatarUI(dataUrl);
-      CareerSetu.saveUserAvatar(dataUrl);
-      showAlert('✨ Preset avatar selected and saved!', 'success');
-    }
 
-    // Update Avatar UI
-    function updateAvatarUI(photoURL) {
-      var container = document.getElementById('insta-avatar-container');
-      var name = (document.getElementById('fullName')?.value || 'Himanshu Sahani').trim();
-      var initial = name.charAt(0).toUpperCase() || 'H';
+      /* ----------------------------------------------
+         LOAD SAVED TEMPLATE
+      ---------------------------------------------- */
 
-      if (container) {
-        if (photoURL) {
-          container.innerHTML = '<img class="insta-avatar-img" src="' + photoURL + '" alt="Avatar">';
-        } else {
-          container.innerHTML = '<div class="insta-avatar-fallback">' + initial + '</div>';
+      try {
+
+        const savedTemplate =
+          localStorage.getItem(
+            'careersetu_resume_template_' +
+            user.uid
+          );
+
+
+        if (
+          savedTemplate &&
+          TEMPLATE_NAMES[savedTemplate]
+        ) {
+
+          selectedResumeTemplate =
+            savedTemplate;
+
         }
+
+      } catch (error) {}
+
+
+      /* ----------------------------------------------
+         LOAD SAVED PROFILE
+      ---------------------------------------------- */
+
+      setSaveStatus(
+        'saving',
+        'Loading profile...'
+      );
+
+
+      let existing = null;
+
+
+      try {
+
+        existing =
+          await CareerSetu.getUserData(
+            'profiles'
+          );
+
+
+      } catch (error) {
+
+        console.error(
+          'Profile loading:',
+          error
+        );
+
       }
 
-      var resAvatar = document.getElementById('res-avatar-preview');
-      if (resAvatar) {
-        if (photoURL) {
-          resAvatar.style.display = 'block';
-          resAvatar.innerHTML = '<img src="' + photoURL + '" style="width: 54px; height: 54px; border-radius: 50%; object-fit: cover; border: 2px solid #4f46e5; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">';
-        } else {
-          resAvatar.style.display = 'none';
-        }
-      }
-    }
 
-    // Step Transition Function
-    function goToStep(stepNumber) {
-      // Save data from current step before leaving
-      saveCurrentDataSilently();
+      /*
+        NEVER save before this point.
+      */
 
-      currentStep = stepNumber;
+      if (existing) {
 
-      // Update Stepper Active State
-      var navItems = document.querySelectorAll('.step-nav-item');
-      navItems.forEach(function (item) {
-        var s = parseInt(item.getAttribute('data-step'));
-        item.classList.remove('active');
-        if (s < currentStep) {
-          item.classList.add('completed');
-        } else if (s === currentStep) {
-          item.classList.add('active');
-        } else {
-          item.classList.remove('completed');
-        }
-      });
+        populateProfile(
+          existing
+        );
 
-      // Show Active Pane
-      var panes = document.querySelectorAll('.step-pane');
-      panes.forEach(function (pane) {
-        pane.classList.remove('active');
-      });
-      var activePane = document.getElementById('pane-step-' + stepNumber);
-      if (activePane) {
-        activePane.classList.add('active');
-      }
-
-      // If Step 6, update live preview values
-      if (stepNumber === 6) {
-        renderLiveResumeAndRecs();
-      }
-
-      window.scrollTo({ top: 120, behavior: 'smooth' });
-    }
-
-    // Toggle Technical Skill Chip
-    function toggleSkillChip(el, skillName) {
-      el.classList.toggle('selected');
-      var skillsInput = document.getElementById('technicalSkills');
-      var current = skillsInput.value.split(',').map(function (s) { return s.trim(); }).filter(Boolean);
-
-      if (el.classList.contains('selected')) {
-        if (current.indexOf(skillName) === -1) current.push(skillName);
       } else {
-        current = current.filter(function (s) { return s !== skillName; });
+
+        /*
+          First time user.
+          Only auth identity.
+        */
+
+        setValue(
+          'fullName',
+          user.displayName || ''
+        );
+
+
+        setValue(
+          'email',
+          user.email || ''
+        );
+
+
+        currentProfilePhoto =
+          user.photoURL || '';
+
       }
-      skillsInput.value = current.join(', ');
-      saveCurrentDataSilently();
+
+
+      /* ----------------------------------------------
+         AVATAR
+      ---------------------------------------------- */
+
+      updateAvatar(
+        currentProfilePhoto
+      );
+
+
+      /* ----------------------------------------------
+         TEMPLATE
+      ---------------------------------------------- */
+
+      if (
+        existing &&
+        existing.resumeTemplate &&
+        TEMPLATE_NAMES[
+          existing.resumeTemplate
+        ]
+      ) {
+
+        selectedResumeTemplate =
+          existing.resumeTemplate;
+
+      }
+
+
+      /* ----------------------------------------------
+         INITIAL TARGET ROLE
+      ---------------------------------------------- */
+
+      updateTargetCards();
+
+
+      /* ----------------------------------------------
+         INITIAL SKILL CHIPS
+      ---------------------------------------------- */
+
+      updateSkillChips();
+
+
+      /* ----------------------------------------------
+         PROFILE IS NOW SAFE
+      ---------------------------------------------- */
+
+      profileHydrated =
+        true;
+
+
+      profileDirty =
+        false;
+
+
+      setSaveStatus(
+        'saved',
+        'Profile loaded'
+      );
+
+
+      /* ----------------------------------------------
+         BIND FORM
+      ---------------------------------------------- */
+
+      bindEvents();
+
+
+      /* ----------------------------------------------
+         RESUME
+      ---------------------------------------------- */
+
+      renderResume();
+
+
+    }
+  );
+
+
+  /* =========================================================
+     BIND EVENTS
+  ========================================================= */
+
+  function bindEvents() {
+
+    /*
+      Next buttons
+    */
+
+    document
+      .querySelectorAll(
+        '[data-next-step]'
+      )
+      .forEach(
+        function (button) {
+
+          button.addEventListener(
+            'click',
+            function (event) {
+
+              event.preventDefault();
+
+              const step =
+                parseInt(
+                  button.getAttribute(
+                    'data-next-step'
+                  ),
+                  10
+                );
+
+
+              goToStep(
+                step
+              );
+
+            }
+          );
+
+        }
+      );
+
+
+    /*
+      Back buttons
+    */
+
+    document
+      .querySelectorAll(
+        '[data-back-step]'
+      )
+      .forEach(
+        function (button) {
+
+          button.addEventListener(
+            'click',
+            function (event) {
+
+              event.preventDefault();
+
+              const step =
+                parseInt(
+                  button.getAttribute(
+                    'data-back-step'
+                  ),
+                  10
+                );
+
+
+              goToStep(
+                step
+              );
+
+            }
+          );
+
+        }
+      );
+
+
+    /*
+      Stepper
+    */
+
+    document
+      .querySelectorAll(
+        '.step-nav-item'
+      )
+      .forEach(
+        function (item) {
+
+          item.addEventListener(
+            'click',
+            function () {
+
+              const step =
+                parseInt(
+                  item.getAttribute(
+                    'data-step'
+                  ),
+                  10
+                );
+
+
+              goToStep(
+                step
+              );
+
+            }
+          );
+
+        }
+      );
+
+
+    /*
+      Form fields
+    */
+
+    document
+      .querySelectorAll(
+        '.form-control, input[type="checkbox"]'
+      )
+      .forEach(
+        function (element) {
+
+          element.addEventListener(
+            'input',
+            markProfileDirty
+          );
+
+
+          element.addEventListener(
+            'change',
+            markProfileDirty
+          );
+
+        }
+      );
+
+
+    /*
+      Skill chips
+    */
+
+    document
+      .querySelectorAll(
+        '[data-skill]'
+      )
+      .forEach(
+        function (chip) {
+
+          chip.addEventListener(
+            'click',
+            function () {
+
+              toggleSkill(
+                chip
+              );
+
+            }
+          );
+
+        }
+      );
+
+
+    /*
+      Target roles
+    */
+
+    document
+      .querySelectorAll(
+        '[data-role]'
+      )
+      .forEach(
+        function (card) {
+
+          card.addEventListener(
+            'click',
+            function () {
+
+              selectTargetRole(
+                card
+              );
+
+            }
+          );
+
+        }
+      );
+
+
+    /*
+      Resume templates
+    */
+
+    document
+      .querySelectorAll(
+        '[data-template]'
+      )
+      .forEach(
+        function (card) {
+
+          card.addEventListener(
+            'click',
+            function () {
+
+              selectResumeTemplate(
+                card.getAttribute(
+                  'data-template'
+                )
+              );
+
+            }
+          );
+
+        }
+      );
+
+
+    /*
+      Generate Resume
+    */
+
+    const generateButton =
+      document.getElementById(
+        'generate-resume-btn'
+      );
+
+
+    if (generateButton) {
+
+      generateButton.addEventListener(
+        'click',
+        function () {
+
+          saveProfile(
+            true
+          ).then(
+            function () {
+
+              renderResume();
+
+              goToStep(
+                6
+              );
+
+            }
+          );
+
+        }
+      );
+
     }
 
-    // Select Target Role
-    function selectTargetRole(cardEl, roleTitle) {
-      var allCards = document.querySelectorAll('.target-role-card');
-      allCards.forEach(function (c) { c.classList.remove('selected'); });
-      cardEl.classList.add('selected');
-      document.getElementById('targetCareer').value = roleTitle;
-      saveCurrentDataSilently();
+
+    /*
+      Photo
+    */
+
+    const uploadButton =
+      document.getElementById(
+        'upload-photo-btn'
+      );
+
+
+    const avatarInput =
+      document.getElementById(
+        'avatar-file'
+      );
+
+
+    const avatarRing =
+      document.getElementById(
+        'avatar-ring'
+      );
+
+
+    if (uploadButton) {
+
+      uploadButton.addEventListener(
+        'click',
+        function () {
+
+          avatarInput.click();
+
+        }
+      );
+
     }
 
-    // Generate Resume & Hub (Step 5 to 6)
-    function generateResumeAndHub() {
-      saveCurrentDataSilently();
-      goToStep(6);
+
+    if (avatarRing) {
+
+      avatarRing.addEventListener(
+        'click',
+        function () {
+
+          avatarInput.click();
+
+        }
+      );
+
     }
 
-    // Render Live Resume and Dynamic Opportunity Cards
-    function renderLiveResumeAndRecs() {
-      var name = document.getElementById('fullName').value || 'Student Candidate';
-      var email = document.getElementById('email').value || 'student@domain.com';
-      var phone = document.getElementById('phone').value || '+91 98765 43210';
-      var location = document.getElementById('location').value || 'India';
-      var college = document.getElementById('college').value || 'RGPV Bhopal';
-      var degree = document.getElementById('educationLevel').value || 'B.Tech';
-      var branch = document.getElementById('branch').value || 'CSE';
-      var year = document.getElementById('gradYear').value || '2027';
-      var cgpa = document.getElementById('cgpa').value || '8.5';
-      var skills = document.getElementById('technicalSkills').value || 'Python, SQL, React, JavaScript';
-      var target = document.getElementById('targetCareer').value || 'AI / ML Engineer';
-      var projTitle = document.getElementById('projectName').value || 'Kisan Saathi Agricultural Advisory Portal';
-      var projDesc = document.getElementById('projectDesc').value || 'Engineered scalable web applications and AI tools.';
 
-      document.getElementById('res-name').textContent = name;
-      document.getElementById('res-target-title').textContent = 'Target Track: ' + target;
-      document.getElementById('res-contact').innerHTML = '<span>📧 ' + email + '</span><span>📱 ' + phone + '</span><span>📍 ' + location + '</span>';
-      document.getElementById('res-summary').textContent = 'Passionate ' + degree + ' (' + branch + ') undergraduate at ' + college + ' aiming for high-growth ' + target + ' opportunities. Proficient in ' + skills + ' with hands-on project implementation.';
-      document.getElementById('res-college').textContent = college + ' — ' + degree + ' in ' + branch;
-      document.getElementById('res-year').textContent = 'Graduating ' + year + ' | CGPA: ' + cgpa;
-      document.getElementById('res-skills').innerHTML = '<strong>Core Technical Skills:</strong> ' + skills + '<br><strong>Soft Skills:</strong> Problem Solving, Analytical Thinking, Team Leadership';
-      document.getElementById('res-project-title').textContent = projTitle;
-      document.getElementById('res-project-desc').textContent = projDesc;
+    if (avatarInput) {
+
+      avatarInput.addEventListener(
+        'change',
+        function () {
+
+          if (
+            avatarInput.files &&
+            avatarInput.files[0]
+          ) {
+
+            handlePhotoUpload(
+              avatarInput.files[0]
+            );
+
+          }
+
+        }
+      );
+
     }
 
-    // Silent Auto-Save to Firestore + LocalStorage on every step transition
-    function saveCurrentDataSilently() {
-      if (!window.CareerSetu) return;
 
-      var formData = {
-        fullName: document.getElementById('fullName')?.value?.trim() || '',
-        email: document.getElementById('email')?.value?.trim() || '',
-        phone: document.getElementById('phone')?.value?.trim() || '',
-        location: document.getElementById('location')?.value?.trim() || '',
-        linkedinUrl: document.getElementById('linkedinUrl')?.value?.trim() || '',
-        githubUrl: document.getElementById('githubUrl')?.value?.trim() || '',
-        college: document.getElementById('college')?.value?.trim() || '',
-        educationLevel: document.getElementById('educationLevel')?.value || 'B.Tech',
-        branch: document.getElementById('branch')?.value?.trim() || '',
-        gradYear: document.getElementById('gradYear')?.value?.trim() || '',
-        cgpa: document.getElementById('cgpa')?.value?.trim() || '',
-        currentSemester: document.getElementById('currentSemester')?.value || '',
-        technicalSkills: document.getElementById('technicalSkills')?.value?.trim() || '',
-        softSkills: document.getElementById('softSkills')?.value?.trim() || '',
-        projectName: document.getElementById('projectName')?.value?.trim() || '',
-        projectDesc: document.getElementById('projectDesc')?.value?.trim() || '',
-        targetCareer: document.getElementById('targetCareer')?.value || 'AI / ML Engineer',
-        preferredLocations: document.getElementById('preferredLocations')?.value?.trim() || '',
-        preferredJobType: document.getElementById('preferredJobType')?.value || '',
-        weeklyHours: document.getElementById('weeklyHours')?.value || '',
-        lastUpdated: new Date().toISOString()
+    /*
+      Remove photo
+    */
+
+    const removeButton =
+      document.getElementById(
+        'remove-photo-btn'
+      );
+
+
+    if (removeButton) {
+
+      removeButton.addEventListener(
+        'click',
+        async function () {
+
+          if (!profileHydrated) {
+            return;
+          }
+
+
+          try {
+
+            await CareerSetu.removeUserAvatar();
+
+            currentProfilePhoto = '';
+
+            updateAvatar(
+              ''
+            );
+
+            renderResume();
+
+            showAlert(
+              'Profile photo removed successfully.',
+              'success'
+            );
+
+          } catch (error) {
+
+            console.error(
+              error
+            );
+
+            showAlert(
+              'Photo remove nahi ho paya.',
+              'error'
+            );
+
+          }
+
+        }
+      );
+
+    }
+
+
+    /*
+      Preset avatars
+    */
+
+    document
+      .querySelectorAll(
+        '[data-avatar]'
+      )
+      .forEach(
+        function (button) {
+
+          button.addEventListener(
+            'click',
+            function () {
+
+              applyPresetAvatar(
+                button.getAttribute(
+                  'data-avatar'
+                )
+              );
+
+            }
+          );
+
+        }
+      );
+
+
+    /*
+      Quick Fill
+    */
+
+    const quickFill =
+      document.getElementById(
+        'quick-fill-btn'
+      );
+
+
+    if (quickFill) {
+
+      quickFill.addEventListener(
+        'click',
+        quickFillProfile
+      );
+
+    }
+
+
+    /*
+      Download buttons
+    */
+
+    const downloadTop =
+      document.getElementById(
+        'download-resume-btn'
+      );
+
+
+    const downloadBottom =
+      document.getElementById(
+        'download-resume-bottom'
+      );
+
+
+    if (downloadTop) {
+
+      downloadTop.addEventListener(
+        'click',
+        downloadResumePDF
+      );
+
+    }
+
+
+    if (downloadBottom) {
+
+      downloadBottom.addEventListener(
+        'click',
+        downloadResumePDF
+      );
+
+    }
+
+
+    /*
+      Mobile menu
+    */
+
+    const menu =
+      document.getElementById(
+        'mobile-menu-toggle'
+      );
+
+
+    if (menu) {
+
+      menu.addEventListener(
+        'click',
+        function () {
+
+          const sidebar =
+            document.querySelector(
+              '.app-sidebar'
+            );
+
+
+          if (sidebar) {
+
+            sidebar.classList.toggle(
+              'mobile-open'
+            );
+
+          }
+
+        }
+      );
+
+    }
+
+
+    /*
+      Before leaving page
+    */
+
+    window.addEventListener(
+      'beforeunload',
+      function () {
+
+        if (
+          profileHydrated &&
+          profileDirty
+        ) {
+
+          saveProfile(
+            false
+          );
+
+        }
+
+      }
+    );
+
+  }
+
+
+  /* =========================================================
+     NAVIGATION
+  ========================================================= */
+
+  window.goToStep =
+    function (step) {
+
+      step =
+        parseInt(
+          step,
+          10
+        );
+
+
+      if (
+        step < 1 ||
+        step > 6
+      ) {
+
+        return;
+
+      }
+
+
+      /*
+        Save current profile before moving,
+        but only after hydration.
+      */
+
+      if (
+        profileHydrated &&
+        profileDirty
+      ) {
+
+        saveProfile(
+          false
+        );
+
+      }
+
+
+      currentStep =
+        step;
+
+
+      /*
+        nav
+      */
+
+      document
+        .querySelectorAll(
+          '.step-nav-item'
+        )
+        .forEach(
+          function (item) {
+
+            const itemStep =
+              parseInt(
+                item.getAttribute(
+                  'data-step'
+                ),
+                10
+              );
+
+
+            item.classList.remove(
+              'active'
+            );
+
+
+            item.classList.remove(
+              'completed'
+            );
+
+
+            if (
+              itemStep ===
+              currentStep
+            ) {
+
+              item.classList.add(
+                'active'
+              );
+
+            }
+
+
+            if (
+              itemStep <
+              currentStep
+            ) {
+
+              item.classList.add(
+                'completed'
+              );
+
+            }
+
+          }
+        );
+
+
+      /*
+        panes
+      */
+
+      document
+        .querySelectorAll(
+          '.step-pane'
+        )
+        .forEach(
+          function (pane) {
+
+            pane.classList.remove(
+              'active'
+            );
+
+          }
+        );
+
+
+      const activePane =
+        document.getElementById(
+          'pane-step-' +
+          currentStep
+        );
+
+
+      if (activePane) {
+
+        activePane.classList.add(
+          'active'
+        );
+
+      }
+
+
+      if (
+        currentStep === 6
+      ) {
+
+        renderResume();
+
+      }
+
+
+      window.scrollTo({
+        top: 100,
+        behavior: 'smooth'
+      });
+
+    };
+
+
+  /* =========================================================
+     PROFILE CHANGES
+  ========================================================= */
+
+  function markProfileDirty() {
+
+    if (!profileHydrated) {
+      return;
+    }
+
+
+    profileDirty =
+      true;
+
+
+    setSaveStatus(
+      'saving',
+      'Unsaved changes'
+    );
+
+
+    clearTimeout(
+      saveTimer
+    );
+
+
+    saveTimer =
+      setTimeout(
+        function () {
+
+          saveProfile(
+            false
+          );
+
+        },
+        900
+      );
+
+
+    renderResume();
+
+
+    updateSidebarNameLive();
+
+  }
+
+
+  /* =========================================================
+     SAVE PROFILE
+  ========================================================= */
+
+  async function saveProfile(
+    showMessage
+  ) {
+
+    if (!profileHydrated) {
+
+      return null;
+
+    }
+
+
+    if (!window.CareerSetu) {
+
+      return null;
+
+    }
+
+
+    const user =
+      CareerSetu.getCurrentUser();
+
+
+    if (!user) {
+
+      return null;
+
+    }
+
+
+    const data =
+      collectProfileData();
+
+
+    /*
+      Safety check.
+      Empty form never overwrites existing profile.
+    */
+
+    const usefulFields = [
+
+      data.fullName,
+      data.email,
+      data.college,
+      data.branch,
+      data.technicalSkills,
+      data.projectName,
+      data.targetCareer
+
+    ];
+
+
+    const hasUsefulData =
+      usefulFields.some(
+        function (value) {
+          return Boolean(
+            String(
+              value || ''
+            ).trim()
+          );
+        }
+      );
+
+
+    if (!hasUsefulData) {
+
+      console.warn(
+        'Profile save skipped because form is empty.'
+      );
+
+
+      return null;
+
+    }
+
+
+    setSaveStatus(
+      'saving',
+      'Saving profile...'
+    );
+
+
+    try {
+
+      const result =
+        await CareerSetu.saveUserData(
+          'profiles',
+          data
+        );
+
+
+      profileDirty =
+        false;
+
+
+      setSaveStatus(
+        'saved',
+        'Profile saved'
+      );
+
+
+      if (showMessage) {
+
+        showAlert(
+          '✅ Profile saved successfully.',
+          'success'
+        );
+
+      }
+
+
+      /*
+        Refresh sidebar
+      */
+
+      CareerSetu
+        .renderUserProfileWidget()
+        .catch(
+          function () {}
+        );
+
+
+      return result;
+
+    } catch (error) {
+
+      console.error(
+        'Save error:',
+        error
+      );
+
+
+      setSaveStatus(
+        'error',
+        'Save failed'
+      );
+
+
+      if (showMessage) {
+
+        showAlert(
+          'Profile save nahi ho paya.',
+          'error'
+        );
+
+      }
+
+
+      return null;
+
+    }
+
+  }
+
+
+  /* =========================================================
+     COLLECT PROFILE
+  ========================================================= */
+
+  function collectProfileData() {
+
+    const interests = [];
+
+
+    document
+      .querySelectorAll(
+        'input[name="interest_domain"]:checked'
+      )
+      .forEach(
+        function (checkbox) {
+
+          interests.push(
+            checkbox.value
+          );
+
+        }
+      );
+
+
+    return {
+
+      fullName:
+        getValue(
+          'fullName'
+        ),
+
+      email:
+        getValue(
+          'email'
+        ),
+
+      phone:
+        getValue(
+          'phone'
+        ),
+
+      location:
+        getValue(
+          'location'
+        ),
+
+      linkedinUrl:
+        getValue(
+          'linkedinUrl'
+        ),
+
+      githubUrl:
+        getValue(
+          'githubUrl'
+        ),
+
+      college:
+        getValue(
+          'college'
+        ),
+
+      educationLevel:
+        getValue(
+          'educationLevel',
+          'B.Tech'
+        ),
+
+      branch:
+        getValue(
+          'branch'
+        ),
+
+      gradYear:
+        getValue(
+          'gradYear'
+        ),
+
+      cgpa:
+        getValue(
+          'cgpa'
+        ),
+
+      currentSemester:
+        getValue(
+          'currentSemester'
+        ),
+
+      higherSecondary:
+        getValue(
+          'higherSecondary'
+        ),
+
+      technicalSkills:
+        getValue(
+          'technicalSkills'
+        ),
+
+      softSkills:
+        getValue(
+          'softSkills'
+        ),
+
+      projectName:
+        getValue(
+          'projectName'
+        ),
+
+      projectDesc:
+        getValue(
+          'projectDesc'
+        ),
+
+      interestDomains:
+        interests,
+
+      preferredJobType:
+        getValue(
+          'preferredJobType'
+        ),
+
+      weeklyHours:
+        getValue(
+          'weeklyHours'
+        ),
+
+      preferredLocations:
+        getValue(
+          'preferredLocations'
+        ),
+
+      targetCareer:
+        getValue(
+          'targetCareer',
+          'AI / ML Engineer'
+        ),
+
+      photoURL:
+        currentProfilePhoto || '',
+
+      resumeTemplate:
+        selectedResumeTemplate,
+
+      lastUpdated:
+        new Date().toISOString()
+
+    };
+
+  }
+
+
+  /* =========================================================
+     POPULATE PROFILE
+  ========================================================= */
+
+  function populateProfile(
+    data
+  ) {
+
+    if (!data) {
+      return;
+    }
+
+
+    const fields = [
+
+      'fullName',
+      'email',
+      'phone',
+      'location',
+      'linkedinUrl',
+      'githubUrl',
+      'college',
+      'educationLevel',
+      'branch',
+      'gradYear',
+      'cgpa',
+      'currentSemester',
+      'higherSecondary',
+      'technicalSkills',
+      'softSkills',
+      'projectName',
+      'projectDesc',
+      'preferredJobType',
+      'weeklyHours',
+      'preferredLocations',
+      'targetCareer'
+
+    ];
+
+
+    fields.forEach(
+      function (id) {
+
+        if (
+          data[id] !== undefined &&
+          data[id] !== null
+        ) {
+
+          setValue(
+            id,
+            data[id]
+          );
+
+        }
+
+      }
+    );
+
+
+    /*
+      Interests
+    */
+
+    const interests =
+      Array.isArray(
+        data.interestDomains
+      )
+        ? data.interestDomains
+        : [];
+
+
+    document
+      .querySelectorAll(
+        'input[name="interest_domain"]'
+      )
+      .forEach(
+        function (checkbox) {
+
+          checkbox.checked =
+            interests.includes(
+              checkbox.value
+            );
+
+        }
+      );
+
+
+    /*
+      Photo
+    */
+
+    if (data.photoURL) {
+
+      currentProfilePhoto =
+        data.photoURL;
+
+    }
+
+
+    /*
+      Selected template
+    */
+
+    if (
+      data.resumeTemplate &&
+      TEMPLATE_NAMES[
+        data.resumeTemplate
+      ]
+    ) {
+
+      selectedResumeTemplate =
+        data.resumeTemplate;
+
+    }
+
+  }
+
+
+  /* =========================================================
+     SKILLS
+  ========================================================= */
+
+  function toggleSkill(
+    chip
+  ) {
+
+    const skill =
+      chip.getAttribute(
+        'data-skill'
+      );
+
+
+    const input =
+      document.getElementById(
+        'technicalSkills'
+      );
+
+
+    if (!input || !skill) {
+      return;
+    }
+
+
+    let skills =
+      input.value
+        .split(',')
+        .map(
+          function (item) {
+            return item.trim();
+          }
+        )
+        .filter(Boolean);
+
+
+    if (
+      skills.includes(
+        skill
+      )
+    ) {
+
+      skills =
+        skills.filter(
+          function (item) {
+            return item !== skill;
+          }
+        );
+
+
+      chip.classList.remove(
+        'selected'
+      );
+
+    } else {
+
+      skills.push(
+        skill
+      );
+
+
+      chip.classList.add(
+        'selected'
+      );
+
+    }
+
+
+    input.value =
+      skills.join(', ');
+
+
+    markProfileDirty();
+
+  }
+
+
+  function updateSkillChips() {
+
+    const input =
+      document.getElementById(
+        'technicalSkills'
+      );
+
+
+    if (!input) {
+      return;
+    }
+
+
+    const skills =
+      input.value
+        .split(',')
+        .map(
+          function (item) {
+            return item.trim().toLowerCase();
+          }
+        )
+        .filter(Boolean);
+
+
+    document
+      .querySelectorAll(
+        '[data-skill]'
+      )
+      .forEach(
+        function (chip) {
+
+          const chipSkill =
+            chip.getAttribute(
+              'data-skill'
+            )
+              .toLowerCase();
+
+
+          chip.classList.toggle(
+            'selected',
+            skills.includes(
+              chipSkill
+            )
+          );
+
+        }
+      );
+
+  }
+
+
+  /* =========================================================
+     TARGET CAREER
+  ========================================================= */
+
+  function selectTargetRole(
+    card
+  ) {
+
+    const role =
+      card.getAttribute(
+        'data-role'
+      );
+
+
+    if (!role) {
+      return;
+    }
+
+
+    document
+      .querySelectorAll(
+        '[data-role]'
+      )
+      .forEach(
+        function (item) {
+
+          item.classList.remove(
+            'selected'
+          );
+
+        }
+      );
+
+
+    card.classList.add(
+      'selected'
+    );
+
+
+    setValue(
+      'targetCareer',
+      role
+    );
+
+
+    markProfileDirty();
+
+  }
+
+
+  function updateTargetCards() {
+
+    const target =
+      getValue(
+        'targetCareer',
+        'AI / ML Engineer'
+      );
+
+
+    document
+      .querySelectorAll(
+        '[data-role]'
+      )
+      .forEach(
+        function (card) {
+
+          card.classList.toggle(
+            'selected',
+            card.getAttribute(
+              'data-role'
+            ) === target
+          );
+
+        }
+      );
+
+  }
+
+
+  /* =========================================================
+     AVATAR
+  ========================================================= */
+
+  function updateAvatar(
+    photoUrl
+  ) {
+
+    const container =
+      document.getElementById(
+        'avatar-container'
+      );
+
+
+    if (!container) {
+      return;
+    }
+
+
+    const name =
+      getValue(
+        'fullName',
+        'Student'
+      );
+
+
+    if (photoUrl) {
+
+      container.innerHTML =
+
+        '<img ' +
+        'class="avatar-image" ' +
+        'src="' +
+        escapeHTML(photoUrl) +
+        '" ' +
+        'alt="Profile Photo">';
+
+    } else {
+
+      container.innerHTML =
+
+        '<div class="avatar-fallback">' +
+        escapeHTML(
+          (
+            name.charAt(0)
+              .toUpperCase()
+          ) || 'S'
+        ) +
+        '</div>';
+
+    }
+
+  }
+
+
+  /* =========================================================
+     PHOTO UPLOAD
+  ========================================================= */
+
+  async function handlePhotoUpload(
+    file
+  ) {
+
+    if (!profileHydrated) {
+      return;
+    }
+
+
+    if (
+      !file ||
+      !file.type.startsWith(
+        'image/'
+      )
+    ) {
+
+      showAlert(
+        'Please select a valid image file.',
+        'error'
+      );
+
+
+      return;
+
+    }
+
+
+    const reader =
+      new FileReader();
+
+
+    reader.onload =
+      function (event) {
+
+        const image =
+          new Image();
+
+
+        image.onload =
+          async function () {
+
+            const canvas =
+              document.createElement(
+                'canvas'
+              );
+
+
+            const max =
+              256;
+
+
+            let width =
+              image.width;
+
+
+            let height =
+              image.height;
+
+
+            if (
+              width >
+              height
+            ) {
+
+              if (
+                width >
+                max
+              ) {
+
+                height =
+                  Math.round(
+                    (
+                      height *
+                      max
+                    ) /
+                    width
+                  );
+
+
+                width =
+                  max;
+
+              }
+
+            } else {
+
+              if (
+                height >
+                max
+              ) {
+
+                width =
+                  Math.round(
+                    (
+                      width *
+                      max
+                    ) /
+                    height
+                  );
+
+
+                height =
+                  max;
+
+              }
+
+            }
+
+
+            canvas.width =
+              width;
+
+
+            canvas.height =
+              height;
+
+
+            const context =
+              canvas.getContext(
+                '2d'
+              );
+
+
+            context.drawImage(
+              image,
+              0,
+              0,
+              width,
+              height
+            );
+
+
+            const photo =
+              canvas.toDataURL(
+                'image/jpeg',
+                0.88
+              );
+
+
+            currentProfilePhoto =
+              photo;
+
+
+            updateAvatar(
+              photo
+            );
+
+
+            try {
+
+              await CareerSetu.saveUserAvatar(
+                photo
+              );
+
+
+              profileDirty =
+                false;
+
+
+              setSaveStatus(
+                'saved',
+                'Photo saved'
+              );
+
+
+              renderResume();
+
+
+              showAlert(
+                '📸 Profile photo saved successfully.',
+                'success'
+              );
+
+            } catch (error) {
+
+              console.error(
+                error
+              );
+
+
+              showAlert(
+                'Photo save nahi ho paya.',
+                'error'
+              );
+
+            }
+
+          };
+
+
+        image.src =
+          event.target.result;
+
       };
 
-      CareerSetu.saveUserData('profiles', formData);
+
+    reader.readAsDataURL(
+      file
+    );
+
+  }
+
+
+  /* =========================================================
+     PRESET AVATAR
+  ========================================================= */
+
+  function applyPresetAvatar(
+    type
+  ) {
+
+    if (!profileHydrated) {
+      return;
     }
 
-    // Populate Fields Helper
-    function populateFields(data) {
-      for (var key in data) {
-        var el = document.getElementById(key);
-        if (el) {
-          el.value = data[key];
+
+    const colors = {
+
+      coder: [
+        '#4f46e5',
+        '#06b6d4'
+      ],
+
+      engineer: [
+        '#f59e0b',
+        '#ef4444'
+      ],
+
+      ai: [
+        '#8b5cf6',
+        '#ec4899'
+      ],
+
+      scholar: [
+        '#10b981',
+        '#0284c7'
+      ]
+
+    };
+
+
+    const pair =
+      colors[type] ||
+      colors.coder;
+
+
+    const svg = `
+
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 100 100"
+      >
+
+        <defs>
+
+          <linearGradient
+            id="avatarGradient"
+            x1="0%"
+            y1="0%"
+            x2="100%"
+            y2="100%"
+          >
+
+            <stop
+              offset="0%"
+              stop-color="${pair[0]}"
+            />
+
+            <stop
+              offset="100%"
+              stop-color="${pair[1]}"
+            />
+
+          </linearGradient>
+
+        </defs>
+
+
+        <circle
+          cx="50"
+          cy="50"
+          r="50"
+          fill="url(#avatarGradient)"
+        />
+
+
+        <circle
+          cx="50"
+          cy="38"
+          r="18"
+          fill="#ffffff"
+        />
+
+
+        <path
+          d="M22 84 C22 66,36 60,50 60 C64 60,78 66,78 84 Z"
+          fill="#ffffff"
+        />
+
+      </svg>
+
+    `;
+
+
+    const photo =
+      'data:image/svg+xml;charset=utf-8,' +
+      encodeURIComponent(
+        svg
+      );
+
+
+    currentProfilePhoto =
+      photo;
+
+
+    updateAvatar(
+      photo
+    );
+
+
+    CareerSetu
+      .saveUserAvatar(
+        photo
+      )
+      .then(
+        function () {
+
+          renderResume();
+
+
+          showAlert(
+            '✨ Avatar saved successfully.',
+            'success'
+          );
+
         }
-      }
-      if (data.targetCareer) {
-        var cards = document.querySelectorAll('.target-role-card');
-        cards.forEach(function (c) {
-          if (c.textContent.indexOf(data.targetCareer) !== -1) {
-            c.classList.add('selected');
-          } else {
-            c.classList.remove('selected');
-          }
-        });
-      }
+      )
+      .catch(
+        function (error) {
+
+          console.error(
+            error
+          );
+
+        }
+      );
+
+  }
+
+
+  /* =========================================================
+     QUICK FILL
+  ========================================================= */
+
+  function quickFillProfile() {
+
+    if (!profileHydrated) {
+
+      showAlert(
+        'Profile abhi load ho rahi hai.',
+        'info'
+      );
+
+
+      return;
+
     }
 
-    function showAlert(message, type) {
-      var alertContainer = document.getElementById('alert-container');
-      if (!alertContainer) return;
-      var alertClass = type === 'success' ? 'alert-emerald' : (type === 'error' ? 'alert-rose' : 'alert-primary');
-      alertContainer.innerHTML = '<div class="alert ' + alertClass + '" style="margin-bottom: 1.25rem; padding: 0.75rem 1rem; border-radius: 8px; font-size: 0.88rem; background: ' + (type === 'success' ? '#ecfdf5' : (type === 'error' ? '#fff1f2' : '#eff6ff')) + '; color: ' + (type === 'success' ? '#047857' : (type === 'error' ? '#b91c1c' : '#1e40af')) + '; border: 1px solid ' + (type === 'success' ? '#a7f3d0' : (type === 'error' ? '#fecdd3' : '#bfdbfe')) + ';">' + message + '</div>';
+
+    const user =
+      CareerSetu.getCurrentUser();
+
+
+    const data = {
+
+      fullName:
+        user &&
+        user.displayName
+          ? user.displayName
+          : 'Demo Student',
+
+      email:
+        user &&
+        user.email
+          ? user.email
+          : '',
+
+      phone:
+        '+91 98765 43210',
+
+      location:
+        'Bhopal, Madhya Pradesh',
+
+      linkedinUrl:
+        'https://linkedin.com/in/your-name',
+
+      githubUrl:
+        'https://github.com/your-name',
+
+      college:
+        'RGPV Bhopal',
+
+      educationLevel:
+        'B.Tech',
+
+      branch:
+        'Computer Science & Engineering',
+
+      gradYear:
+        '2028',
+
+      cgpa:
+        '8.5',
+
+      currentSemester:
+        '6th Semester',
+
+      higherSecondary:
+        '88.4%',
+
+      technicalSkills:
+        'Python, SQL, JavaScript, HTML5, CSS3, React',
+
+      softSkills:
+        'Problem Solving, Communication, Teamwork',
+
+      projectName:
+        'CareerSetu AI Career Platform',
+
+      projectDesc:
+        'Built a student career platform for profile management, career guidance, skill-gap analysis, resume generation and interview preparation.',
+
+      preferredJobType:
+        'Internship leading to PPO',
+
+      weeklyHours:
+        '15-20 hrs/week',
+
+      preferredLocations:
+        'Bhopal, Remote, Bengaluru, Pune',
+
+      targetCareer:
+        'AI / ML Engineer',
+
+      interestDomains: [
+        'ai_ml',
+        'fullstack'
+      ]
+
+    };
+
+
+    populateProfile(
+      data
+    );
+
+
+    updateTargetCards();
+
+    updateSkillChips();
+
+
+    profileDirty =
+      true;
+
+
+    saveProfile(
+      true
+    );
+
+
+    renderResume();
+
+  }
+
+
+  /* =========================================================
+     RESUME — TEMPLATE
+  ========================================================= */
+
+  function selectResumeTemplate(
+    template
+  ) {
+
+    if (
+      !TEMPLATE_NAMES[
+        template
+      ]
+    ) {
+
+      template =
+        'modern';
+
     }
-  </script>
+
+
+    selectedResumeTemplate =
+      template;
+
+
+    document
+      .querySelectorAll(
+        '.resume-template-card'
+      )
+      .forEach(
+        function (card) {
+
+          card.classList.toggle(
+            'selected',
+            card.getAttribute(
+              'data-template'
+            ) ===
+            selectedResumeTemplate
+          );
+
+        }
+      );
+
+
+    const label =
+      document.getElementById(
+        'selected-design-text'
+      );
+
+
+    if (label) {
+
+      label.innerHTML =
+        'Selected Design: <strong>' +
+        escapeHTML(
+          TEMPLATE_NAMES[
+            selectedResumeTemplate
+          ]
+        ) +
+        '</strong>';
+
+    }
+
+
+    const user =
+      CareerSetu.getCurrentUser();
+
+
+    try {
+
+      if (
+        user &&
+        user.uid
+      ) {
+
+        localStorage.setItem(
+          'careersetu_resume_template_' +
+          user.uid,
+          selectedResumeTemplate
+        );
+
+      }
+
+    } catch (error) {}
+
+
+    renderResume();
+
+
+    if (profileHydrated) {
+
+      profileDirty =
+        true;
+
+
+      saveProfile(
+        false
+      );
+
+    }
+
+  }
+
+
+  /* =========================================================
+     RESUME DATA
+  ========================================================= */
+
+  function getResumeData() {
+
+    return {
+
+      fullName:
+        getValue(
+          'fullName',
+          'Student Candidate'
+        ),
+
+      email:
+        getValue(
+          'email'
+        ),
+
+      phone:
+        getValue(
+          'phone'
+        ),
+
+      location:
+        getValue(
+          'location',
+          'India'
+        ),
+
+      linkedinUrl:
+        getValue(
+          'linkedinUrl'
+        ),
+
+      githubUrl:
+        getValue(
+          'githubUrl'
+        ),
+
+      college:
+        getValue(
+          'college',
+          'College / University'
+        ),
+
+      educationLevel:
+        getValue(
+          'educationLevel',
+          'B.Tech'
+        ),
+
+      branch:
+        getValue(
+          'branch',
+          'Computer Science'
+        ),
+
+      gradYear:
+        getValue(
+          'gradYear'
+        ),
+
+      cgpa:
+        getValue(
+          'cgpa'
+        ),
+
+      currentSemester:
+        getValue(
+          'currentSemester'
+        ),
+
+      higherSecondary:
+        getValue(
+          'higherSecondary'
+        ),
+
+      technicalSkills:
+        getValue(
+          'technicalSkills'
+        ),
+
+      softSkills:
+        getValue(
+          'softSkills'
+        ),
+
+      projectName:
+        getValue(
+          'projectName'
+        ),
+
+      projectDesc:
+        getValue(
+          'projectDesc'
+        ),
+
+      preferredJobType:
+        getValue(
+          'preferredJobType'
+        ),
+
+      preferredLocations:
+        getValue(
+          'preferredLocations'
+        ),
+
+      weeklyHours:
+        getValue(
+          'weeklyHours'
+        ),
+
+      targetCareer:
+        getValue(
+          'targetCareer',
+          'AI / ML Engineer'
+        ),
+
+      photoURL:
+        currentProfilePhoto || ''
+
+    };
+
+  }
+
+
+  /* =========================================================
+     RENDER RESUME
+  ========================================================= */
+
+  function renderResume() {
+
+    const sheet =
+      document.getElementById(
+        'resume-sheet'
+      );
+
+
+    if (!sheet) {
+      return;
+    }
+
+
+    const data =
+      getResumeData();
+
+
+    sheet.className =
+      'resume-sheet ' +
+      selectedResumeTemplate;
+
+
+    sheet.innerHTML =
+      buildResumeHTML(
+        data
+      );
+
+
+    document
+      .querySelectorAll(
+        '.resume-template-card'
+      )
+      .forEach(
+        function (card) {
+
+          card.classList.toggle(
+            'selected',
+            card.getAttribute(
+              'data-template'
+            ) ===
+            selectedResumeTemplate
+          );
+
+        }
+      );
+
+
+    const selectedLabel =
+      document.getElementById(
+        'selected-design-text'
+      );
+
+
+    if (selectedLabel) {
+
+      selectedLabel.innerHTML =
+        'Selected Design: <strong>' +
+        escapeHTML(
+          TEMPLATE_NAMES[
+            selectedResumeTemplate
+          ]
+        ) +
+        '</strong>';
+
+    }
+
+  }
+
+
+  /* =========================================================
+     RESUME HTML
+  ========================================================= */
+
+  function buildResumeHTML(
+    data
+  ) {
+
+    const avatar =
+      data.photoURL
+
+        ? `
+          <img
+            class="resume-photo"
+            src="${escapeHTML(data.photoURL)}"
+            alt="Profile Photo"
+          >
+        `
+
+        : `
+          <div class="resume-initial">
+            ${
+              escapeHTML(
+                (
+                  data.fullName ||
+                  'S'
+                ).charAt(0)
+              ).toUpperCase()
+            }
+          </div>
+        `;
+
+
+    let contacts = '';
+
+
+    if (data.email) {
+
+      contacts +=
+        `<span>📧 ${escapeHTML(data.email)}</span>`;
+
+    }
+
+
+    if (data.phone) {
+
+      contacts +=
+        `<span>📱 ${escapeHTML(data.phone)}</span>`;
+
+    }
+
+
+    if (data.location) {
+
+      contacts +=
+        `<span>📍 ${escapeHTML(data.location)}</span>`;
+
+    }
+
+
+    if (data.linkedinUrl) {
+
+      contacts +=
+        `<span>🔗 LinkedIn</span>`;
+
+    }
+
+
+    if (data.githubUrl) {
+
+      contacts +=
+        `<span>💻 GitHub / Portfolio</span>`;
+
+    }
+
+
+    const technicalSkills =
+      data.technicalSkills
+        ? data.technicalSkills
+            .split(',')
+            .map(
+              function (skill) {
+
+                return `
+                  <span class="resume-tag">
+                    ${escapeHTML(skill.trim())}
+                  </span>
+                `;
+
+              }
+            )
+            .join('')
+        : `
+            <span class="resume-tag">
+              Add Technical Skills
+            </span>
+          `;
+
+
+    const softSkills =
+      data.softSkills
+        ? data.softSkills
+            .split(',')
+            .map(
+              function (skill) {
+
+                return `
+                  <span class="resume-tag">
+                    ${escapeHTML(skill.trim())}
+                  </span>
+                `;
+
+              }
+            )
+            .join('')
+        : `
+            <span class="resume-tag">
+              Add Soft Skills
+            </span>
+          `;
+
+
+    const education =
+      [
+        data.college,
+        data.educationLevel
+      ]
+        .filter(Boolean)
+        .join(' — ');
+
+
+    const educationSub =
+      [
+        data.branch,
+        data.currentSemester
+      ]
+        .filter(Boolean)
+        .join(' • ');
+
+
+    let score = '';
+
+
+    if (data.gradYear) {
+
+      score +=
+        'Graduation: ' +
+        escapeHTML(
+          data.gradYear
+        ) +
+        '<br>';
+
+    }
+
+
+    if (data.cgpa) {
+
+      score +=
+        'CGPA / Score: ' +
+        escapeHTML(
+          data.cgpa
+        ) +
+        '<br>';
+
+    }
+
+
+    if (data.higherSecondary) {
+
+      score +=
+        '12th / Diploma: ' +
+        escapeHTML(
+          data.higherSecondary
+        );
+
+    }
+
+
+    const summary =
+      'Motivated ' +
+      escapeHTML(
+        data.educationLevel ||
+        'student'
+      ) +
+      ' in ' +
+      escapeHTML(
+        data.branch ||
+        'technology'
+      ) +
+      ' targeting ' +
+      escapeHTML(
+        data.targetCareer ||
+        'technology opportunities'
+      ) +
+      '. ' +
+      (
+        data.technicalSkills
+          ? 'Skilled in ' +
+            escapeHTML(
+              data.technicalSkills
+            ) +
+            ' with practical project experience.'
+          : 'Focused on building practical projects and becoming industry ready.'
+      );
+
+
+    const project =
+      data.projectName ||
+      data.projectDesc
+
+        ? `
+          <div class="resume-project">
+
+            ${
+              data.projectName
+                ? `
+                  <div class="resume-project-title">
+                    ${escapeHTML(
+                      data.projectName
+                    )}
+                  </div>
+                `
+                : ''
+            }
+
+            ${
+              data.projectDesc
+                ? `
+                  <p class="resume-project-desc">
+                    ${escapeHTML(
+                      data.projectDesc
+                    )}
+                  </p>
+                `
+                : ''
+            }
+
+          </div>
+        `
+
+        : `
+          <p>
+            Add a featured project in your profile.
+          </p>
+        `;
+
+
+    let preferences = '';
+
+
+    if (data.preferredJobType) {
+
+      preferences +=
+        `<li>${escapeHTML(data.preferredJobType)}</li>`;
+
+    }
+
+
+    if (data.preferredLocations) {
+
+      preferences +=
+        `<li>Locations: ${escapeHTML(data.preferredLocations)}</li>`;
+
+    }
+
+
+    if (data.weeklyHours) {
+
+      preferences +=
+        `<li>Preparation: ${escapeHTML(data.weeklyHours)}</li>`;
+
+    }
+
+
+    if (!preferences) {
+
+      preferences =
+        '<li>Work preferences not added.</li>';
+
+    }
+
+
+    /* =======================================================
+       MODERN
+    ======================================================= */
+
+    if (
+      selectedResumeTemplate ===
+      'modern'
+    ) {
+
+      return `
+
+        <div
+          style="
+            border-top:7px solid #4f46e5;
+            margin:-56px -56px 20px;
+            padding:50px 56px 0;
+          "
+        ></div>
+
+
+        <div class="resume-sheet-header">
+
+          <div>
+
+            <h1 class="resume-name">
+              ${escapeHTML(
+                data.fullName
+              )}
+            </h1>
+
+            <div class="resume-target">
+              ${escapeHTML(
+                data.targetCareer
+              )}
+            </div>
+
+            <div class="resume-contact">
+              ${contacts}
+            </div>
+
+          </div>
+
+          ${avatar}
+
+        </div>
+
+
+        <div class="resume-divider"></div>
+
+
+        <div class="resume-two-column">
+
+          <div>
+
+            <div class="resume-section">
+
+              <div class="resume-section-title">
+                Professional Summary
+              </div>
+
+              <p>
+                ${summary}
+              </p>
+
+            </div>
+
+
+            <div class="resume-section">
+
+              <div class="resume-section-title">
+                Education
+              </div>
+
+              <div class="resume-edu-row">
+
+                <div>
+
+                  <div class="resume-edu-main">
+                    ${escapeHTML(
+                      education ||
+                      'Education Details'
+                    )}
+                  </div>
+
+                  <div class="resume-edu-sub">
+                    ${escapeHTML(
+                      educationSub
+                    )}
+                  </div>
+
+                </div>
+
+                <div class="resume-edu-score">
+                  ${score}
+                </div>
+
+              </div>
+
+            </div>
+
+
+            <div class="resume-section">
+
+              <div class="resume-section-title">
+                Featured Project
+              </div>
+
+              ${project}
+
+            </div>
+
+          </div>
+
+
+          <div class="resume-side-box">
+
+            <div class="resume-section">
+
+              <div class="resume-section-title">
+                Technical Skills
+              </div>
+
+              <div class="resume-tags">
+                ${technicalSkills}
+              </div>
+
+            </div>
+
+
+            <div class="resume-section">
+
+              <div class="resume-section-title">
+                Soft Skills
+              </div>
+
+              <div class="resume-tags">
+                ${softSkills}
+              </div>
+
+            </div>
+
+
+            <div class="resume-section">
+
+              <div class="resume-section-title">
+                Career Preferences
+              </div>
+
+              <ul>
+                ${preferences}
+              </ul>
+
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <div class="resume-footer">
+          Generated with CareerSetu AI
+        </div>
+
+      `;
+
+    }
+
+
+    /* =======================================================
+       ATS
+    ======================================================= */
+
+    if (
+      selectedResumeTemplate ===
+      'ats'
+    ) {
+
+      return `
+
+        <div
+          class="resume-sheet-header"
+        >
+
+          <h1 class="resume-name">
+            ${escapeHTML(
+              data.fullName
+            )}
+          </h1>
+
+          <div class="resume-target">
+            ${escapeHTML(
+              data.targetCareer
+            )}
+          </div>
+
+          <div class="resume-contact">
+            ${contacts}
+          </div>
+
+        </div>
+
+
+        <div class="resume-divider"></div>
+
+
+        <div class="resume-section">
+
+          <div class="resume-section-title">
+            Professional Summary
+          </div>
+
+          <p>
+            ${summary}
+          </p>
+
+        </div>
+
+
+        <div class="resume-section">
+
+          <div class="resume-section-title">
+            Education
+          </div>
+
+          <div class="resume-edu-row">
+
+            <div>
+
+              <div class="resume-edu-main">
+                ${escapeHTML(
+                  education ||
+                  'Education Details'
+                )}
+              </div>
+
+              <div class="resume-edu-sub">
+                ${escapeHTML(
+                  educationSub
+                )}
+              </div>
+
+            </div>
+
+            <div class="resume-edu-score">
+              ${score}
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <div class="resume-section">
+
+          <div class="resume-section-title">
+            Technical Skills
+          </div>
+
+          <p>
+            ${escapeHTML(
+              data.technicalSkills ||
+              'Not added'
+            )}
+          </p>
+
+        </div>
+
+
+        <div class="resume-section">
+
+          <div class="resume-section-title">
+            Soft Skills
+          </div>
+
+          <p>
+            ${escapeHTML(
+              data.softSkills ||
+              'Not added'
+            )}
+          </p>
+
+        </div>
+
+
+        <div class="resume-section">
+
+          <div class="resume-section-title">
+            Projects
+          </div>
+
+          ${project}
+
+        </div>
+
+
+        <div class="resume-section">
+
+          <div class="resume-section-title">
+            Career Preferences
+          </div>
+
+          <ul>
+            ${preferences}
+          </ul>
+
+        </div>
+
+
+        <div class="resume-footer">
+          CareerSetu AI Resume Builder
+        </div>
+
+      `;
+
+    }
+
+
+    /* =======================================================
+       FRESHER
+    ======================================================= */
+
+    if (
+      selectedResumeTemplate ===
+      'fresher'
+    ) {
+
+      return `
+
+        <div
+          style="
+            border-left:10px solid #0f766e;
+            margin:-56px 0 18px;
+            height:1px;
+          "
+        ></div>
+
+
+        <div class="resume-sheet-header">
+
+          <div>
+
+            <h1 class="resume-name">
+              ${escapeHTML(
+                data.fullName
+              )}
+            </h1>
+
+            <div
+              class="resume-target"
+              style="color:#0f766e;"
+            >
+              ${escapeHTML(
+                data.targetCareer
+              )}
+            </div>
+
+            <div class="resume-contact">
+              ${contacts}
+            </div>
+
+          </div>
+
+          ${avatar}
+
+        </div>
+
+
+        <div
+          class="resume-divider"
+          style="background:#0f766e;"
+        ></div>
+
+
+        <div
+          class="resume-two-column"
+          style="grid-template-columns:210px 1fr;"
+        >
+
+          <div
+            class="resume-side-box"
+            style="
+              background:#f0fdfa;
+              border-color:#ccfbf1;
+            "
+          >
+
+            <div class="resume-section">
+
+              <div
+                class="resume-section-title"
+                style="color:#0f766e;"
+              >
+                Skills
+              </div>
+
+              <div class="resume-tags">
+                ${technicalSkills}
+              </div>
+
+            </div>
+
+
+            <div class="resume-section">
+
+              <div
+                class="resume-section-title"
+                style="color:#0f766e;"
+              >
+                Soft Skills
+              </div>
+
+              <div class="resume-tags">
+                ${softSkills}
+              </div>
+
+            </div>
+
+          </div>
+
+
+          <div>
+
+            <div class="resume-section">
+
+              <div
+                class="resume-section-title"
+                style="color:#0f766e;"
+              >
+                Profile
+              </div>
+
+              <p>
+                ${summary}
+              </p>
+
+            </div>
+
+
+            <div class="resume-section">
+
+              <div
+                class="resume-section-title"
+                style="color:#0f766e;"
+              >
+                Education
+              </div>
+
+              <div class="resume-edu-main">
+                ${escapeHTML(
+                  education ||
+                  'Education Details'
+                )}
+              </div>
+
+              <div class="resume-edu-sub">
+                ${escapeHTML(
+                  educationSub
+                )}
+              </div>
+
+              <div
+                style="
+                  margin-top:5px;
+                  color:#475569;
+                  font-size:9.5px;
+                "
+              >
+                ${score}
+              </div>
+
+            </div>
+
+
+            <div class="resume-section">
+
+              <div
+                class="resume-section-title"
+                style="color:#0f766e;"
+              >
+                Featured Project
+              </div>
+
+              ${project}
+
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <div class="resume-footer">
+          Student / Fresher Resume • CareerSetu AI
+        </div>
+
+      `;
+
+    }
+
+
+    /* =======================================================
+       CREATIVE
+    ======================================================= */
+
+    if (
+      selectedResumeTemplate ===
+      'creative'
+    ) {
+
+      return `
+
+        <div class="creative-head">
+
+          <div class="resume-sheet-header">
+
+            <div>
+
+              <h1 class="resume-name">
+                ${escapeHTML(
+                  data.fullName
+                )}
+              </h1>
+
+              <div class="resume-target">
+                ${escapeHTML(
+                  data.targetCareer
+                )}
+              </div>
+
+              <div class="resume-contact">
+                ${contacts}
+              </div>
+
+            </div>
+
+            ${avatar}
+
+          </div>
+
+        </div>
+
+
+        <div class="creative-body">
+
+          <div class="resume-section">
+
+            <div class="resume-section-title">
+              About Me
+            </div>
+
+            <p>
+              ${summary}
+            </p>
+
+          </div>
+
+
+          <div class="resume-section">
+
+            <div class="resume-section-title">
+              Education
+            </div>
+
+            <div class="resume-edu-main">
+              ${escapeHTML(
+                education ||
+                'Education Details'
+              )}
+            </div>
+
+            <div class="resume-edu-sub">
+              ${escapeHTML(
+                educationSub
+              )}
+            </div>
+
+            <div
+              style="
+                margin-top:5px;
+                color:#475569;
+                font-size:9.5px;
+              "
+            >
+              ${score}
+            </div>
+
+          </div>
+
+
+          <div class="resume-section">
+
+            <div class="resume-section-title">
+              Technical Skills
+            </div>
+
+            <div class="resume-tags">
+              ${technicalSkills}
+            </div>
+
+          </div>
+
+
+          <div class="resume-section">
+
+            <div class="resume-section-title">
+              Strengths
+            </div>
+
+            <div class="resume-tags">
+              ${softSkills}
+            </div>
+
+          </div>
+
+
+          <div class="resume-section">
+
+            <div class="resume-section-title">
+              Featured Project
+            </div>
+
+            ${project}
+
+          </div>
+
+
+          <div class="resume-section">
+
+            <div class="resume-section-title">
+              Career Preferences
+            </div>
+
+            <ul>
+              ${preferences}
+            </ul>
+
+          </div>
+
+
+          <div class="resume-footer">
+            Created with CareerSetu AI
+          </div>
+
+        </div>
+
+      `;
+
+    }
+
+
+    /* =======================================================
+       MINIMAL
+    ======================================================= */
+
+    return `
+
+      <div class="resume-sheet-header">
+
+        <div>
+
+          <h1 class="resume-name">
+            ${escapeHTML(
+              data.fullName
+            )}
+          </h1>
+
+          <div class="resume-target">
+            ${escapeHTML(
+              data.targetCareer
+            )}
+          </div>
+
+          <div class="resume-contact">
+            ${contacts}
+          </div>
+
+        </div>
+
+        ${avatar}
+
+      </div>
+
+
+      <div class="resume-divider"></div>
+
+
+      <div class="resume-section">
+
+        <div class="resume-section-title">
+          Summary
+        </div>
+
+        <p>
+          ${summary}
+        </p>
+
+      </div>
+
+
+      <div class="resume-section">
+
+        <div class="resume-section-title">
+          Education
+        </div>
+
+        <div class="resume-edu-row">
+
+          <div>
+
+            <div class="resume-edu-main">
+              ${escapeHTML(
+                education ||
+                'Education Details'
+              )}
+            </div>
+
+            <div class="resume-edu-sub">
+              ${escapeHTML(
+                educationSub
+              )}
+            </div>
+
+          </div>
+
+          <div class="resume-edu-score">
+            ${score}
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <div class="resume-section">
+
+        <div class="resume-section-title">
+          Skills
+        </div>
+
+        <div class="resume-tags">
+          ${technicalSkills}
+        </div>
+
+      </div>
+
+
+      <div class="resume-section">
+
+        <div class="resume-section-title">
+          Soft Skills
+        </div>
+
+        <div class="resume-tags">
+          ${softSkills}
+        </div>
+
+      </div>
+
+
+      <div class="resume-section">
+
+        <div class="resume-section-title">
+          Featured Project
+        </div>
+
+        ${project}
+
+      </div>
+
+
+      <div class="resume-section">
+
+        <div class="resume-section-title">
+          Career Preferences
+        </div>
+
+        <ul>
+          ${preferences}
+        </ul>
+
+      </div>
+
+
+      <div class="resume-footer">
+        CareerSetu AI • Resume Builder
+      </div>
+
+    `;
+
+  }
+
+
+  /* =========================================================
+     DOWNLOAD PDF
+  ========================================================= */
+
+  async function downloadResumePDF() {
+
+    if (
+      typeof html2pdf ===
+      'undefined'
+    ) {
+
+      showAlert(
+        'PDF library load nahi hui. Internet check karke page refresh karo.',
+        'error'
+      );
+
+
+      return;
+
+    }
+
+
+    /*
+      First save profile.
+    */
+
+    await saveProfile(
+      false
+    );
+
+
+    renderResume();
+
+
+    const sheet =
+      document.getElementById(
+        'resume-sheet'
+      );
+
+
+    if (!sheet) {
+
+      showAlert(
+        'Resume preview available nahi hai.',
+        'error'
+      );
+
+
+      return;
+
+    }
+
+
+    const data =
+      getResumeData();
+
+
+    const safeName =
+      (
+        data.fullName ||
+        'Student'
+      )
+        .replace(
+          /[^a-zA-Z0-9]+/g,
+          '_'
+        )
+        .replace(
+          /^_+|_+$/g,
+          ''
+        );
+
+
+    const fileName =
+      safeName +
+      '_' +
+      selectedResumeTemplate +
+      '_Resume.pdf';
+
+
+    const buttons = [
+      document.getElementById(
+        'download-resume-btn'
+      ),
+      document.getElementById(
+        'download-resume-bottom'
+      )
+    ];
+
+
+    buttons.forEach(
+      function (button) {
+
+        if (button) {
+
+          button.disabled =
+            true;
+
+          button.dataset.oldText =
+            button.innerHTML;
+
+          button.innerHTML =
+            '⏳ Creating PDF...';
+
+        }
+
+      }
+    );
+
+
+    try {
+
+      await html2pdf()
+        .set({
+
+          margin: 0,
+
+          filename:
+            fileName,
+
+          image: {
+            type: 'jpeg',
+            quality: 0.98
+          },
+
+          html2canvas: {
+
+            scale: 2,
+
+            useCORS: true,
+
+            allowTaint: true,
+
+            backgroundColor:
+              '#ffffff',
+
+            logging: false
+
+          },
+
+          jsPDF: {
+
+            unit: 'mm',
+
+            format: 'a4',
+
+            orientation:
+              'portrait'
+
+          },
+
+          pagebreak: {
+            mode: [
+              'css',
+              'legacy'
+            ]
+          }
+
+        })
+        .from(sheet)
+        .save();
+
+
+      showAlert(
+        '✅ Resume PDF downloaded successfully.',
+        'success'
+      );
+
+
+    } catch (error) {
+
+      console.error(
+        'Resume download:',
+        error
+      );
+
+
+      showAlert(
+        'Resume PDF generate nahi ho paya. Dobara try karo.',
+        'error'
+      );
+
+    }
+
+
+    buttons.forEach(
+      function (button) {
+
+        if (button) {
+
+          button.disabled =
+            false;
+
+          button.innerHTML =
+            button.dataset.oldText ||
+            '📥 Download Resume PDF';
+
+        }
+
+      }
+    );
+
+  }
+
+
+  /* =========================================================
+     USER STATUS
+  ========================================================= */
+
+  function updateUserStatus(
+    user
+  ) {
+
+    const status =
+      document.getElementById(
+        'profile-user-status'
+      );
+
+
+    if (
+      status &&
+      user
+    ) {
+
+      status.textContent =
+        user.email
+          ? user.email
+          : 'Secure Student Profile';
+
+    }
+
+  }
+
+
+  /* =========================================================
+     SIDEBAR LIVE NAME
+  ========================================================= */
+
+  function updateSidebarNameLive() {
+
+    const name =
+      getValue(
+        'fullName',
+        'Student'
+      );
+
+
+    const avatar =
+      document.getElementById(
+        'sidebar-user-avatar'
+      );
+
+
+    const nameEl =
+      document.getElementById(
+        'sidebar-user-name'
+      );
+
+
+    if (nameEl) {
+
+      nameEl.textContent =
+        name;
+
+    }
+
+
+    if (
+      avatar &&
+      !currentProfilePhoto
+    ) {
+
+      avatar.textContent =
+        name
+          .charAt(0)
+          .toUpperCase() ||
+        'S';
+
+    }
+
+  }
+
+
+  /* =========================================================
+     SAVE STATUS
+  ========================================================= */
+
+  function setSaveStatus(
+    type,
+    text
+  ) {
+
+    const dot =
+      document.getElementById(
+        'save-status-dot'
+      );
+
+
+    const label =
+      document.getElementById(
+        'save-status-text'
+      );
+
+
+    if (dot) {
+
+      dot.classList.remove(
+        'saving',
+        'error'
+      );
+
+
+      if (
+        type ===
+        'saving'
+      ) {
+
+        dot.classList.add(
+          'saving'
+        );
+
+      }
+
+
+      if (
+        type ===
+        'error'
+      ) {
+
+        dot.classList.add(
+          'error'
+        );
+
+      }
+
+    }
+
+
+    if (label) {
+
+      label.textContent =
+        text;
+
+    }
+
+  }
+
+
+  /* =========================================================
+     GET / SET VALUE
+  ========================================================= */
+
+  function getValue(
+    id,
+    fallback
+  ) {
+
+    const element =
+      document.getElementById(
+        id
+      );
+
+
+    if (!element) {
+
+      return (
+        fallback || ''
+      );
+
+    }
+
+
+    const value =
+      String(
+        element.value ||
+        ''
+      ).trim();
+
+
+    return value ||
+      (
+        fallback || ''
+      );
+
+  }
+
+
+  function setValue(
+    id,
+    value
+  ) {
+
+    const element =
+      document.getElementById(
+        id
+      );
+
+
+    if (
+      element &&
+      value !== undefined &&
+      value !== null
+    ) {
+
+      element.value =
+        String(
+          value
+        );
+
+    }
+
+  }
+
+
+  /* =========================================================
+     ALERT
+  ========================================================= */
+
+  function showAlert(
+    message,
+    type
+  ) {
+
+    const container =
+      document.getElementById(
+        'alert-container'
+      );
+
+
+    if (!container) {
+      return;
+    }
+
+
+    const alert =
+      document.createElement(
+        'div'
+      );
+
+
+    alert.className =
+      'profile-alert ' +
+      (
+        type ===
+        'success'
+          ? 'success'
+          : type ===
+            'error'
+              ? 'error'
+              : ''
+      );
+
+
+    alert.textContent =
+      message;
+
+
+    container.innerHTML =
+      '';
+
+
+    container.appendChild(
+      alert
+    );
+
+
+    setTimeout(
+      function () {
+
+        if (
+          container
+        ) {
+
+          container.innerHTML =
+            '';
+
+        }
+
+      },
+      4500
+    );
+
+  }
+
+
+  /* =========================================================
+     ESCAPE HTML
+  ========================================================= */
+
+  function escapeHTML(
+    value
+  ) {
+
+    return String(
+      value == null
+        ? ''
+        : value
+    )
+      .replace(
+        /&/g,
+        '&amp;'
+      )
+      .replace(
+        /</g,
+        '&lt;'
+      )
+      .replace(
+        />/g,
+        '&gt;'
+      )
+      .replace(
+        /"/g,
+        '&quot;'
+      )
+      .replace(
+        /'/g,
+        '&#039;'
+      );
+
+  }
+
+})();
+</script>
+
 </body>
 </html>

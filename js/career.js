@@ -1,196 +1,1224 @@
-/**
- * CareerSetu — AI Career Recommendations
- */
+/* =====================================================
+   CAREERSETU AI
+   CAREER PAGE JAVASCRIPT
+===================================================== */
 
-import { checkAuthGuard, renderUserProfileWidget } from './auth.js';
-import { getUserData, saveUserData } from './firebase.js';
+document.addEventListener("DOMContentLoaded", () => {
 
-document.addEventListener('DOMContentLoaded', async () => {
-  if (!checkAuthGuard()) return;
-  renderUserProfileWidget();
+  console.log("CareerSetu Career Page Loaded");
 
-  const container = document.getElementById('career-results-container');
-  const summaryBox = document.getElementById('career-summary-box');
-  const refreshBtn = document.getElementById('refresh-analysis-btn');
 
-  loadCareerAnalysis();
+  /* =====================================================
+     ELEMENTS
+  ===================================================== */
 
-  if (refreshBtn) {
-    refreshBtn.addEventListener('click', () => {
-      loadCareerAnalysis(true);
+  const sidebar =
+    document.getElementById("sidebar");
+
+  const menuBtn =
+    document.getElementById("mobileMenuBtn");
+
+  const overlay =
+    document.getElementById("sidebarOverlay");
+
+  const levelFilter =
+    document.getElementById("levelFilter");
+
+  const updateBtn =
+    document.getElementById("updateCoursesBtn");
+
+  const targetCareer =
+    document.getElementById("targetCareer");
+
+  const overviewCareer =
+    document.getElementById("overviewCareer");
+
+  const courseCount =
+    document.getElementById("courseCount");
+
+  const totalDuration =
+    document.getElementById("totalDuration");
+
+  const courseSubtitle =
+    document.getElementById("courseSubtitle");
+
+  const careerStatusText =
+    document.getElementById("careerStatusText");
+
+  const coursesGrid =
+    document.getElementById("coursesGrid");
+
+  const careerAlert =
+    document.getElementById("careerAlert");
+
+
+  /* =====================================================
+     MOBILE SIDEBAR
+  ===================================================== */
+
+  if (menuBtn && sidebar) {
+
+    menuBtn.addEventListener("click", () => {
+
+      sidebar.classList.toggle("open");
+
+      if (overlay) {
+        overlay.classList.toggle("active");
+      }
+
     });
+
   }
 
-  async function loadCareerAnalysis(forceRefresh = false) {
-    if (!container) return;
 
-    // Show AI loading state
-    container.innerHTML = `
-      <div class="card loading-container">
-        <span class="loading-spinner" style="width: 40px; height: 40px;"></span>
-        <div class="ai-pulse-badge">
-          <span class="pulse-dot"></span>
-          AI is analyzing your academic profile, skills and assessment...
-        </div>
-        <p class="text-muted" style="max-width: 500px; font-size: 0.9rem;">
-          Evaluating market demand, skill alignment, and high-growth technology pathways...
-        </p>
+  if (overlay) {
+
+    overlay.addEventListener("click", () => {
+
+      sidebar.classList.remove("open");
+
+      overlay.classList.remove("active");
+
+    });
+
+  }
+
+
+  /* =====================================================
+     CLOSE MOBILE SIDEBAR AFTER NAV CLICK
+  ===================================================== */
+
+  document
+    .querySelectorAll(".nav-item")
+    .forEach(item => {
+
+      item.addEventListener("click", () => {
+
+        if (window.innerWidth <= 768) {
+
+          sidebar?.classList.remove("open");
+
+          overlay?.classList.remove("active");
+
+        }
+
+      });
+
+    });
+
+
+  /* =====================================================
+     COURSE FILTER
+  ===================================================== */
+
+  function filterCourses() {
+
+    if (!coursesGrid || !levelFilter) {
+      return;
+    }
+
+    const selected =
+      levelFilter.value;
+
+    const cards =
+      coursesGrid.querySelectorAll(
+        ".course-card"
+      );
+
+    cards.forEach(card => {
+
+      const level =
+        card.dataset.level;
+
+      if (
+        selected === "all" ||
+        level === selected
+      ) {
+
+        card.style.display = "flex";
+
+      } else {
+
+        card.style.display = "none";
+
+      }
+
+    });
+
+  }
+
+
+  if (levelFilter) {
+
+    levelFilter.addEventListener(
+      "change",
+      filterCourses
+    );
+
+  }
+
+
+  /* =====================================================
+     UPDATE CAREER
+  ===================================================== */
+
+  if (updateBtn) {
+
+    updateBtn.addEventListener(
+      "click",
+      () => {
+
+        const selectedCareer =
+          targetCareer?.value;
+
+        if (!selectedCareer) {
+
+          showAlert(
+            "Please select a target career first.",
+            "error"
+          );
+
+          return;
+
+        }
+
+
+        /* Update overview */
+
+        if (overviewCareer) {
+
+          overviewCareer.textContent =
+            selectedCareer;
+
+        }
+
+
+        /* Update subtitle */
+
+        if (courseSubtitle) {
+
+          courseSubtitle.textContent =
+            `Courses recommended for ${selectedCareer}.`;
+
+        }
+
+
+        /* Update status */
+
+        if (careerStatusText) {
+
+          careerStatusText.textContent =
+            "Career Profile Active";
+
+        }
+
+
+        /* Save locally */
+
+        localStorage.setItem(
+          "careerSetuTargetCareer",
+          selectedCareer
+        );
+
+
+        showAlert(
+          `✓ Courses updated for ${selectedCareer}`,
+          "success"
+        );
+
+      }
+    );
+
+  }
+
+
+  /* =====================================================
+     COURSE BUTTONS
+  ===================================================== */
+
+  function setupCourseButtons() {
+
+    const buttons =
+      document.querySelectorAll(
+        ".course-action"
+      );
+
+
+    buttons.forEach(button => {
+
+      button.addEventListener(
+        "click",
+        () => {
+
+          const card =
+            button.closest(".course-card");
+
+          const title =
+            card?.querySelector("h3")
+              ?.textContent
+              .trim();
+
+
+          if (!title) {
+            return;
+          }
+
+
+          localStorage.setItem(
+            "careerSetuSelectedCourse",
+            title
+          );
+
+
+          button.textContent =
+            "✓ Selected";
+
+
+          button.style.background =
+            "#16a34a";
+
+          button.style.borderColor =
+            "#16a34a";
+
+          button.style.color =
+            "#ffffff";
+
+
+          showAlert(
+            `✓ ${title} selected. You can continue to Roadmap.`,
+            "success"
+          );
+
+        }
+      );
+
+    });
+
+  }
+
+
+  setupCourseButtons();
+
+
+  /* =====================================================
+     OVERVIEW COUNTS
+  ===================================================== */
+
+  function updateOverview() {
+
+    const cards =
+      document.querySelectorAll(
+        ".course-card"
+      );
+
+
+    if (courseCount) {
+
+      courseCount.textContent =
+        cards.length;
+
+    }
+
+
+    let totalWeeks = 0;
+
+
+    cards.forEach(card => {
+
+      const duration =
+        card.querySelector(
+          ".course-duration"
+        )?.textContent || "";
+
+
+      const match =
+        duration.match(/\d+/);
+
+
+      if (match) {
+
+        totalWeeks +=
+          Number(match[0]);
+
+      }
+
+    });
+
+
+    if (totalDuration) {
+
+      totalDuration.textContent =
+        `${totalWeeks} Weeks`;
+
+    }
+
+  }
+
+
+  updateOverview();
+
+
+  /* =====================================================
+     LOAD SAVED CAREER
+  ===================================================== */
+
+  const savedCareer =
+    localStorage.getItem(
+      "careerSetuTargetCareer"
+    );
+
+
+  if (
+    savedCareer &&
+    targetCareer
+  ) {
+
+    const optionExists =
+      [...targetCareer.options]
+        .some(
+          option =>
+            option.value === savedCareer
+        );
+
+
+    if (optionExists) {
+
+      targetCareer.value =
+        savedCareer;
+
+
+      if (overviewCareer) {
+
+        overviewCareer.textContent =
+          savedCareer;
+
+      }
+
+
+      if (courseSubtitle) {
+
+        courseSubtitle.textContent =
+          `Courses recommended for ${savedCareer}.`;
+
+      }
+
+    }
+
+  }
+
+
+  /* =====================================================
+     ALERT FUNCTION
+  ===================================================== */
+
+  function showAlert(message, type) {
+
+    if (!careerAlert) {
+      return;
+    }
+
+
+    const background =
+      type === "error"
+        ? "#fef2f2"
+        : "#ecfdf5";
+
+
+    const border =
+      type === "error"
+        ? "#fecaca"
+        : "#a7f3d0";
+
+
+    const color =
+      type === "error"
+        ? "#b91c1c"
+        : "#047857";
+
+
+    careerAlert.innerHTML = `
+      <div
+        class="career-alert"
+        style="
+          background:${background};
+          border-color:${border};
+          color:${color};
+        "
+      >
+        ${message}
       </div>
     `;
 
-    try {
-      // Check cached recommendations if not forcing refresh
-      if (!forceRefresh) {
-        const cached = await getUserData('careerRecommendations');
-        if (cached && cached.data) {
-          renderAnalysis(cached.data);
-          return;
-        }
+
+    setTimeout(() => {
+
+      careerAlert.innerHTML = "";
+
+    }, 4000);
+
+  }
+
+
+  /* =====================================================
+     SIDEBAR USER FROM LOCAL STORAGE
+  ===================================================== */
+
+  try {
+
+    const savedProfile =
+      localStorage.getItem(
+        "careerSaathiProfile"
+      );
+
+
+    if (savedProfile) {
+
+      const profile =
+        JSON.parse(savedProfile);
+
+
+      const name =
+        profile.fullName ||
+        profile.name ||
+        "Student";
+
+
+      const email =
+        profile.email ||
+        "Student";
+
+
+      const avatar =
+        document.getElementById(
+          "sidebar-user-avatar"
+        );
+
+
+      const nameElement =
+        document.getElementById(
+          "sidebar-user-name"
+        );
+
+
+      const emailElement =
+        document.getElementById(
+          "sidebar-user-email"
+        );
+
+
+      if (nameElement) {
+
+        nameElement.textContent =
+          name;
+
       }
 
-      // Fetch user profile and assessment for analysis
-      const profile = (await getUserData('profiles')) || {};
-      const assessment = (await getUserData('assessments')) || {};
 
-      const currentSkills = profile.technicalSkills
-        ? profile.technicalSkills.split(',').map(s => s.trim())
-        : ['HTML5', 'CSS3', 'JavaScript', 'Git'];
+      if (emailElement) {
 
-      const payload = {
-        profile,
-        academic: {
-          degree: profile.educationLevel || 'B.Tech',
-          branch: profile.branch || 'Computer Science',
-          gradYear: profile.gradYear || '2026',
-          cgpa: profile.cgpa || '8.2'
-        },
-        assessment,
-        currentSkills,
-        careerGoals: {
-          targetCareer: profile.targetCareer || 'Frontend Web Developer',
-          industry: profile.preferredIndustry || 'Information Technology'
+        emailElement.textContent =
+          email;
+
+      }
+
+
+      if (avatar) {
+
+        avatar.textContent =
+          name
+            .charAt(0)
+            .toUpperCase();
+
+      }
+
+    }
+
+  } catch (error) {
+
+    console.warn(
+      "Profile loading skipped:",
+      error
+    );
+
+  }
+
+
+  /* =====================================================
+     LOGOUT
+  ===================================================== */
+
+  const logoutBtn =
+    document.getElementById(
+      "logout-btn"
+    );
+
+
+  if (logoutBtn) {
+
+    logoutBtn.addEventListener(
+      "click",
+      async () => {
+
+        try {
+
+          /*
+             Firebase logout is normally
+             handled by auth.js.
+
+             If auth.js has already attached
+             the event, this button remains
+             compatible.
+          */
+
+          localStorage.removeItem(
+            "careerSetuTargetCareer"
+          );
+
+        } catch (error) {
+
+          console.warn(error);
+
         }
-      };
 
-      // Call Vercel Serverless Function
-      const res = await fetch('/api/career-analysis', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
+      }
+    );
+
+  }
+
+
+});
+
+/* =========================================================
+   CareerSetu AI
+   Career Search & Course Filter
+   File: career-search.js
+========================================================= */
+
+(function () {
+
+  "use strict";
+
+
+  /* =======================================================
+     WAIT FOR DOM
+  ======================================================= */
+
+  document.addEventListener("DOMContentLoaded", function () {
+
+
+    /* =====================================================
+       GET ELEMENTS
+    ===================================================== */
+
+    const searchInput =
+      document.getElementById("courseSearch");
+
+    const clearSearchButton =
+      document.getElementById("clearCourseSearch");
+
+    const levelFilter =
+      document.getElementById("levelFilter");
+
+    const coursesGrid =
+      document.getElementById("coursesGrid");
+
+    const courseCount =
+      document.getElementById("courseCount");
+
+    const noResults =
+      document.getElementById("noCourseResults");
+
+    const resetSearchButton =
+      document.getElementById("resetCourseSearch");
+
+
+    /* =====================================================
+       CHECK REQUIRED ELEMENTS
+    ===================================================== */
+
+    if (!searchInput) {
+      console.error(
+        "Career Search Error: #courseSearch not found."
+      );
+      return;
+    }
+
+
+    if (!levelFilter) {
+      console.error(
+        "Career Search Error: #levelFilter not found."
+      );
+      return;
+    }
+
+
+    if (!coursesGrid) {
+      console.error(
+        "Career Search Error: #coursesGrid not found."
+      );
+      return;
+    }
+
+
+    /* =====================================================
+       GET COURSE CARDS
+    ===================================================== */
+
+    function getCourseCards() {
+
+      return Array.from(
+        coursesGrid.querySelectorAll(".course-card")
+      );
+
+    }
+
+
+    /* =====================================================
+       NORMALIZE TEXT
+       
+       Converts:
+       "  Machine   Learning  "
+       
+       into:
+       "machine learning"
+    ===================================================== */
+
+    function normalizeText(value) {
+
+      return String(value || "")
+        .toLowerCase()
+        .trim()
+        .replace(/\s+/g, " ");
+
+    }
+
+
+    /* =====================================================
+       GET SEARCH QUERY
+    ===================================================== */
+
+    function getSearchQuery() {
+
+      return normalizeText(
+        searchInput.value
+      );
+
+    }
+
+
+    /* =====================================================
+       GET SELECTED LEVEL
+    ===================================================== */
+
+    function getSelectedLevel() {
+
+      return normalizeText(
+        levelFilter.value
+      );
+
+    }
+
+
+    /* =====================================================
+       CREATE SEARCHABLE COURSE TEXT
+       
+       Searches:
+       - Course title
+       - Description
+       - Level
+       - Tags
+       - Duration
+    ===================================================== */
+
+    function getCourseSearchText(card) {
+
+      const title =
+        card.querySelector("h3");
+
+      const description =
+        card.querySelector("p");
+
+      const level =
+        card.querySelector(".course-level");
+
+      const tags =
+        card.querySelectorAll(".course-tag");
+
+      const duration =
+        card.querySelector(".course-duration");
+
+
+      let searchableText = "";
+
+
+      /* Course title */
+
+      if (title) {
+
+        searchableText +=
+          " " + title.textContent;
+
+      }
+
+
+      /* Course description */
+
+      if (description) {
+
+        searchableText +=
+          " " + description.textContent;
+
+      }
+
+
+      /* Course level */
+
+      if (level) {
+
+        searchableText +=
+          " " + level.textContent;
+
+      }
+
+
+      /* Course tags */
+
+      tags.forEach(function (tag) {
+
+        searchableText +=
+          " " + tag.textContent;
+
       });
 
-      if (!res.ok) {
-        throw new Error(`Server returned HTTP ${res.status}`);
+
+      /* Course duration */
+
+      if (duration) {
+
+        searchableText +=
+          " " + duration.textContent;
+
       }
 
-      const json = await res.json();
-      const analysisData = json.data;
 
-      // Save to Firestore
-      await saveUserData('careerRecommendations', { data: analysisData });
+      return normalizeText(
+        searchableText
+      );
 
-      renderAnalysis(analysisData);
-    } catch (err) {
-      console.warn('API fetch error, falling back locally:', err);
-      // Resilient local render
-      renderFallbackAnalysis();
-    }
-  }
-
-  function renderAnalysis(data) {
-    if (summaryBox && data.summary) {
-      summaryBox.innerHTML = `
-        <div class="card" style="border-left: 4px solid var(--brand-cyan); margin-bottom: 2rem;">
-          <div class="flex-between mb-1">
-            <div class="flex-align">
-              <span class="badge badge-cyan">AI Recommendation</span>
-              <span class="text-dim" style="font-size: 0.8rem;">Powered by Gemini API</span>
-            </div>
-            <span class="badge badge-emerald">Readiness: ${data.readinessScore || 78}%</span>
-          </div>
-          <p style="font-size: 1.05rem; line-height: 1.6;">${data.summary}</p>
-          ${data.overallAdvice ? `<p class="text-muted mt-1" style="font-size: 0.9rem;"><strong>Strategy Tip:</strong> ${data.overallAdvice}</p>` : ''}
-        </div>
-      `;
     }
 
-    const paths = data.topCareerPaths || [];
-    let html = '';
 
-    paths.forEach((career, idx) => {
-      const matchPct = career.matchPercentage || 80;
-      const matchBadgeClass = matchPct >= 80 ? 'badge-emerald' : matchPct >= 70 ? 'badge-cyan' : 'badge-amber';
+    /* =====================================================
+       GET COURSE LEVEL
+    ===================================================== */
 
-      html += `
-        <div class="card mb-2" style="position: relative;">
-          <div class="flex-between mb-1">
-            <div>
-              <span class="text-dim" style="font-size: 0.75rem; text-transform: uppercase; font-weight: 700;">Path ${idx + 1}</span>
-              <h3 style="margin-top: 0.2rem;">${career.careerName}</h3>
-            </div>
-            <span class="badge ${matchBadgeClass}" style="font-size: 0.9rem;">${matchPct}% Fit Match</span>
-          </div>
+    function getCourseLevel(card) {
+
+      /*
+        First try data-level
+      */
+
+      if (card.dataset.level) {
+
+        return normalizeText(
+          card.dataset.level
+        );
+
+      }
+
+
+      /*
+        Fallback to visible level badge
+      */
+
+      const level =
+        card.querySelector(".course-level");
+
+
+      if (level) {
+
+        return normalizeText(
+          level.textContent
+        );
+
+      }
+
+
+      return "";
+
+    }
+
+
+    /* =====================================================
+       SHOW / HIDE CLEAR BUTTON
+    ===================================================== */
+
+    function updateClearButton() {
+
+      if (!clearSearchButton) {
+        return;
+      }
+
+
+      const hasSearchText =
+        searchInput.value.trim().length > 0;
+
+
+      clearSearchButton.hidden =
+        !hasSearchText;
+
+    }
+
+
+    /* =====================================================
+       SHOW / HIDE NO RESULTS
+    ===================================================== */
+
+    function updateNoResults(visibleCount) {
+
+      if (!noResults) {
+        return;
+      }
+
+
+      noResults.hidden =
+        visibleCount !== 0;
+
+    }
+
+
+    /* =====================================================
+       UPDATE COURSE COUNT
+    ===================================================== */
+
+    function updateCourseCount(visibleCount) {
+
+      if (!courseCount) {
+        return;
+      }
+
+
+      courseCount.textContent =
+        visibleCount;
+
+    }
+
+
+    /* =====================================================
+       FILTER COURSES
+    ===================================================== */
+
+    function filterCourses() {
+
+      const searchQuery =
+        getSearchQuery();
+
+
+      const selectedLevel =
+        getSelectedLevel();
+
+
+      const courseCards =
+        getCourseCards();
+
+
+      let visibleCount = 0;
+
+
+      /* ---------------------------------------------------
+         LOOP THROUGH COURSES
+      --------------------------------------------------- */
+
+      courseCards.forEach(function (card) {
+
+
+        /*
+          Get searchable course content
+        */
+
+        const searchableText =
+          getCourseSearchText(card);
+
+
+        /*
+          Get course level
+        */
+
+        const courseLevel =
+          getCourseLevel(card);
+
+
+        /*
+          SEARCH MATCH
           
-          <p class="text-muted mb-1" style="font-size: 0.95rem;">${career.description}</p>
+          Empty search = match everything
+        */
+
+        const searchMatches =
+          searchQuery === "" ||
+          searchableText.includes(
+            searchQuery
+          );
+
+
+        /*
+          LEVEL MATCH
           
-          <div style="background: rgba(0, 210, 255, 0.05); border: 1px solid rgba(0, 210, 255, 0.15); border-radius: var(--radius-md); padding: 0.85rem 1.15rem; margin-bottom: 1.25rem;">
-            <p style="font-size: 0.875rem;"><strong class="text-cyan">Why It May Suit You:</strong> ${career.whyItMaySuitYou}</p>
-          </div>
+          "all" = match every level
+        */
 
-          <div class="grid-2 mb-1">
-            <div>
-              <h4 style="font-size: 0.9rem; margin-bottom: 0.6rem; color: #6ee7b7;">✓ Your Matching Skills</h4>
-              <div style="display: flex; flex-wrap: wrap; gap: 0.4rem;">
-                ${(career.userMatchingSkills || []).map(s => `<span class="badge badge-emerald">${s}</span>`).join('') || '<span class="text-dim">Baseline alignment</span>'}
-              </div>
-            </div>
-            <div>
-              <h4 style="font-size: 0.9rem; margin-bottom: 0.6rem; color: #fbbf24;">◐ Skills To Develop (Gaps)</h4>
-              <div style="display: flex; flex-wrap: wrap; gap: 0.4rem;">
-                ${(career.skillsToDevelop || []).map(s => `<span class="badge badge-amber">${s}</span>`).join('')}
-              </div>
-            </div>
-          </div>
+        const levelMatches =
+          selectedLevel === "all" ||
+          courseLevel === selectedLevel;
 
-          <div style="margin-top: 1.25rem; padding-top: 1rem; border-top: 1px solid var(--border-subtle);" class="flex-between">
-            <span class="text-dim" style="font-size: 0.8rem;">Outlook: <strong class="text-main">${career.growthOutlook || 'Strong Expansion'}</strong></span>
-            <div style="display: flex; gap: 0.5rem;">
-              <a href="skill-gap.html" class="btn btn-sm btn-outline">Analyze Skill Gap</a>
-              <a href="roadmap.html" class="btn btn-sm btn-primary">Generate Roadmap</a>
-            </div>
-          </div>
-        </div>
-      `;
-    });
 
-    container.innerHTML = html;
-  }
+        /*
+          FINAL MATCH
+        */
 
-  function renderFallbackAnalysis() {
-    renderAnalysis({
-      summary: "Your engineering foundation in modern web development and software architecture positions you strongly for high-demand digital engineering careers.",
-      readinessScore: 78,
-      overallAdvice: "Turn academic projects into live deployed portfolio products on GitHub and Vercel to establish competitive edge.",
-      topCareerPaths: [
-        {
-          careerName: "Frontend Web Developer",
-          matchPercentage: 88,
-          description: "Builds intuitive, performant user interfaces for web and enterprise SaaS applications.",
-          whyItMaySuitYou: "Your proficiency with HTML5, CSS3, and JavaScript provides an immediate head start.",
-          userMatchingSkills: ["HTML5", "CSS3", "JavaScript"],
-          skillsToDevelop: ["Git & GitHub", "REST APIs", "Vercel Deployment"],
-          growthOutlook: "22% projected annual growth"
-        },
-        {
-          careerName: "Full-Stack Software Engineer",
-          matchPercentage: 80,
-          description: "Engineers end-to-end applications from database models to responsive client interfaces.",
-          whyItMaySuitYou: "Strong analytical problem-solving foundation enables rapid full-stack adoption.",
-          userMatchingSkills: ["Frontend Core"],
-          skillsToDevelop: ["Serverless Backend", "Cloud Firestore", "Security Architecture"],
-          growthOutlook: "25% demand across tech hubs"
+        const shouldShow =
+          searchMatches &&
+          levelMatches;
+
+
+        /*
+          Show / hide course
+        */
+
+        card.hidden =
+          !shouldShow;
+
+
+        /*
+          Count visible courses
+        */
+
+        if (shouldShow) {
+
+          visibleCount++;
+
         }
-      ]
-    });
-  }
-});
+
+      });
+
+
+      /* ---------------------------------------------------
+         UPDATE UI
+      --------------------------------------------------- */
+
+      updateCourseCount(
+        visibleCount
+      );
+
+
+      updateNoResults(
+        visibleCount
+      );
+
+
+      updateClearButton();
+
+
+    }
+
+
+    /* =====================================================
+       CLEAR SEARCH
+    ===================================================== */
+
+    function clearSearch() {
+
+      searchInput.value = "";
+
+
+      /*
+        Apply filter immediately
+      */
+
+      filterCourses();
+
+
+      /*
+        Put cursor back into search
+      */
+
+      searchInput.focus();
+
+    }
+
+
+    /* =====================================================
+       SEARCH INPUT EVENT
+       
+       Runs while user types.
+    ===================================================== */
+
+    searchInput.addEventListener(
+      "input",
+      function () {
+
+        filterCourses();
+
+      }
+    );
+
+
+    /* =====================================================
+       LEVEL FILTER EVENT
+    ===================================================== */
+
+    levelFilter.addEventListener(
+      "change",
+      function () {
+
+        filterCourses();
+
+      }
+    );
+
+
+    /* =====================================================
+       CLEAR BUTTON EVENT
+    ===================================================== */
+
+    if (clearSearchButton) {
+
+      clearSearchButton.addEventListener(
+        "click",
+        function () {
+
+          clearSearch();
+
+        }
+      );
+
+    }
+
+
+    /* =====================================================
+       RESET SEARCH BUTTON
+       
+       Clears BOTH:
+       - Search
+       - Level filter
+    ===================================================== */
+
+    if (resetSearchButton) {
+
+      resetSearchButton.addEventListener(
+        "click",
+        function () {
+
+          searchInput.value = "";
+
+          levelFilter.value = "all";
+
+
+          filterCourses();
+
+
+          searchInput.focus();
+
+        }
+      );
+
+    }
+
+
+    /* =====================================================
+       ESCAPE KEY
+       
+       Press ESC while inside search to clear it.
+    ===================================================== */
+
+    searchInput.addEventListener(
+      "keydown",
+      function (event) {
+
+        if (event.key === "Escape") {
+
+          event.preventDefault();
+
+          clearSearch();
+
+        }
+
+      }
+    );
+
+
+    /* =====================================================
+       ENTER KEY
+       
+       Prevents accidental form submission if this
+       search is later placed inside a form.
+    ===================================================== */
+
+    searchInput.addEventListener(
+      "keydown",
+      function (event) {
+
+        if (event.key === "Enter") {
+
+          event.preventDefault();
+
+          filterCourses();
+
+        }
+
+      }
+    );
+
+
+    /* =====================================================
+       INITIAL FILTER
+       
+       Makes sure:
+       - Count is correct
+       - All courses visible
+       - Clear button hidden
+       - No-results hidden
+    ===================================================== */
+
+    filterCourses();
+
+
+    /* =====================================================
+       OPTIONAL GLOBAL API
+       
+       Allows other scripts to manually trigger search.
+       
+       Example:
+       window.CareerSearch.clear();
+       window.CareerSearch.refresh();
+    ===================================================== */
+
+    window.CareerSearch = {
+
+      filter: filterCourses,
+
+      clear: clearSearch,
+
+      refresh: filterCourses,
+
+      getQuery: getSearchQuery,
+
+      getLevel: getSelectedLevel
+
+    };
+
+
+    /* =====================================================
+       READY MESSAGE
+       
+       Useful while developing.
+    ===================================================== */
+
+    console.log(
+      "CareerSetu: Course search initialized successfully."
+    );
+
+
+  });
+
+})();

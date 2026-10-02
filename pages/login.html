@@ -1,135 +1,1225 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Login — CareerSetu AI</title>
-  <link rel="stylesheet" href="../css/style.css">
-  <link rel="stylesheet" href="../css/auth.css">
-  <link rel="stylesheet" href="../css/responsive.css">
-  <style>
-    .auth-card {
-      background: #ffffff;
-      border: 1px solid var(--border-color);
-      box-shadow: var(--shadow-lg);
-    }
-  </style>
 
-  <!-- CareerSetu Universal Core (Instant 0ms Load) -->
-  <script src="../js/careersetu-core.js"></script>
-  <!-- Optional Background Firebase SDK -->
-  <script defer src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-  <script defer src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
-  <script defer src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Login | CareerSetu AI</title>
+
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/responsive.css">
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: Inter, Arial, sans-serif;
+            background:
+                radial-gradient(circle at top left, rgba(79, 70, 229, 0.12), transparent 35%),
+                #f8fafc;
+            color: #0f172a;
+        }
+
+        .login-page {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 25px;
+        }
+
+        .login-wrapper {
+            width: 100%;
+            max-width: 1100px;
+            min-height: 650px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            background: #ffffff;
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: 0 25px 70px rgba(15, 23, 42, 0.12);
+        }
+
+        /* LEFT */
+        .login-left {
+            position: relative;
+            padding: 55px;
+            background:
+                linear-gradient(
+                    135deg,
+                    #1e1b4b 0%,
+                    #312e81 45%,
+                    #2563eb 100%
+                );
+            color: white;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            overflow: hidden;
+        }
+
+        .login-left::before {
+            content: "";
+            position: absolute;
+            width: 420px;
+            height: 420px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.07);
+            top: -150px;
+            right: -150px;
+        }
+
+        .login-left::after {
+            content: "";
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            border-radius: 50%;
+            background: rgba(56,189,248,0.10);
+            bottom: -140px;
+            left: -100px;
+        }
+
+        .brand {
+            position: relative;
+            z-index: 2;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 25px;
+            font-weight: 800;
+        }
+
+        .brand-icon {
+            width: 46px;
+            height: 46px;
+            border-radius: 13px;
+            background: rgba(255,255,255,0.14);
+            border: 1px solid rgba(255,255,255,0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+        }
+
+        .hero-copy {
+            position: relative;
+            z-index: 2;
+            max-width: 480px;
+        }
+
+        .hero-copy h1 {
+            font-size: clamp(2rem, 4vw, 3.3rem);
+            line-height: 1.05;
+            margin: 0 0 20px;
+        }
+
+        .hero-copy h1 span {
+            color: #93c5fd;
+        }
+
+        .hero-copy p {
+            margin: 0;
+            color: #dbeafe;
+            line-height: 1.7;
+            font-size: 15px;
+        }
+
+        .feature-list {
+            position: relative;
+            z-index: 2;
+            display: grid;
+            gap: 12px;
+            margin-top: 30px;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: #e0f2fe;
+            font-size: 14px;
+        }
+
+        .feature-icon {
+            width: 35px;
+            height: 35px;
+            border-radius: 10px;
+            background: rgba(255,255,255,0.12);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* RIGHT */
+        .login-right {
+            padding: 55px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .login-header {
+            margin-bottom: 28px;
+        }
+
+        .login-header h2 {
+            margin: 0 0 8px;
+            font-size: 32px;
+            font-weight: 800;
+        }
+
+        .login-header p {
+            margin: 0;
+            color: #64748b;
+            font-size: 14px;
+        }
+
+        .status-box {
+            display: none;
+            margin-bottom: 18px;
+            padding: 12px 14px;
+            border-radius: 12px;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        .status-box.error {
+            background: #fef2f2;
+            color: #b91c1c;
+            border: 1px solid #fecaca;
+        }
+
+        .status-box.success {
+            background: #ecfdf5;
+            color: #047857;
+            border: 1px solid #a7f3d0;
+        }
+
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 13px;
+            font-weight: 700;
+            color: #334155;
+        }
+
+        .input-wrap {
+            position: relative;
+        }
+
+        .input-wrap input {
+            width: 100%;
+            height: 52px;
+            border: 1px solid #dbe2ea;
+            border-radius: 12px;
+            padding: 0 48px 0 15px;
+            outline: none;
+            font-size: 14px;
+            color: #0f172a;
+            background: #fff;
+            transition: 0.2s;
+        }
+
+        .input-wrap input:focus {
+            border-color: #6366f1;
+            box-shadow: 0 0 0 4px rgba(99,102,241,0.10);
+        }
+
+        .input-icon {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            font-size: 17px;
+        }
+
+        .login-options {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 5px 0 22px;
+            font-size: 13px;
+        }
+
+        .remember {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #64748b;
+        }
+
+        .remember input {
+            width: 16px;
+            height: 16px;
+            accent-color: #4f46e5;
+        }
+
+        .forgot-btn {
+            border: none;
+            background: none;
+            color: #4f46e5;
+            cursor: pointer;
+            font-weight: 700;
+            padding: 0;
+        }
+
+        .primary-btn {
+            width: 100%;
+            height: 52px;
+            border: none;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #4f46e5, #2563eb);
+            color: #ffffff;
+            font-size: 14px;
+            font-weight: 800;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .primary-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 10px 25px rgba(37,99,235,0.20);
+        }
+
+        .primary-btn:disabled {
+            opacity: 0.65;
+            cursor: not-allowed;
+        }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin: 23px 0;
+            color: #94a3b8;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .divider::before,
+        .divider::after {
+            content: "";
+            flex: 1;
+            height: 1px;
+            background: #e2e8f0;
+        }
+
+        .google-btn {
+            width: 100%;
+            height: 52px;
+            background: white;
+            border: 1px solid #dbe2ea;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            color: #1e293b;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .google-btn:hover {
+            background: #f8fafc;
+            border-color: #cbd5e1;
+            box-shadow: 0 5px 15px rgba(15,23,42,0.06);
+        }
+
+        .google-logo {
+            width: 20px;
+            height: 20px;
+        }
+
+        .signup-link {
+            margin-top: 25px;
+            text-align: center;
+            color: #64748b;
+            font-size: 13px;
+        }
+
+        .signup-link a {
+            color: #4f46e5;
+            font-weight: 800;
+            text-decoration: none;
+        }
+
+        .back-home {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .back-home a {
+            color: #64748b;
+            text-decoration: none;
+            font-size: 13px;
+        }
+
+        @media (max-width: 850px) {
+
+            .login-wrapper {
+                grid-template-columns: 1fr;
+                max-width: 560px;
+            }
+
+            .login-left {
+                min-height: 300px;
+                padding: 35px;
+            }
+
+            .hero-copy h1 {
+                font-size: 2rem;
+            }
+
+            .login-right {
+                padding: 35px;
+            }
+        }
+
+        @media (max-width: 500px) {
+
+            .login-page {
+                padding: 12px;
+            }
+
+            .login-left,
+            .login-right {
+                padding: 25px;
+            }
+
+            .login-header h2 {
+                font-size: 27px;
+            }
+        }
+    </style>
 </head>
+
 <body>
 
-  <div class="auth-wrapper" style="background: radial-gradient(circle at 50% 20%, #eff6ff 0%, #f8fafc 80%);">
-    <div class="auth-card">
-      <div class="auth-header">
-        <a href="../index.html" class="flex-align" style="justify-content: center; gap: 0.6rem; text-decoration: none; margin-bottom: 0.75rem;">
-          <svg width="34" height="34" viewBox="0 0 64 64" fill="none">
-            <rect width="64" height="64" rx="14" fill="#4f46e5" />
-            <path d="M14 44 C22 28, 42 28, 50 44" stroke="#ffffff" stroke-width="4" stroke-linecap="round" />
-            <path d="M20 44 L20 35 M32 44 L32 30 M44 44 L44 35" stroke="#ffffff" stroke-width="3" stroke-linecap="round" />
-            <circle cx="32" cy="20" r="5" fill="#38bdf8" />
-          </svg>
-          <span style="font-size: 1.6rem; font-weight: 800; color: #0f172a;">CareerSetu <span class="badge badge-primary" style="font-size: 0.75rem;">AI</span></span>
-        </a>
-        <p class="auth-subtitle">Sign in to resume your personalized career readiness journey</p>
-      </div>
+<div class="login-page">
 
-      <div id="alert-box"></div>
+    <div class="login-wrapper">
 
-      <form id="login-form">
-        <div class="form-group">
-          <label class="form-label" for="email">Email Address</label>
-          <input type="email" id="email" class="form-control" placeholder="your-email@gmail.com" required autocomplete="email">
-        </div>
+        <!-- LEFT -->
+        <section class="login-left">
 
-        <div class="form-group">
-          <div class="flex-between" style="margin-bottom: 0.4rem;">
-            <label class="form-label" for="password" style="margin-bottom: 0;">Password</label>
-            <a href="#" id="forgot-password-link" style="font-size: 0.8rem;">Forgot Password?</a>
-          </div>
-          <input type="password" id="password" class="form-control" placeholder="••••••••" required autocomplete="current-password">
-        </div>
+            <div class="brand">
+                <div class="brand-icon">🎓</div>
+                <div>
+                    CareerSetu <span style="color:#93c5fd;">AI</span>
+                </div>
+            </div>
 
-        <button type="submit" class="btn btn-primary btn-pill" style="width: 100%; margin-top: 0.5rem;" id="login-submit-btn">
-          Sign In
-        </button>
-      </form>
+            <div class="hero-copy">
 
-      <!-- 1-Click Demo / Presentation Access -->
-      <div class="demo-account-box" style="background: #f8fafc; border: 1px dashed #cbd5e1; margin-top: 1.25rem; padding: 1rem; border-radius: 12px;">
-        <p style="color: #475569; font-weight: 600; font-size: 0.85rem; margin-bottom: 0.5rem;">Sample / Demo Account:</p>
-        <button type="button" class="btn btn-sm btn-outline btn-pill" style="width: 100%;" id="demo-login-btn">
-          ⚡ 1-Click Demo Login (Himanshu Sahani Profile)
-        </button>
-      </div>
+                <h1>
+                    Your Career.<br>
+                    Your <span>Roadmap.</span>
+                </h1>
 
-      <div class="auth-footer" style="margin-top: 1.25rem; text-align: center;">
-        Don't have an account yet? <a href="signup.html" style="font-weight: 600;">Create an Account</a>
-      </div>
+                <p>
+                    Sign in to continue your personalized career journey.
+                    Your profile, skills, roadmap, resume and interview progress
+                    stay connected with your account.
+                </p>
+
+                <div class="feature-list">
+
+                    <div class="feature-item">
+                        <div class="feature-icon">🧭</div>
+                        AI Career Guidance
+                    </div>
+
+                    <div class="feature-item">
+                        <div class="feature-icon">📈</div>
+                        Skill Gap Analysis
+                    </div>
+
+                    <div class="feature-item">
+                        <div class="feature-icon">📄</div>
+                        AI Resume Builder
+                    </div>
+
+                    <div class="feature-item">
+                        <div class="feature-icon">🎙️</div>
+                        Mock Interview
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- RIGHT -->
+        <section class="login-right">
+
+            <div class="login-header">
+                <h2>Welcome Back 👋</h2>
+                <p>Login to continue to CareerSetu AI</p>
+            </div>
+
+            <div id="statusBox" class="status-box"></div>
+
+
+            <!-- EMAIL LOGIN -->
+            <form id="loginForm">
+
+                <div class="form-group">
+
+                    <label for="email">
+                        Email Address
+                    </label>
+
+                    <div class="input-wrap">
+
+                        <input
+                            type="email"
+                            id="email"
+                            placeholder="Enter your email"
+                            autocomplete="email"
+                            required
+                        >
+
+                        <span class="input-icon">
+                            ✉️
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="password">
+                        Password
+                    </label>
+
+                    <div class="input-wrap">
+
+                        <input
+                            type="password"
+                            id="password"
+                            placeholder="Enter your password"
+                            autocomplete="current-password"
+                            required
+                        >
+
+                        <button
+                            type="button"
+                            class="input-icon"
+                            id="togglePassword"
+                        >
+                            👁️
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+                <div class="login-options">
+
+                    <label class="remember">
+                        <input
+                            type="checkbox"
+                            id="rememberMe"
+                            checked
+                        >
+                        Remember me
+                    </label>
+
+                    <button
+                        type="button"
+                        class="forgot-btn"
+                        id="forgotPasswordBtn"
+                    >
+                        Forgot Password?
+                    </button>
+
+                </div>
+
+
+                <button
+                    type="submit"
+                    class="primary-btn"
+                    id="loginBtn"
+                >
+                    LOGIN →
+                </button>
+
+            </form>
+
+
+            <div class="divider">
+                OR
+            </div>
+
+
+            <!-- GOOGLE LOGIN -->
+            <button
+                type="button"
+                class="google-btn"
+                id="googleLoginBtn"
+            >
+
+                <svg
+                    class="google-logo"
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                >
+                    <path
+                        fill="#4285F4"
+                        d="M21.35 12.23c0-.79-.07-1.55-.23-2.23H12v4.22h5.23a4.48 4.48 0 0 1-1.94 2.94v2.45h3.14c1.84-1.69 2.92-4.18 2.92-7.38z"
+                    />
+                    <path
+                        fill="#34A853"
+                        d="M12 21.67c2.63 0 4.84-.87 6.46-2.36l-3.14-2.45c-.87.58-1.98.92-3.32.92-2.55 0-4.71-1.72-5.49-4.04H3.27v2.53A9.76 9.76 0 0 0 12 21.67z"
+                    />
+                    <path
+                        fill="#FBBC05"
+                        d="M6.51 13.74A5.87 5.87 0 0 1 6.2 12c0-.61.11-1.2.31-1.74V7.73H3.27A9.73 9.73 0 0 0 2.25 12c0 1.57.38 3.05 1.02 4.27l3.24-2.53z"
+                    />
+                    <path
+                        fill="#EA4335"
+                        d="M12 6.22c1.43 0 2.71.49 3.72 1.45l2.79-2.79C16.84 3.34 14.63 2.33 12 2.33a9.76 9.76 0 0 0-8.73 5.4l3.24 2.53C7.29 7.94 9.45 6.22 12 6.22z"
+                    />
+                </svg>
+
+                Continue with Google
+
+            </button>
+
+
+            <div class="signup-link">
+
+                Don't have an account?
+
+                <a href="signup.html">
+                    Create Account
+                </a>
+
+            </div>
+
+            <div class="back-home">
+                <a href="../index.html">
+                    ← Back to Home
+                </a>
+            </div>
+
+        </section>
+
     </div>
-  </div>
 
-  <script>
-    document.addEventListener('DOMContentLoaded', function () {
-      if (window.CareerSetu) {
-        CareerSetu.checkAuthGuard(true);
-      }
+</div>
 
-      var loginForm = document.getElementById('login-form');
-      var demoBtn = document.getElementById('demo-login-btn');
-      var forgotLink = document.getElementById('forgot-password-link');
-      var alertBox = document.getElementById('alert-box');
 
-      try {
-        var lastUser = CareerSetu.getCurrentUser();
-        if (lastUser && lastUser.email) {
-          document.getElementById('email').value = lastUser.email;
+<!-- ======================================================
+     FIREBASE SDK
+====================================================== -->
+
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+
+
+<script>
+
+"use strict";
+
+
+/* ======================================================
+   FIREBASE CONFIG
+====================================================== */
+
+const firebaseConfig = {
+    apiKey: "REPLACE_WITH_YOUR_API_KEY",
+    authDomain: "careersetu-88d98.firebaseapp.com",
+    projectId: "careersetu-88d98",
+    storageBucket: "careersetu-88d98.firebasestorage.app",
+    messagingSenderId: "199488708377",
+    appId: "1:199488708377:web:7eacabb05647411727ef88",
+    measurementId: "G-DR9SR12EFY"
+};
+
+
+/* ======================================================
+   FIREBASE INITIALIZE
+====================================================== */
+
+if (!firebase.apps.length) {
+    firebase.initializeApp(firebaseConfig);
+}
+
+const auth = firebase.auth();
+
+let db = null;
+
+if (firebase.firestore) {
+    db = firebase.firestore();
+}
+
+
+/* ======================================================
+   ELEMENTS
+====================================================== */
+
+const loginForm = document.getElementById("loginForm");
+const emailInput = document.getElementById("email");
+const passwordInput = document.getElementById("password");
+const rememberMe = document.getElementById("rememberMe");
+
+const loginBtn = document.getElementById("loginBtn");
+const googleLoginBtn = document.getElementById("googleLoginBtn");
+
+const forgotPasswordBtn =
+    document.getElementById("forgotPasswordBtn");
+
+const togglePassword =
+    document.getElementById("togglePassword");
+
+const statusBox =
+    document.getElementById("statusBox");
+
+
+/* ======================================================
+   MESSAGE
+====================================================== */
+
+function showMessage(message, type = "error") {
+
+    statusBox.textContent = message;
+
+    statusBox.className =
+        "status-box " + type;
+
+    statusBox.style.display = "block";
+}
+
+
+function hideMessage() {
+
+    statusBox.style.display = "none";
+
+}
+
+
+/* ======================================================
+   PASSWORD TOGGLE
+====================================================== */
+
+togglePassword.addEventListener("click", function () {
+
+    if (passwordInput.type === "password") {
+
+        passwordInput.type = "text";
+        togglePassword.textContent = "🙈";
+
+    } else {
+
+        passwordInput.type = "password";
+        togglePassword.textContent = "👁️";
+
+    }
+
+});
+
+
+/* ======================================================
+   SAVE FIREBASE USER
+====================================================== */
+
+async function saveFirebaseUser(firebaseUser) {
+
+    if (!firebaseUser) {
+        throw new Error("Firebase user not found.");
+    }
+
+    const userData = {
+
+        uid: firebaseUser.uid,
+
+        email: firebaseUser.email || "",
+
+        displayName:
+            firebaseUser.displayName ||
+            (firebaseUser.email
+                ? firebaseUser.email.split("@")[0]
+                : "Student"),
+
+        photoURL:
+            firebaseUser.photoURL || "",
+
+        isFirebaseUser: true,
+
+        provider:
+            firebaseUser.providerData &&
+            firebaseUser.providerData[0]
+                ? firebaseUser.providerData[0].providerId
+                : "password"
+
+    };
+
+
+    /* ----------------------------------------------
+       CareerSetu local session
+    ---------------------------------------------- */
+
+    localStorage.setItem(
+        "careerSaathiCurrentUser",
+        JSON.stringify(userData)
+    );
+
+    localStorage.setItem(
+        "careerSetuCurrentUser",
+        JSON.stringify(userData)
+    );
+
+
+    /* ----------------------------------------------
+       Save/merge profile
+    ---------------------------------------------- */
+
+    try {
+
+        const existingProfile =
+            JSON.parse(
+                localStorage.getItem(
+                    "careerSaathiData_" +
+                    firebaseUser.uid +
+                    "_profiles"
+                ) || "{}"
+            );
+
+        const mergedProfile = {
+            ...existingProfile,
+
+            uid: firebaseUser.uid,
+
+            email:
+                existingProfile.email ||
+                firebaseUser.email ||
+                "",
+
+            fullName:
+                existingProfile.fullName ||
+                firebaseUser.displayName ||
+                "",
+
+            photoURL:
+                existingProfile.photoURL ||
+                firebaseUser.photoURL ||
+                ""
+        };
+
+
+        localStorage.setItem(
+            "careerSaathiData_" +
+            firebaseUser.uid +
+            "_profiles",
+
+            JSON.stringify(mergedProfile)
+        );
+
+
+        /* Firestore merge */
+
+        if (db) {
+
+            await db
+                .collection("profiles")
+                .doc(firebaseUser.uid)
+                .set(
+                    mergedProfile,
+                    { merge: true }
+                );
+
         }
-      } catch (e) {}
 
-      loginForm.addEventListener('submit', async function (e) {
-        e.preventDefault();
-        var email = document.getElementById('email').value.trim();
-        var password = document.getElementById('password').value;
-        var submitBtn = document.getElementById('login-submit-btn');
+    } catch (profileError) {
 
-        submitBtn.disabled = true;
-        submitBtn.innerHTML = 'Signing In...';
+        console.warn(
+            "Profile save warning:",
+            profileError
+        );
+
+    }
+
+
+    return userData;
+}
+
+
+/* ======================================================
+   ERROR TRANSLATOR
+====================================================== */
+
+function getFirebaseErrorMessage(error) {
+
+    const code = error && error.code
+        ? error.code
+        : "";
+
+    switch (code) {
+
+        case "auth/invalid-credential":
+            return "Email ya password galat hai.";
+
+        case "auth/user-not-found":
+            return "Is email se koi account nahi mila.";
+
+        case "auth/wrong-password":
+            return "Password galat hai.";
+
+        case "auth/invalid-email":
+            return "Valid email address enter karo.";
+
+        case "auth/user-disabled":
+            return "Ye account disabled hai.";
+
+        case "auth/popup-closed-by-user":
+            return "Google login window close ho gayi. Dobara try karo.";
+
+        case "auth/popup-blocked":
+            return "Browser ne Google popup block kiya. Popups allow karo.";
+
+        case "auth/cancelled-popup-request":
+            return "Google login request cancel ho gayi.";
+
+        case "auth/unauthorized-domain":
+            return "Ye website domain Firebase Authentication mein authorized nahi hai.";
+
+        case "auth/operation-not-allowed":
+            return "Firebase Console mein Google Sign-In enable nahi hai.";
+
+        case "auth/account-exists-with-different-credential":
+            return "Is email ka account kisi doosre login method se already bana hua hai.";
+
+        case "auth/network-request-failed":
+            return "Internet/network connection check karo.";
+
+        default:
+            return (
+                error?.message ||
+                "Login failed. Dobara try karo."
+            );
+    }
+}
+
+
+/* ======================================================
+   EMAIL PASSWORD LOGIN
+====================================================== */
+
+loginForm.addEventListener(
+    "submit",
+    async function (event) {
+
+        event.preventDefault();
+
+        hideMessage();
+
+        const email =
+            emailInput.value.trim();
+
+        const password =
+            passwordInput.value;
+
+        if (!email || !password) {
+
+            showMessage(
+                "Email aur password dono enter karo."
+            );
+
+            return;
+
+        }
+
+
+        loginBtn.disabled = true;
+        loginBtn.textContent = "Logging in...";
+
 
         try {
-          if (!window.CareerSetu) {
-            throw new Error('Core engine initializing...');
-          }
-          await CareerSetu.logIn(email, password);
-          // Instant navigation without artificial delay
-          window.location.href = 'dashboard.html';
-        } catch (err) {
-          showAlert(err.message || 'Login failed. Please check your credentials.', 'error');
-          submitBtn.disabled = false;
-          submitBtn.textContent = 'Sign In';
+
+            /* Remember Me */
+
+            await auth.setPersistence(
+                rememberMe.checked
+                    ? firebase.auth.Auth.Persistence.LOCAL
+                    : firebase.auth.Auth.Persistence.SESSION
+            );
+
+
+            /* Firebase Email Login */
+
+            const result =
+                await auth.signInWithEmailAndPassword(
+                    email,
+                    password
+                );
+
+
+            await saveFirebaseUser(
+                result.user
+            );
+
+
+            showMessage(
+                "Login successful. Dashboard open ho raha hai...",
+                "success"
+            );
+
+
+            setTimeout(function () {
+
+                window.location.replace(
+                    "dashboard.html"
+                );
+
+            }, 500);
+
+
+        } catch (error) {
+
+            console.error(
+                "Email login error:",
+                error
+            );
+
+            showMessage(
+                getFirebaseErrorMessage(error)
+            );
+
+        } finally {
+
+            loginBtn.disabled = false;
+            loginBtn.textContent = "LOGIN →";
+
         }
-      });
 
-      demoBtn.addEventListener('click', function () {
-        CareerSetu.loginAsDemoJudge();
-        window.location.href = 'dashboard.html';
-      });
+    }
+);
 
-      forgotLink.addEventListener('click', function (e) {
-        e.preventDefault();
-        showAlert('If an account exists for this email, password reset instructions will be sent.', 'info');
-      });
 
-      function showAlert(msg, type) {
-        var alertClass = type === 'success' ? 'alert-emerald' : (type === 'error' ? 'alert-rose' : 'alert-primary');
-        alertBox.innerHTML = '<div class="alert ' + alertClass + '" style="margin-bottom: 1rem; padding: 0.75rem 1rem; border-radius: 8px; font-size: 0.88rem; background: ' + (type === 'success' ? '#ecfdf5' : (type === 'error' ? '#fff1f2' : '#eff6ff')) + '; color: ' + (type === 'success' ? '#047857' : (type === 'error' ? '#b91c1c' : '#1e40af')) + '; border: 1px solid ' + (type === 'success' ? '#a7f3d0' : (type === 'error' ? '#fecdd3' : '#bfdbfe')) + ';">' + msg + '</div>';
-      }
-    });
-  </script>
+/* ======================================================
+   GOOGLE LOGIN
+====================================================== */
+
+googleLoginBtn.addEventListener(
+    "click",
+    async function () {
+
+        hideMessage();
+
+        googleLoginBtn.disabled = true;
+
+        googleLoginBtn.innerHTML =
+            "⏳ Connecting to Google...";
+
+
+        try {
+
+            /* ------------------------------------------------
+               IMPORTANT:
+               Real Firebase Google Provider
+            ------------------------------------------------ */
+
+            const provider =
+                new firebase.auth.GoogleAuthProvider();
+
+
+            provider.setCustomParameters({
+                prompt: "select_account"
+            });
+
+
+            /* Remember user */
+
+            await auth.setPersistence(
+                rememberMe.checked
+                    ? firebase.auth.Auth.Persistence.LOCAL
+                    : firebase.auth.Auth.Persistence.SESSION
+            );
+
+
+            /* Google popup */
+
+            const result =
+                await auth.signInWithPopup(
+                    provider
+                );
+
+
+            if (!result || !result.user) {
+
+                throw new Error(
+                    "Google user data not received."
+                );
+
+            }
+
+
+            console.log(
+                "Google user:",
+                result.user
+            );
+
+
+            /* Save actual Google user */
+
+            await saveFirebaseUser(
+                result.user
+            );
+
+
+            showMessage(
+                "Google login successful. Dashboard open ho raha hai...",
+                "success"
+            );
+
+
+            setTimeout(function () {
+
+                window.location.replace(
+                    "dashboard.html"
+                );
+
+            }, 500);
+
+
+        } catch (error) {
+
+            console.error(
+                "Google login error:",
+                error
+            );
+
+            showMessage(
+                getFirebaseErrorMessage(error)
+            );
+
+            googleLoginBtn.disabled = false;
+
+            googleLoginBtn.innerHTML = `
+                <svg
+                    class="google-logo"
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                >
+                    <path fill="#4285F4"
+                        d="M21.35 12.23c0-.79-.07-1.55-.23-2.23H12v4.22h5.23a4.48 4.48 0 0 1-1.94 2.94v2.45h3.14c1.84-1.69 2.92-4.18 2.92-7.38z" />
+
+                    <path fill="#34A853"
+                        d="M12 21.67c2.63 0 4.84-.87 6.46-2.36l-3.14-2.45c-.87.58-1.98.92-3.32.92-2.55 0-4.71-1.72-5.49-4.04H3.27v2.53A9.76 9.76 0 0 0 12 21.67z" />
+
+                    <path fill="#FBBC05"
+                        d="M6.51 13.74A5.87 5.87 0 0 1 6.2 12c0-.61.11-1.2.31-1.74V7.73H3.27A9.73 9.73 0 0 0 2.25 12c0 1.57.38 3.05 1.02 4.27l3.24-2.53z" />
+
+                    <path fill="#EA4335"
+                        d="M12 6.22c1.43 0 2.71.49 3.72 1.45l2.79-2.79C16.84 3.34 14.63 2.33 12 2.33a9.76 9.76 0 0 0-8.73 5.4l3.24 2.53C7.29 7.94 9.45 6.22 12 6.22z" />
+                </svg>
+
+                Continue with Google
+            `;
+
+        }
+
+    }
+);
+
+
+/* ======================================================
+   FORGOT PASSWORD
+====================================================== */
+
+forgotPasswordBtn.addEventListener(
+    "click",
+    async function () {
+
+        hideMessage();
+
+        const email =
+            emailInput.value.trim();
+
+        if (!email) {
+
+            showMessage(
+                "Pehle email enter karo."
+            );
+
+            emailInput.focus();
+
+            return;
+
+        }
+
+
+        try {
+
+            await auth.sendPasswordResetEmail(
+                email
+            );
+
+            showMessage(
+                "Password reset email bhej diya gaya hai. Inbox check karo.",
+                "success"
+            );
+
+        } catch (error) {
+
+            console.error(
+                "Password reset error:",
+                error
+            );
+
+            showMessage(
+                getFirebaseErrorMessage(error)
+            );
+
+        }
+
+    }
+);
+
+
+/* ======================================================
+   AUTH STATE CHECK
+====================================================== */
+
+auth.onAuthStateChanged(
+    function (user) {
+
+        if (user) {
+
+            console.log(
+                "Firebase authenticated user:",
+                user.email,
+                user.uid
+            );
+
+        }
+
+    }
+);
+
+</script>
+
 </body>
 </html>

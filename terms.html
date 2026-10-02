@@ -1,0 +1,1466 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Terms & Conditions — CareerSetu AI</title>
+
+    <meta
+        name="description"
+        content="Terms and Conditions for CareerSetu AI"
+    >
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Manrope:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet"
+    >
+
+    <!-- Font Awesome -->
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    >
+
+    <style>
+
+        /* =====================================================
+           RESET
+        ===================================================== */
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: "Inter", sans-serif;
+
+            color: #10204a;
+
+            min-height: 100vh;
+
+            background:
+                radial-gradient(
+                    circle at 5% 10%,
+                    rgba(96, 165, 250, 0.35),
+                    transparent 28%
+                ),
+                radial-gradient(
+                    circle at 95% 20%,
+                    rgba(129, 140, 248, 0.25),
+                    transparent 27%
+                ),
+                linear-gradient(
+                    135deg,
+                    #edf7ff 0%,
+                    #f8fbff 50%,
+                    #edf6ff 100%
+                );
+
+            overflow-x: hidden;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+
+        /* =====================================================
+           BACKGROUND
+        ===================================================== */
+
+        .background {
+            position: fixed;
+            inset: 0;
+
+            pointer-events: none;
+
+            overflow: hidden;
+
+            z-index: -1;
+        }
+
+        .bg-circle {
+            position: absolute;
+
+            border-radius: 50%;
+
+            filter: blur(60px);
+
+            opacity: .45;
+        }
+
+        .circle-1 {
+            width: 320px;
+            height: 320px;
+
+            left: -130px;
+            top: 130px;
+
+            background: #60a5fa;
+        }
+
+        .circle-2 {
+            width: 360px;
+            height: 360px;
+
+            right: -150px;
+            top: 400px;
+
+            background: #c4b5fd;
+        }
+
+
+        /* =====================================================
+           HEADER
+        ===================================================== */
+
+        .header {
+            width: 100%;
+
+            padding: 18px 4% 0;
+
+            position: relative;
+
+            z-index: 100;
+        }
+
+        .navbar {
+            max-width: 1450px;
+
+            min-height: 76px;
+
+            margin: auto;
+
+            padding:
+                0 20px 0 28px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: space-between;
+
+            background:
+                rgba(255, 255, 255, .94);
+
+            border:
+                1px solid rgba(255,255,255,.9);
+
+            border-radius: 22px;
+
+            box-shadow:
+                0 15px 45px
+                rgba(31,75,135,.13);
+
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+        }
+
+
+        /* =====================================================
+           LOGO
+        ===================================================== */
+
+        .logo {
+            display: flex;
+
+            align-items: center;
+
+            gap: 12px;
+
+            flex-shrink: 0;
+        }
+
+        .logo-icon {
+            width: 45px;
+            height: 45px;
+
+            display: flex;
+
+            align-items: center;
+            justify-content: center;
+
+            color: white;
+
+            font-size: 23px;
+
+            background:
+                linear-gradient(
+                    145deg,
+                    #1976ff,
+                    #1749d1
+                );
+
+            clip-path:
+                polygon(
+                    50% 0%,
+                    100% 25%,
+                    82% 38%,
+                    82% 72%,
+                    50% 90%,
+                    18% 72%,
+                    18% 38%,
+                    0% 25%
+                );
+        }
+
+        .logo-text {
+            font-family: "Manrope", sans-serif;
+
+            font-size: 27px;
+
+            font-weight: 800;
+
+            letter-spacing: -1px;
+
+            color: #07133d;
+        }
+
+        .logo-text span {
+            color: #1877f2;
+        }
+
+
+        /* =====================================================
+           NAV
+        ===================================================== */
+
+        .nav-links {
+            display: flex;
+
+            align-items: center;
+
+            gap: 38px;
+        }
+
+        .nav-links a {
+            position: relative;
+
+            padding: 27px 0;
+
+            font-size: 15px;
+
+            font-weight: 600;
+
+            color: #111936;
+
+            transition: .25s ease;
+        }
+
+        .nav-links a:hover {
+            color: #2563eb;
+        }
+
+        .nav-links a.active {
+            color: #2563eb;
+        }
+
+        .nav-links a.active::after {
+            content: "";
+
+            position: absolute;
+
+            left: 0;
+            right: 0;
+
+            bottom: 13px;
+
+            height: 3px;
+
+            border-radius: 20px;
+
+            background: #2563eb;
+        }
+
+
+        /* =====================================================
+           LOGIN BUTTON
+        ===================================================== */
+
+        .login-button {
+            min-width: 140px;
+
+            height: 50px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            gap: 10px;
+
+            color: white;
+
+            font-size: 15px;
+
+            font-weight: 700;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #2187ff,
+                    #1949db
+                );
+
+            border-radius: 15px;
+
+            box-shadow:
+                0 10px 25px
+                rgba(37,99,235,.28);
+
+            transition: .3s ease;
+        }
+
+        .login-button:hover {
+            transform: translateY(-2px);
+
+            box-shadow:
+                0 15px 32px
+                rgba(37,99,235,.38);
+        }
+
+
+        /* =====================================================
+           MOBILE BUTTON
+        ===================================================== */
+
+        .mobile-button {
+            display: none;
+
+            width: 45px;
+            height: 45px;
+
+            border: none;
+
+            border-radius: 13px;
+
+            background: #eff6ff;
+
+            color: #2563eb;
+
+            font-size: 20px;
+
+            cursor: pointer;
+        }
+
+        .mobile-menu {
+            display: none;
+        }
+
+
+        /* =====================================================
+           HERO
+        ===================================================== */
+
+        .terms-hero {
+            max-width: 1200px;
+
+            margin: auto;
+
+            padding:
+                75px 5% 45px;
+
+            text-align: center;
+        }
+
+        .page-badge {
+            display: inline-flex;
+
+            align-items: center;
+
+            gap: 9px;
+
+            padding:
+                10px 18px;
+
+            border-radius: 999px;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #dbeafe,
+                    #e0e7ff
+                );
+
+            color: #1746bc;
+
+            font-size: 14px;
+
+            font-weight: 700;
+        }
+
+        .page-badge i {
+            color: #2563eb;
+        }
+
+        .terms-hero h1 {
+            margin-top: 22px;
+
+            font-family: "Manrope", sans-serif;
+
+            font-size:
+                clamp(40px, 5vw, 64px);
+
+            line-height: 1.05;
+
+            letter-spacing: -2.5px;
+
+            font-weight: 800;
+
+            color: #07133d;
+        }
+
+        .terms-hero h1 span {
+            color: #2563eb;
+        }
+
+        .terms-hero p {
+            max-width: 720px;
+
+            margin:
+                20px auto 0;
+
+            color: #66738f;
+
+            font-size: 16px;
+
+            line-height: 1.7;
+        }
+
+
+        /* =====================================================
+           TERMS CONTAINER
+        ===================================================== */
+
+        .terms-wrapper {
+            max-width: 1180px;
+
+            margin:
+                0 auto 70px;
+
+            padding:
+                0 5%;
+        }
+
+        .terms-card {
+            background:
+                rgba(255,255,255,.91);
+
+            border:
+                1px solid
+                rgba(255,255,255,.95);
+
+            border-radius: 30px;
+
+            padding: 42px;
+
+            box-shadow:
+                0 20px 60px
+                rgba(30,64,175,.10);
+
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+        }
+
+
+        /* =====================================================
+           LAST UPDATED
+        ===================================================== */
+
+        .updated {
+            display: flex;
+
+            align-items: center;
+
+            gap: 9px;
+
+            margin-bottom: 30px;
+
+            padding: 12px 16px;
+
+            width: fit-content;
+
+            border-radius: 12px;
+
+            background: #eff6ff;
+
+            color: #49658d;
+
+            font-size: 13px;
+
+            font-weight: 600;
+        }
+
+        .updated i {
+            color: #2563eb;
+        }
+
+
+        /* =====================================================
+           TERM ITEM
+        ===================================================== */
+
+        .term-item {
+            padding:
+                25px 0;
+
+            border-bottom:
+                1px solid #e8eef8;
+        }
+
+        .term-item:first-of-type {
+            padding-top: 0;
+        }
+
+        .term-item:last-child {
+            border-bottom: none;
+
+            padding-bottom: 0;
+        }
+
+        .term-heading {
+            display: flex;
+
+            align-items: center;
+
+            gap: 14px;
+
+            margin-bottom: 12px;
+        }
+
+        .term-number {
+            width: 39px;
+            height: 39px;
+
+            flex-shrink: 0;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            border-radius: 11px;
+
+            color: white;
+
+            font-size: 14px;
+
+            font-weight: 800;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #2563eb,
+                    #6366f1
+                );
+
+            box-shadow:
+                0 8px 18px
+                rgba(37,99,235,.20);
+        }
+
+        .term-heading h2 {
+            font-family: "Manrope", sans-serif;
+
+            font-size: 20px;
+
+            color: #101b43;
+
+            font-weight: 800;
+        }
+
+        .term-item p {
+            margin-left: 53px;
+
+            color: #65718b;
+
+            font-size: 15px;
+
+            line-height: 1.75;
+        }
+
+
+        /* =====================================================
+           IMPORTANT NOTICE
+        ===================================================== */
+
+        .notice {
+            margin-top: 28px;
+
+            padding: 22px;
+
+            display: flex;
+
+            align-items: flex-start;
+
+            gap: 15px;
+
+            border-radius: 18px;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #eff6ff,
+                    #f5f3ff
+                );
+
+            border:
+                1px solid #dbeafe;
+        }
+
+        .notice-icon {
+            width: 42px;
+            height: 42px;
+
+            flex-shrink: 0;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            color: white;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #2563eb,
+                    #6366f1
+                );
+
+            border-radius: 11px;
+        }
+
+        .notice strong {
+            display: block;
+
+            margin-bottom: 5px;
+
+            color: #172554;
+
+            font-size: 15px;
+        }
+
+        .notice p {
+            color: #66738f;
+
+            font-size: 13px;
+
+            line-height: 1.65;
+        }
+
+
+        /* =====================================================
+           FOOTER
+        ===================================================== */
+
+        .footer {
+            padding:
+                30px 5%;
+
+            background:
+                rgba(255,255,255,.75);
+
+            border-top:
+                1px solid #e5edf8;
+        }
+
+        .footer-inner {
+            max-width: 1200px;
+
+            margin: auto;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: space-between;
+
+            gap: 20px;
+        }
+
+        .footer-brand {
+            font-weight: 800;
+
+            color: #07133d;
+        }
+
+        .footer-brand span {
+            color: #2563eb;
+        }
+
+        .footer-text {
+            color: #77839b;
+
+            font-size: 13px;
+        }
+
+
+        /* =====================================================
+           RESPONSIVE
+        ===================================================== */
+
+        @media (max-width: 900px) {
+
+            .nav-links,
+            .login-button {
+                display: none;
+            }
+
+            .mobile-button {
+                display: flex;
+
+                align-items: center;
+
+                justify-content: center;
+            }
+
+            .mobile-menu.open {
+                display: flex;
+
+                position: absolute;
+
+                left: 4%;
+                right: 4%;
+
+                top: 88px;
+
+                padding: 15px;
+
+                flex-direction: column;
+
+                gap: 5px;
+
+                background: white;
+
+                border-radius: 20px;
+
+                box-shadow:
+                    0 20px 45px
+                    rgba(15,23,42,.15);
+            }
+
+            .mobile-menu a {
+                padding: 13px 15px;
+
+                border-radius: 12px;
+
+                font-weight: 600;
+
+                color: #17203b;
+            }
+
+            .mobile-menu a:hover {
+                background: #eff6ff;
+
+                color: #2563eb;
+            }
+
+            .terms-hero {
+                padding-top: 60px;
+            }
+        }
+
+
+        @media (max-width: 650px) {
+
+            .header {
+                padding:
+                    10px 3% 0;
+            }
+
+            .navbar {
+                min-height: 65px;
+
+                padding:
+                    0 13px 0 17px;
+
+                border-radius: 17px;
+            }
+
+            .logo-icon {
+                width: 39px;
+                height: 39px;
+
+                font-size: 20px;
+            }
+
+            .logo-text {
+                font-size: 21px;
+            }
+
+            .terms-hero {
+                padding:
+                    45px 5% 30px;
+            }
+
+            .terms-hero h1 {
+                font-size: 42px;
+
+                letter-spacing: -1.8px;
+            }
+
+            .terms-hero p {
+                font-size: 14px;
+            }
+
+            .terms-wrapper {
+                padding:
+                    0 4%;
+
+                margin-bottom: 45px;
+            }
+
+            .terms-card {
+                padding: 25px 20px;
+
+                border-radius: 22px;
+            }
+
+            .term-heading h2 {
+                font-size: 17px;
+            }
+
+            .term-item p {
+                margin-left: 0;
+
+                margin-top: 12px;
+
+                font-size: 14px;
+            }
+
+            .term-number {
+                width: 34px;
+                height: 34px;
+
+                font-size: 12px;
+            }
+
+            .notice {
+                padding: 17px;
+            }
+
+            .footer-inner {
+                flex-direction: column;
+
+                text-align: center;
+            }
+        }
+
+    </style>
+</head>
+
+
+<body>
+
+
+    <!-- =====================================================
+         BACKGROUND
+    ====================================================== -->
+
+    <div class="background">
+
+        <div class="bg-circle circle-1"></div>
+
+        <div class="bg-circle circle-2"></div>
+
+    </div>
+
+
+    <!-- =====================================================
+         HEADER
+    ====================================================== -->
+
+    <header class="header">
+
+        <nav class="navbar">
+
+
+            <!-- LOGO -->
+
+            <a href="index.html" class="logo">
+
+                <div class="logo-icon">
+                    <i class="fa-solid fa-graduation-cap"></i>
+                </div>
+
+                <div class="logo-text">
+                    CareerSetu<span>AI</span>
+                </div>
+
+            </a>
+
+
+            <!-- DESKTOP NAV -->
+
+            <div class="nav-links">
+
+                <a href="index.html">
+                    Home
+                </a>
+
+                <a
+                    href="terms.html"
+                    class="active"
+                >
+                    Terms & Conditions
+                </a>
+
+                <a href="contact.html">
+                    Contact Us
+                </a>
+
+                <a href="about.html">
+                    About
+                </a>
+
+            </div>
+
+
+            <!-- LOGIN -->
+
+            <a
+                href="login.html"
+                class="login-button"
+            >
+
+                <i class="fa-regular fa-user"></i>
+
+                Login
+
+            </a>
+
+
+            <!-- MOBILE -->
+
+            <button
+                class="mobile-button"
+                id="mobileButton"
+            >
+
+                <i class="fa-solid fa-bars"></i>
+
+            </button>
+
+        </nav>
+
+
+        <!-- MOBILE MENU -->
+
+        <div
+            class="mobile-menu"
+            id="mobileMenu"
+        >
+
+            <a href="index.html">
+                Home
+            </a>
+
+            <a href="terms.html">
+                Terms & Conditions
+            </a>
+
+            <a href="contact.html">
+                Contact Us
+            </a>
+
+            <a href="about.html">
+                About
+            </a>
+
+            <a href="login.html">
+                Login
+            </a>
+
+        </div>
+
+    </header>
+
+
+    <!-- =====================================================
+         HERO
+    ====================================================== -->
+
+    <section class="terms-hero">
+
+        <div class="page-badge">
+
+            <i class="fa-solid fa-shield-halved"></i>
+
+            CareerSetu AI
+
+        </div>
+
+
+        <h1>
+
+            Terms &
+
+            <span>
+                Conditions
+            </span>
+
+        </h1>
+
+
+        <p>
+
+            Please read these terms carefully before using
+            CareerSetu AI and its career guidance services.
+
+        </p>
+
+    </section>
+
+
+    <!-- =====================================================
+         TERMS CONTENT
+    ====================================================== -->
+
+    <main class="terms-wrapper">
+
+        <div class="terms-card">
+
+
+            <!-- UPDATED -->
+
+            <div class="updated">
+
+                <i class="fa-regular fa-calendar"></i>
+
+                Last Updated: September 2026
+
+            </div>
+
+
+            <!-- 01 -->
+
+            <div class="term-item">
+
+                <div class="term-heading">
+
+                    <div class="term-number">
+                        01
+                    </div>
+
+                    <h2>
+                        Acceptance of Terms
+                    </h2>
+
+                </div>
+
+                <p>
+                    By accessing or using CareerSetu AI,
+                    you agree to follow these Terms &
+                    Conditions. If you do not agree with
+                    these terms, please do not use the
+                    platform.
+                </p>
+
+            </div>
+
+
+            <!-- 02 -->
+
+            <div class="term-item">
+
+                <div class="term-heading">
+
+                    <div class="term-number">
+                        02
+                    </div>
+
+                    <h2>
+                        Use of CareerSetu AI
+                    </h2>
+
+                </div>
+
+                <p>
+                    CareerSetu AI is designed to provide
+                    students with career guidance,
+                    skill-gap information, roadmap
+                    suggestions, resume assistance and
+                    interview preparation tools.
+                </p>
+
+            </div>
+
+
+            <!-- 03 -->
+
+            <div class="term-item">
+
+                <div class="term-heading">
+
+                    <div class="term-number">
+                        03
+                    </div>
+
+                    <h2>
+                        AI-Generated Guidance
+                    </h2>
+
+                </div>
+
+                <p>
+                    Some recommendations and guidance
+                    provided by CareerSetu AI may be
+                    generated using artificial intelligence.
+                    AI-generated information may not always
+                    be complete or suitable for every
+                    individual situation.
+                </p>
+
+            </div>
+
+
+            <!-- 04 -->
+
+            <div class="term-item">
+
+                <div class="term-heading">
+
+                    <div class="term-number">
+                        04
+                    </div>
+
+                    <h2>
+                        User Information
+                    </h2>
+
+                </div>
+
+                <p>
+                    Users should provide accurate and
+                    relevant information when creating
+                    their profile. The quality of career
+                    recommendations may depend on the
+                    information provided by the user.
+                </p>
+
+            </div>
+
+
+            <!-- 05 -->
+
+            <div class="term-item">
+
+                <div class="term-heading">
+
+                    <div class="term-number">
+                        05
+                    </div>
+
+                    <h2>
+                        Career Decisions
+                    </h2>
+
+                </div>
+
+                <p>
+                    CareerSetu AI provides guidance and
+                    educational assistance. Users should
+                    independently evaluate career options,
+                    educational programs, jobs and other
+                    opportunities before making decisions.
+                </p>
+
+            </div>
+
+
+            <!-- 06 -->
+
+            <div class="term-item">
+
+                <div class="term-heading">
+
+                    <div class="term-number">
+                        06
+                    </div>
+
+                    <h2>
+                        Account Security
+                    </h2>
+
+                </div>
+
+                <p>
+                    Users are responsible for maintaining
+                    the confidentiality of their account
+                    information and for activities carried
+                    out through their account.
+                </p>
+
+            </div>
+
+
+            <!-- 07 -->
+
+            <div class="term-item">
+
+                <div class="term-heading">
+
+                    <div class="term-number">
+                        07
+                    </div>
+
+                    <h2>
+                        Prohibited Use
+                    </h2>
+
+                </div>
+
+                <p>
+                    Users should not misuse the platform,
+                    attempt unauthorized access, interfere
+                    with platform functionality or use the
+                    service for unlawful purposes.
+                </p>
+
+            </div>
+
+
+            <!-- 08 -->
+
+            <div class="term-item">
+
+                <div class="term-heading">
+
+                    <div class="term-number">
+                        08
+                    </div>
+
+                    <h2>
+                        Platform Availability
+                    </h2>
+
+                </div>
+
+                <p>
+                    CareerSetu AI may occasionally be
+                    unavailable because of maintenance,
+                    technical issues, updates or other
+                    circumstances.
+                </p>
+
+            </div>
+
+
+            <!-- 09 -->
+
+            <div class="term-item">
+
+                <div class="term-heading">
+
+                    <div class="term-number">
+                        09
+                    </div>
+
+                    <h2>
+                        Changes to These Terms
+                    </h2>
+
+                </div>
+
+                <p>
+                    CareerSetu AI may update these Terms &
+                    Conditions from time to time. Updated
+                    terms will be reflected on this page.
+                </p>
+
+            </div>
+
+
+            <!-- 10 -->
+
+            <div class="term-item">
+
+                <div class="term-heading">
+
+                    <div class="term-number">
+                        10
+                    </div>
+
+                    <h2>
+                        Contact
+                    </h2>
+
+                </div>
+
+                <p>
+                    If you have questions about these Terms
+                    & Conditions, you can contact the
+                    CareerSetu AI team through the Contact
+                    Us page.
+                </p>
+
+            </div>
+
+
+            <!-- NOTICE -->
+
+            <div class="notice">
+
+                <div class="notice-icon">
+
+                    <i class="fa-solid fa-info"></i>
+
+                </div>
+
+                <div>
+
+                    <strong>
+                        Important
+                    </strong>
+
+                    <p>
+                        CareerSetu AI is intended to support
+                        students with career exploration and
+                        preparation. The platform does not
+                        guarantee admission, employment,
+                        salary, selection or any specific
+                        career outcome.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </main>
+
+
+    <!-- =====================================================
+         FOOTER
+    ====================================================== -->
+
+    <footer class="footer">
+
+        <div class="footer-inner">
+
+            <div class="footer-brand">
+
+                CareerSetu<span>AI</span>
+
+            </div>
+
+            <div class="footer-text">
+
+                © 2026 CareerSetu AI. All rights reserved.
+
+            </div>
+
+        </div>
+
+    </footer>
+
+
+    <!-- =====================================================
+         JAVASCRIPT
+    ====================================================== -->
+
+    <script>
+
+        const mobileButton =
+            document.getElementById(
+                "mobileButton"
+            );
+
+        const mobileMenu =
+            document.getElementById(
+                "mobileMenu"
+            );
+
+
+        mobileButton.addEventListener(
+            "click",
+            function () {
+
+                mobileMenu.classList.toggle(
+                    "open"
+                );
+
+                const icon =
+                    mobileButton.querySelector("i");
+
+
+                if (
+                    mobileMenu.classList.contains("open")
+                ) {
+
+                    icon.classList.remove(
+                        "fa-bars"
+                    );
+
+                    icon.classList.add(
+                        "fa-xmark"
+                    );
+
+                } else {
+
+                    icon.classList.remove(
+                        "fa-xmark"
+                    );
+
+                    icon.classList.add(
+                        "fa-bars"
+                    );
+
+                }
+
+            }
+        );
+
+
+        /* Close mobile menu */
+
+        document
+            .querySelectorAll(".mobile-menu a")
+            .forEach(function(link) {
+
+                link.addEventListener(
+                    "click",
+                    function() {
+
+                        mobileMenu.classList.remove(
+                            "open"
+                        );
+
+                        const icon =
+                            mobileButton.querySelector("i");
+
+                        icon.classList.remove(
+                            "fa-xmark"
+                        );
+
+                        icon.classList.add(
+                            "fa-bars"
+                        );
+
+                    }
+                );
+
+            });
+
+    </script>
+
+</body>
+</html>

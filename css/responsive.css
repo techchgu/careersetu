@@ -1,89 +1,1008 @@
-/* ==========================================================================
-   CAREERSETU — RESPONSIVE MEDIA QUERIES
-   Pure CSS3 Adaptability (Desktop, Tablet, Mobile)
-   ========================================================================== */
+/* =========================================================
+   CareerSetu AI
+   UNIVERSAL RESPONSIVE / MOBILE CSS
+   Works with Dashboard, Profile, Career, Skill Gap,
+   Roadmap, Opportunities, Resume, Interview & Progress
+========================================================= */
 
-/* Large Tablets & Small Laptops (<= 1024px) */
-@media screen and (max-width: 1024px) {
-  .grid-4 {
-    grid-template-columns: repeat(2, 1fr);
-  }
-  
-  .grid-3 {
-    grid-template-columns: repeat(2, 1fr);
-  }
-  
-  .page-content {
-    padding: 1.5rem;
-  }
+
+/* =========================================================
+   GLOBAL RESPONSIVE RESET
+========================================================= */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
 }
 
-/* Tablets (<= 768px) */
-@media screen and (max-width: 768px) {
-  .app-sidebar {
+html {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+  scroll-behavior: smooth;
+}
+
+body {
+  width: 100%;
+  max-width: 100%;
+  margin: 0;
+  overflow-x: hidden;
+}
+
+
+/* Images */
+
+img,
+svg,
+video {
+  max-width: 100%;
+}
+
+
+/* Forms */
+
+input,
+select,
+textarea,
+button {
+  max-width: 100%;
+}
+
+
+/* =========================================================
+   DESKTOP APP LAYOUT
+========================================================= */
+
+.app-layout {
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+}
+
+
+/* =========================================================
+   SIDEBAR
+========================================================= */
+
+.app-sidebar,
+.sidebar {
+  width: 250px;
+  min-width: 250px;
+  height: 100vh;
+
+  position: fixed;
+  left: 0;
+  top: 0;
+
+  z-index: 1000;
+
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+
+/* =========================================================
+   MAIN AREA
+========================================================= */
+
+.app-main,
+.main-content {
+  width: calc(100% - 250px);
+  min-width: 0;
+
+  margin-left: 250px;
+
+  min-height: 100vh;
+}
+
+
+/* =========================================================
+   TOPBAR
+========================================================= */
+
+.app-topbar,
+.topbar {
+  width: 100%;
+
+  min-height: 70px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 15px;
+
+  padding: 12px 28px;
+
+  position: sticky;
+  top: 0;
+
+  z-index: 900;
+}
+
+
+/* =========================================================
+   MOBILE MENU BUTTON
+========================================================= */
+
+.mobile-menu-btn {
+  display: none;
+
+  width: 42px;
+  height: 42px;
+
+  flex-shrink: 0;
+
+  border: none;
+  border-radius: 10px;
+
+  cursor: pointer;
+
+  align-items: center;
+  justify-content: center;
+
+  font-size: 21px;
+}
+
+
+/* =========================================================
+   TABLET
+   1200px
+========================================================= */
+
+@media (max-width: 1200px) {
+
+  .app-sidebar,
+  .sidebar {
+    width: 230px;
+    min-width: 230px;
+  }
+
+  .app-main,
+  .main-content {
+    width: calc(100% - 230px);
+    margin-left: 230px;
+  }
+
+  .app-topbar,
+  .topbar {
+    padding-left: 22px;
+    padding-right: 22px;
+  }
+
+}
+
+
+/* =========================================================
+   TABLET
+   992px
+========================================================= */
+
+@media (max-width: 992px) {
+
+  .app-sidebar,
+  .sidebar {
+    width: 250px;
+    min-width: 250px;
+
     transform: translateX(-100%);
-    box-shadow: var(--shadow-lg);
+
+    transition:
+      transform 0.25s ease,
+      box-shadow 0.25s ease;
   }
 
-  .app-sidebar.open {
+
+  .app-sidebar.open,
+  .sidebar.open,
+  .app-sidebar.active,
+  .sidebar.active {
     transform: translateX(0);
+
+    box-shadow:
+      15px 0 40px rgba(15, 23, 42, 0.22);
   }
 
-  .app-main {
+
+  .app-main,
+  .main-content {
+    width: 100%;
     margin-left: 0;
   }
 
+
   .mobile-menu-btn {
-    display: inline-block;
+    display: inline-flex;
   }
 
-  .grid-2, .grid-3, .grid-4 {
-    grid-template-columns: 1fr;
+
+  .app-topbar,
+  .topbar {
+    min-height: 64px;
+    padding: 10px 18px;
   }
+
+
+  /* Prevent desktop width issues */
+
+  .page-content {
+    width: 100%;
+    max-width: 100%;
+  }
+
+
+  /* Generic grids */
+
+  .grid-4,
+  .stats-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+
+  .grid-3 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+}
+
+
+/* =========================================================
+   MOBILE
+   768px
+========================================================= */
+
+@media (max-width: 768px) {
+
+  body {
+    font-size: 14px;
+  }
+
+
+  /* -------------------------------------------------------
+     SIDEBAR
+  ------------------------------------------------------- */
+
+  .app-sidebar,
+  .sidebar {
+    width: 275px;
+    min-width: 275px;
+
+    transform: translateX(-105%);
+  }
+
+
+  .app-sidebar.open,
+  .sidebar.open,
+  .app-sidebar.active,
+  .sidebar.active {
+    transform: translateX(0);
+  }
+
+
+  /* -------------------------------------------------------
+     MAIN
+  ------------------------------------------------------- */
+
+  .app-main,
+  .main-content {
+    width: 100%;
+    margin-left: 0;
+  }
+
+
+  /* -------------------------------------------------------
+     TOPBAR
+  ------------------------------------------------------- */
+
+  .app-topbar,
+  .topbar {
+    min-height: 62px;
+
+    padding: 9px 14px;
+
+    gap: 10px;
+  }
+
+
+  .mobile-menu-btn {
+    width: 40px;
+    height: 40px;
+
+    display: inline-flex;
+  }
+
+
+  .topbar-breadcrumbs,
+  .breadcrumb {
+    min-width: 0;
+
+    flex: 1;
+
+    overflow: hidden;
+
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+
+
+  .topbar-breadcrumbs span,
+  .breadcrumb span,
+  .breadcrumb strong {
+    font-size: 12px;
+  }
+
+
+  /* Hide secondary topbar actions */
+
+  .app-topbar > .btn,
+  .topbar > .btn {
+    display: none;
+  }
+
+
+  /* -------------------------------------------------------
+     PAGE CONTENT
+  ------------------------------------------------------- */
+
+  .page-content {
+    width: 100%;
+    max-width: 100%;
+
+    padding: 18px 14px !important;
+  }
+
+
+  /* -------------------------------------------------------
+     PAGE HEADER
+  ------------------------------------------------------- */
+
+  .page-header,
+  .flex-between {
+    gap: 14px;
+  }
+
+
+  .page-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+
+  .page-title {
+    font-size: 26px !important;
+    line-height: 1.2;
+  }
+
+
+  .page-description {
+    font-size: 13px;
+    line-height: 1.6;
+  }
+
+
+  /* -------------------------------------------------------
+     GENERIC CARDS
+  ------------------------------------------------------- */
+
+  .card {
+    width: 100%;
+    max-width: 100%;
+
+    border-radius: 16px !important;
+  }
+
+
+  /* -------------------------------------------------------
+     GRIDS
+  ------------------------------------------------------- */
+
+  .grid-4,
+  .grid-3,
+  .grid-2,
+  .stats-grid,
+  .dashboard-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+
+  /* -------------------------------------------------------
+     GENERIC TWO COLUMN LAYOUTS
+  ------------------------------------------------------- */
+
+  .two-column,
+  .content-grid,
+  .split-layout {
+    grid-template-columns: 1fr !important;
+  }
+
+
+  /* -------------------------------------------------------
+     BUTTONS
+  ------------------------------------------------------- */
+
+  .btn {
+    min-height: 42px;
+  }
+
+
+  /* -------------------------------------------------------
+     FORMS
+  ------------------------------------------------------- */
+
+  .form-row,
+  .form-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+
+  .form-group {
+    width: 100%;
+  }
+
+
+  input,
+  select,
+  textarea {
+    width: 100%;
+    max-width: 100%;
+  }
+
+
+  /* -------------------------------------------------------
+     TABLES
+  ------------------------------------------------------- */
+
+  .table-container,
+  .table-responsive {
+    width: 100%;
+    overflow-x: auto;
+
+    -webkit-overflow-scrolling: touch;
+  }
+
+
+  table {
+    min-width: 650px;
+  }
+
+}
+
+
+/* =========================================================
+   SMALL MOBILE
+   576px
+========================================================= */
+
+@media (max-width: 576px) {
+
+  .app-sidebar,
+  .sidebar {
+    width: 270px;
+    min-width: 270px;
+  }
+
+
+  .app-topbar,
+  .topbar {
+    padding: 8px 12px;
+  }
+
+
+  .page-content {
+    padding: 14px 12px !important;
+  }
+
+
+  .page-title {
+    font-size: 23px !important;
+  }
+
+
+  .page-description {
+    font-size: 12px;
+  }
+
+
+  /* Buttons full width when grouped */
+
+  .button-group,
+  .action-buttons {
+    width: 100%;
+
+    display: flex;
+    flex-direction: column;
+  }
+
+
+  .button-group .btn,
+  .action-buttons .btn {
+    width: 100%;
+  }
+
+
+  /* Cards */
+
+  .card {
+    padding: 16px !important;
+  }
+
+
+  /* Headings */
 
   h1 {
-    font-size: 2.1rem;
+    line-height: 1.2;
   }
 
   h2 {
-    font-size: 1.6rem;
+    line-height: 1.25;
   }
 
-  .journey-tracker {
-    padding: 1rem;
+  h3 {
+    line-height: 1.3;
   }
 
-  .app-topbar {
-    padding: 0 1rem;
-  }
-
-  .auth-card {
-    padding: 1.75rem 1.25rem;
-  }
 }
 
-/* Mobile Phones (<= 480px) */
-@media screen and (max-width: 480px) {
-  .page-content {
-    padding: 1rem;
+
+/* =========================================================
+   EXTRA SMALL
+   400px
+========================================================= */
+
+@media (max-width: 400px) {
+
+  .app-sidebar,
+  .sidebar {
+    width: 255px;
+    min-width: 255px;
   }
+
+
+  .page-content {
+    padding: 12px 10px !important;
+  }
+
+
+  .mobile-menu-btn {
+    width: 38px;
+    height: 38px;
+  }
+
+
+  .page-title {
+    font-size: 21px !important;
+  }
+
 
   .btn {
+    font-size: 12px;
+  }
+
+}
+
+
+/* =========================================================
+   CAREER PAGE RESPONSIVE
+========================================================= */
+
+@media (max-width: 768px) {
+
+  .career-page {
     width: 100%;
-    justify-content: center;
+    padding: 14px !important;
   }
 
-  .flex-between {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 0.75rem;
+
+  /* HERO */
+
+  .career-hero {
+    grid-template-columns: 1fr !important;
+
+    padding: 24px !important;
+
+    gap: 20px;
   }
 
-  .stat-card {
-    padding: 1rem;
+
+  .career-hero h1 {
+    font-size: 28px !important;
   }
 
-  .stat-value {
-    font-size: 1.5rem;
+
+  .career-hero p {
+    font-size: 13px !important;
   }
+
+
+  .hero-icon {
+    width: 65px !important;
+    height: 65px !important;
+
+    font-size: 30px !important;
+  }
+
+
+  /* SELECTOR */
+
+  .career-selector-row {
+    flex-direction: column !important;
+    align-items: stretch !important;
+  }
+
+
+  .career-select-wrapper {
+    width: 100% !important;
+  }
+
+
+  #updateCoursesBtn {
+    width: 100%;
+  }
+
+
+  /* OVERVIEW */
+
+  .career-overview {
+    grid-template-columns: 1fr 1fr !important;
+    gap: 10px !important;
+  }
+
+
+  .overview-card {
+    min-height: 110px;
+    padding: 14px !important;
+  }
+
+
+  .overview-icon {
+    width: 40px !important;
+    height: 40px !important;
+  }
+
+
+  .overview-card strong {
+    font-size: 14px !important;
+  }
+
+
+  /* COURSES HEADER */
+
+  .courses-header {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+  }
+
+
+  .course-filter {
+    width: 100%;
+  }
+
+
+  .course-filter select {
+    width: 100%;
+  }
+
+
+  /* COURSES */
+
+  .courses-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+
+  /* ROADMAP */
+
+  .roadmap-cta {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+
+    padding: 20px !important;
+  }
+
+
+  .btn-roadmap {
+    width: 100%;
+    text-align: center;
+  }
+
+}
+
+
+/* =========================================================
+   VERY SMALL CAREER SCREEN
+========================================================= */
+
+@media (max-width: 480px) {
+
+  .career-overview {
+    grid-template-columns: 1fr !important;
+  }
+
+
+  .career-hero h1 {
+    font-size: 24px !important;
+  }
+
+
+  .career-hero {
+    padding: 20px !important;
+  }
+
+
+  .section-heading {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+  }
+
+
+  .career-status {
+    align-self: flex-start;
+  }
+
+
+  .course-card {
+    padding: 16px !important;
+  }
+
+
+  .course-actions {
+    flex-direction: column !important;
+  }
+
+
+  .course-actions button,
+  .course-actions a {
+    width: 100%;
+  }
+
+}
+
+
+/* =========================================================
+   PROFILE PAGE RESPONSIVE
+========================================================= */
+
+@media (max-width: 768px) {
+
+  .profile-layout,
+  .profile-container,
+  .profile-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+
+  .profile-sidebar {
+    position: static !important;
+    width: 100% !important;
+  }
+
+
+  .profile-card {
+    width: 100%;
+  }
+
+
+  .resume-preview {
+    width: 100%;
+    overflow-x: auto;
+  }
+
+}
+
+
+/* =========================================================
+   RESUME PAGE RESPONSIVE
+========================================================= */
+
+@media (max-width: 768px) {
+
+  .resume-layout,
+  .resume-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+
+  .resume-preview {
+    padding: 14px !important;
+  }
+
+
+  .resume-actions {
+    flex-direction: column !important;
+  }
+
+
+  .resume-actions .btn {
+    width: 100%;
+  }
+
+}
+
+
+/* =========================================================
+   INTERVIEW PAGE RESPONSIVE
+========================================================= */
+
+@media (max-width: 768px) {
+
+  .interview-layout,
+  .interview-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+
+  .interview-card {
+    width: 100%;
+  }
+
+
+  .interview-controls {
+    flex-direction: column !important;
+  }
+
+
+  .interview-controls button,
+  .interview-controls select {
+    width: 100%;
+  }
+
+}
+
+
+/* =========================================================
+   ROADMAP RESPONSIVE
+========================================================= */
+
+@media (max-width: 768px) {
+
+  .roadmap-container {
+    width: 100%;
+    overflow: hidden;
+  }
+
+
+  .roadmap-step {
+    grid-template-columns: 1fr !important;
+  }
+
+
+  .roadmap-actions {
+    flex-direction: column !important;
+  }
+
+
+  .roadmap-actions .btn {
+    width: 100%;
+  }
+
+}
+
+
+/* =========================================================
+   SKILL GAP RESPONSIVE
+========================================================= */
+
+@media (max-width: 768px) {
+
+  .skill-gap-grid,
+  .skill-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+
+  .skill-card {
+    width: 100%;
+  }
+
+
+  .skill-progress {
+    width: 100%;
+  }
+
+}
+
+
+/* =========================================================
+   OPPORTUNITIES RESPONSIVE
+========================================================= */
+
+@media (max-width: 768px) {
+
+  .opportunities-grid,
+  .jobs-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+
+  .job-card {
+    width: 100%;
+  }
+
+
+  .job-actions {
+    flex-direction: column !important;
+  }
+
+
+  .job-actions .btn {
+    width: 100%;
+  }
+
+}
+
+
+/* =========================================================
+   PROGRESS PAGE
+========================================================= */
+
+@media (max-width: 768px) {
+
+  .progress-grid,
+  .progress-stats {
+    grid-template-columns: 1fr 1fr !important;
+  }
+
+}
+
+
+@media (max-width: 480px) {
+
+  .progress-grid,
+  .progress-stats {
+    grid-template-columns: 1fr !important;
+  }
+
+}
+
+
+/* =========================================================
+   OVERFLOW PROTECTION
+========================================================= */
+
+.page-content,
+.career-page,
+.main-content,
+.app-main {
+  min-width: 0;
+  max-width: 100%;
+}
+
+
+/* Prevent long text breaking layout */
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+span,
+a,
+strong {
+  overflow-wrap: anywhere;
+}
+
+
+/* =========================================================
+   MOBILE SIDEBAR OVERLAY
+========================================================= */
+
+@media (max-width: 992px) {
+
+  body.sidebar-open::before {
+    content: "";
+
+    position: fixed;
+
+    inset: 0;
+
+    background: rgba(15, 23, 42, 0.45);
+
+    z-index: 999;
+
+    backdrop-filter: blur(2px);
+  }
+
 }

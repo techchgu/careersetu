@@ -10,6 +10,7 @@
 
   <!-- CareerSetu Universal Core (Instant 0ms Load) -->
   <script src="../js/careersetu-core.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
   <!-- Optional Background Firebase SDK -->
   <script defer src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script defer src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
@@ -46,10 +47,10 @@
 
       <div class="sidebar-footer">
         <div class="user-profile-summary">
-          <div class="user-avatar" id="sidebar-user-avatar">H</div>
+          <div class="user-avatar" id="sidebar-user-avatar">U</div>
           <div class="user-info-text">
-            <p class="user-name-label" id="sidebar-user-name">Himanshu Sahani</p>
-            <p class="user-role-label" id="sidebar-user-email">himanshu@gmail.com</p>
+            <p class="user-name-label" id="sidebar-user-name">User Profile</p>
+            <p class="user-role-label" id="sidebar-user-email">user@domain.com</p>
           </div>
           <button id="logout-btn" class="btn btn-sm btn-secondary" title="Log Out" style="padding: 0.25rem 0.5rem; font-size: 0.75rem;">⏻</button>
         </div>
@@ -82,118 +83,25 @@
 
         <div id="alert-container"></div>
 
-        <!-- Top Overview Card: 72/100 ATS Compatibility + Section Scores (Exact Poster Screen 8) -->
-        <div class="card mb-2" style="padding: 2rem;">
-          <div style="display: grid; grid-template-columns: 220px 1fr; gap: 3rem; align-items: center;">
-            
-            <!-- Circular Gauge: 72/100 ATS Compatibility -->
-            <div style="text-align: center;">
-              <p class="text-muted" style="font-size: 0.85rem; font-weight: 700; margin-bottom: 0.75rem;">Resume Score</p>
-              <div class="gauge-container" style="width: 145px; height: 145px;">
-                <svg class="gauge-svg" width="145" height="145" viewBox="0 0 145 145">
-                  <circle class="gauge-circle-bg" cx="72.5" cy="72.5" r="60" stroke-width="9"></circle>
-                  <circle class="gauge-circle-progress" cx="72.5" cy="72.5" r="60" stroke="#3b82f6" stroke-width="9"
-                    stroke-dasharray="376.9" stroke-dashoffset="105.5"></circle>
-                </svg>
-                <div class="gauge-center-text">
-                  <span class="gauge-value" style="font-size: 1.85rem; color: #0f172a;">72<span style="font-size: 0.85rem; color: #64748b;">/100</span></span>
-                  <span class="gauge-label" style="font-size: 0.75rem;">ATS Compatibility</span>
-                </div>
-              </div>
+        <section class="card mb-2" style="padding:1.5rem;">
+          <h2 style="font-size:1.2rem; margin-bottom:.4rem;">Company & Job Match</h2>
+          <p class="text-muted" style="margin-bottom:1rem;">Upload your resume, then choose an available job or internship. AI will compare your resume with the listing requirements.</p>
+          <form id="job-match-form">
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1rem;align-items:end;">
+              <label>Resume file (PDF, PPT/PPTX, DOC/DOCX, TXT, or image)
+                <input id="match-file" type="file" accept=".pdf,.ppt,.pptx,.doc,.docx,.txt,.png,.jpg,.jpeg,.webp" required style="display:block;width:100%;margin-top:.35rem;">
+              </label>
+              <label>Opportunity type
+                <select id="match-type" style="display:block;width:100%;margin-top:.35rem;padding:.7rem;border:1px solid #cbd5e1;border-radius:8px;">
+                  <option value="all">Jobs & internships</option><option value="job">Jobs</option><option value="internship">Internships</option>
+                </select>
+              </label>
             </div>
+          </form>
+          <div id="match-opportunity-list" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:.75rem;margin-top:1rem;"></div>
+          <div id="job-match-results" aria-live="polite" style="margin-top:1.25rem;"></div>
+        </section>
 
-            <!-- Section Scores (Poster Screen 8) -->
-            <div>
-              <h3 style="font-size: 1.15rem; color: #0f172a; margin-bottom: 1rem;">Section Scores</h3>
-              <div style="display: flex; flex-direction: column; gap: 0.75rem;">
-                
-                <div>
-                  <div class="flex-between" style="margin-bottom: 0.25rem;">
-                    <span style="font-size: 0.85rem; font-weight: 600;">Skills</span>
-                    <span style="font-size: 0.85rem; font-weight: 700; color: #4f46e5;">81</span>
-                  </div>
-                  <div class="progress-track">
-                    <div class="progress-fill" style="width: 81%;"></div>
-                  </div>
-                </div>
-
-                <div>
-                  <div class="flex-between" style="margin-bottom: 0.25rem;">
-                    <span style="font-size: 0.85rem; font-weight: 600;">Projects</span>
-                    <span style="font-size: 0.85rem; font-weight: 700; color: #4f46e5;">68</span>
-                  </div>
-                  <div class="progress-track">
-                    <div class="progress-fill" style="width: 68%;"></div>
-                  </div>
-                </div>
-
-                <div>
-                  <div class="flex-between" style="margin-bottom: 0.25rem;">
-                    <span style="font-size: 0.85rem; font-weight: 600;">Achievements</span>
-                    <span style="font-size: 0.85rem; font-weight: 700; color: #4f46e5;">51</span>
-                  </div>
-                  <div class="progress-track">
-                    <div class="progress-fill progress-fill-amber" style="width: 51%;"></div>
-                  </div>
-                </div>
-
-                <div>
-                  <div class="flex-between" style="margin-bottom: 0.25rem;">
-                    <span style="font-size: 0.85rem; font-weight: 600;">Keywords</span>
-                    <span style="font-size: 0.85rem; font-weight: 700; color: #4f46e5;">73</span>
-                  </div>
-                  <div class="progress-track">
-                    <div class="progress-fill" style="width: 73%;"></div>
-                  </div>
-                </div>
-
-                <div>
-                  <div class="flex-between" style="margin-bottom: 0.25rem;">
-                    <span style="font-size: 0.85rem; font-weight: 600;">Clarity</span>
-                    <span style="font-size: 0.85rem; font-weight: 700; color: #4f46e5;">69</span>
-                  </div>
-                  <div class="progress-track">
-                    <div class="progress-fill" style="width: 69%;"></div>
-                  </div>
-                </div>
-
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- AI Suggestions (Exact Poster Screen 8 Bottom) -->
-        <div class="card mb-2" style="padding: 1.75rem;">
-          <h3 style="font-size: 1.15rem; color: #0f172a; margin-bottom: 1rem;">AI Suggestions</h3>
-          
-          <ul style="list-style: none; display: flex; flex-direction: column; gap: 0.75rem; margin-bottom: 1.75rem;">
-            <li class="flex-align" style="font-size: 0.95rem; color: #334155;">
-              <span class="badge badge-emerald" style="padding: 0.2rem 0.4rem;">✓</span>
-              Add more technical keywords (e.g., TensorFlow, PyTorch, Scikit-learn)
-            </li>
-            <li class="flex-align" style="font-size: 0.95rem; color: #334155;">
-              <span class="badge badge-emerald" style="padding: 0.2rem 0.4rem;">✓</span>
-              Improve project descriptions with measurable impact (e.g. "improved query efficiency by 35%")
-            </li>
-            <li class="flex-align" style="font-size: 0.95rem; color: #334155;">
-              <span class="badge badge-emerald" style="padding: 0.2rem 0.4rem;">✓</span>
-              Use strong action verbs (Developed, Built, Implemented, Deployed)
-            </li>
-            <li class="flex-align" style="font-size: 0.95rem; color: #334155;">
-              <span class="badge badge-emerald" style="padding: 0.2rem 0.4rem;">✓</span>
-              Keep resume to 1-2 pages with clean reverse-chronological structure
-            </li>
-          </ul>
-
-          <div style="display: flex; gap: 1rem;">
-            <button class="btn btn-primary" id="optimize-role-btn">
-              Optimize for Target Track
-            </button>
-            <button class="btn btn-secondary" onclick="window.print()">
-              Download Optimized Resume
-            </button>
-          </div>
-        </div>
       </main>
     </div>
   </div>
@@ -205,25 +113,104 @@
         CareerSetu.renderUserProfileWidget();
       }
 
-      try {
-        var profile = await CareerSetu.getUserData('profiles');
-        if (profile && profile.targetCareer) {
-          var badge = document.getElementById('resume-target-badge');
-          var optBtn = document.getElementById('optimize-role-btn');
-          if (badge) badge.textContent = 'Target: ' + profile.targetCareer;
-          if (optBtn) optBtn.textContent = 'Optimize for ' + profile.targetCareer;
-        }
-      } catch (e) {}
-
-      var optBtn = document.getElementById('optimize-role-btn');
-      if (optBtn) {
-        optBtn.addEventListener('click', function () {
-          var alertBox = document.getElementById('alert-container');
-          if (alertBox) {
-            alertBox.innerHTML = '<div class="alert alert-emerald" style="margin-bottom: 1.25rem; padding: 0.75rem 1rem; border-radius: 8px; font-size: 0.88rem; background: #ecfdf5; color: #047857; border: 1px solid #a7f3d0;">✨ AI Optimization Complete! Keyword density improved by +24% and ATS score boosted to 94/100.</div>';
-            alertBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-          }
+      var matchForm = document.getElementById('job-match-form');
+      var opportunityList = document.getElementById('match-opportunity-list');
+      var typeFilter = document.getElementById('match-type');
+      var matchResults = document.getElementById('job-match-results');
+      var opportunities = [
+        { id:'tcs-trainee', company:'TCS', title:'Graduate Trainee — Software', type:'job', location:'India', skills:['Java / Python','Problem solving','SQL','Communication'], description:'Entry-level software engineering opportunity. Common screening areas can include aptitude and verbal reasoning, programming fundamentals, data structures, SQL and databases, object-oriented programming, communication, and technical interview readiness. Exact requirements depend on the specific TCS hiring drive.' },
+        { id:'infosys-systems', company:'Infosys', title:'Systems Engineer', type:'job', location:'India', skills:['Programming','Data structures','SQL','Communication'], description:'Entry-level systems engineering role. Common areas include programming, problem solving, data structures, databases, communication and project experience. Exact requirements vary by drive.' },
+        { id:'wipro-talent', company:'Wipro', title:'Project Engineer — Entry Level', type:'job', location:'India', skills:['Programming','Problem solving','Databases','Teamwork'], description:'Entry-level software engineering role. Common areas include programming, problem solving, databases, communication and practical project work. Requirements vary by hiring drive.' },
+        { id:'accenture-associate', company:'Accenture', title:'Associate Software Engineer', type:'job', location:'India', skills:['Programming','Cloud basics','Problem solving','Projects'], description:'Entry-level application development role. Common areas include programming, cloud or platform basics, problem solving, collaboration and practical projects. Exact requirements vary by role.' },
+        { id:'nextech-intern', company:'NexTech Cloud Labs', title:'Frontend Engineering Intern', type:'internship', location:'Bengaluru / Remote', skills:['HTML5','CSS3','JavaScript','Git'], description:'Build product dashboards using JavaScript and CSS. Applicants should show relevant frontend project work, responsive design, and Git collaboration.' },
+        { id:'cognitive-ai-intern', company:'CognitiveScale Systems', title:'AI & Cloud Applications Intern', type:'internship', location:'Pune / Remote', skills:['Python','Generative AI','Node.js','Web APIs'], description:'Prototype generative AI features and API integrations. Relevant evidence includes Python, AI or cloud projects, web APIs and clear project contributions.' },
+        { id:'zenith-web-intern', company:'Zenith Studio Interactive', title:'UI/UX & Web Development Trainee', type:'internship', location:'Remote', skills:['CSS','JavaScript','Accessibility','Figma'], description:'Create accessible digital products. Relevant evidence includes frontend implementation, accessibility awareness, design tools and portfolio projects.' }
+      ];
+      function renderOpportunityChoices() {
+        var selectedType = typeFilter.value;
+        var filtered = opportunities.filter(function (item) { return selectedType === 'all' || item.type === selectedType; });
+        opportunityList.innerHTML = filtered.map(function (item) {
+          return '<button type="button" class="card match-opportunity" data-id="' + escapeHtml(item.id) + '" style="text-align:left;padding:1rem;border:1px solid #dbe3ef;cursor:pointer;background:#fff;"><span class="badge badge-primary">' + escapeHtml(item.type) + '</span><h3 style="font-size:1rem;margin:.55rem 0 .2rem;">' + escapeHtml(item.title) + '</h3><strong>' + escapeHtml(item.company) + '</strong><p class="text-muted" style="font-size:.85rem;margin:.3rem 0;">📍 ' + escapeHtml(item.location) + '</p><p style="font-size:.82rem;color:#475569;">' + item.skills.map(escapeHtml).join(' · ') + '</p><span class="btn btn-sm btn-primary" style="display:inline-block;margin-top:.3rem;">Match my resume</span></button>';
+        }).join('');
+        opportunityList.querySelectorAll('.match-opportunity').forEach(function (card) {
+          card.addEventListener('click', function () { analyzeMatch(opportunities.find(function (item) { return item.id === card.dataset.id; })); });
         });
+      }
+      typeFilter.addEventListener('change', renderOpportunityChoices);
+      renderOpportunityChoices();
+      async function analyzeMatch(opportunity) {
+        var file = document.getElementById('match-file').files[0];
+        if (!file) return;
+        var cards = opportunityList.querySelectorAll('.match-opportunity');
+        cards.forEach(function (card) { card.disabled = true; });
+        matchResults.innerHTML = '<p class="text-muted">Comparing your resume with the job requirements…</p>';
+        try {
+          if (window.location.protocol === 'file:') {
+            var localText = await readResumeInBrowser(file);
+            renderMatch(localMatchAssessment(localText, opportunity));
+            return;
+          }
+          var body = new FormData();
+          body.append('resume', file);
+          body.append('company', opportunity.company);
+          body.append('jobTitle', opportunity.title);
+          body.append('jobType', opportunity.type);
+          body.append('jobDescription', opportunity.description + ' Required skills: ' + opportunity.skills.join(', '));
+          var response = await fetch('/api/resume-match', { method: 'POST', body: body });
+          var result = await response.json();
+          if (!response.ok) throw new Error(result.error || 'Resume match analysis failed.');
+          renderMatch(result.data);
+        } catch (error) {
+          matchResults.innerHTML = '<div class="alert" role="alert" style="padding:.8rem;background:#fff7ed;color:#9a3412;border-radius:8px;">' + escapeHtml(error.message) + '</div>';
+        } finally {
+          cards.forEach(function (card) { card.disabled = false; });
+        }
+      }
+      async function readResumeInBrowser(file) {
+        var name = file.name.toLowerCase();
+        if (name.endsWith('.txt')) return file.text();
+        if (name.endsWith('.pdf') && window.pdfjsLib) {
+          var pdf = await pdfjsLib.getDocument({ data: await file.arrayBuffer() }).promise;
+          var pages = [];
+          for (var i = 1; i <= pdf.numPages; i++) {
+            var page = await pdf.getPage(i);
+            var content = await page.getTextContent();
+            pages.push(content.items.map(function (item) { return item.str; }).join(' '));
+          }
+          return pages.join(' ').slice(0, 30000);
+        }
+        if (name.match(/\.(png|jpe?g|webp)$/)) {
+        if (!window.Tesseract) throw new Error('The image text recognition library could not be loaded. Check your internet connection and reload the page, or upload a PDF resume.');
+          matchResults.innerHTML = '<p class="text-muted">Reading resume text from the image…</p>';
+          var ocr = await window.Tesseract.recognize(file, 'eng', { logger: function (progress) {
+            if (progress.status === 'recognizing text' && progress.progress) matchResults.innerHTML = '<p class="text-muted">Reading image text… ' + Math.round(progress.progress * 100) + '%</p>';
+          } });
+          var recognized = (ocr && ocr.data && ocr.data.text || '').trim();
+          if (recognized.length < 20) throw new Error('No readable text was found in the image. Upload a clear, upright, high-resolution resume image.');
+          return recognized.slice(0, 30000);
+        }
+        if (name.match(/\.(docx|pptx)$/)) throw new Error('DOCX and PPTX extraction requires the app API. Open the app through its local server and try again.');
+        throw new Error('Could not read text from this file. Upload a TXT or text-based PDF, or open the app through its local server.');
+      }
+      function localMatchAssessment(text, opportunity) {
+        var terms = opportunity.skills;
+        var criteria = terms.map(function (term) {
+          var found = text.toLowerCase().includes(term.toLowerCase());
+          return { name: term, status: found ? 'Evidence found' : 'Not found', evidence: found ? 'The resume mentions “' + term + '”.' : 'No clear evidence was found in the uploaded resume.' };
+        });
+        var projectPresent = /project|built|developed|implemented|deployed/i.test(text);
+        var matched = criteria.filter(function (item) { return item.status === 'Evidence found'; }).length;
+        return { company: opportunity.company, jobTitle: opportunity.title, matchScore: Math.round((matched / Math.max(criteria.length, 1)) * 100), summary: matched + ' of ' + criteria.length + ' listed skills were found in the resume. This is a local, keyword-based estimate.', disclaimer: 'Indicative resume match only; this is not a selection prediction. The file was processed in your browser.', criteria: criteria, gaps: criteria.filter(function (item) { return item.status === 'Not found'; }).map(function (item) { return item.name; }), projectGaps: projectPresent ? [] : ['Add a relevant project, your contribution, and the tools you used.'], source: 'browser-local' };
+      }
+      function escapeHtml(value) { return String(value || '').replace(/[&<>"']/g, function (char) { return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[char]; }); }
+      function renderMatch(data) {
+        var score = Math.max(0, Math.min(100, Number(data.matchScore) || 0));
+        var rows = (data.criteria || []).map(function (item) {
+          return '<li style="padding:.65rem 0;border-bottom:1px solid #e2e8f0;"><strong>' + escapeHtml(item.name) + '</strong> <span style="float:right;font-weight:700;">' + escapeHtml(item.status) + '</span><div class="text-muted" style="font-size:.88rem;margin-top:.25rem;">' + escapeHtml(item.evidence || '') + '</div></li>';
+        }).join('');
+        var gaps = (data.gaps || []).map(function (item) { return '<li style="margin:.35rem 0;">' + escapeHtml(item) + '</li>'; }).join('') || '<li>No major requirement gaps were identified.</li>';
+        var projects = (data.projectGaps || []).map(function (item) { return '<li style="margin:.35rem 0;">' + escapeHtml(item) + '</li>'; }).join('') || '<li>No specific missing project was identified.</li>';
+        matchResults.innerHTML = '<div class="card" style="padding:1.2rem;border:1px solid #cbd5e1;"><div class="flex-between" style="gap:1rem;flex-wrap:wrap;"><div><span class="badge badge-primary">' + escapeHtml(data.company) + ' · ' + escapeHtml(data.jobTitle) + '</span><h3 style="margin:.6rem 0;">Resume match score</h3><p class="text-muted">' + escapeHtml(data.disclaimer) + '</p></div><div style="font-size:2rem;font-weight:800;color:#4f46e5;">' + score + '<span style="font-size:1rem;">/100</span></div></div><p>' + escapeHtml(data.summary) + '</p><h4 style="margin-top:1rem;">Selection criteria</h4><ul style="list-style:none;padding:0;">' + rows + '</ul><div class="grid-2" style="margin-top:1rem;"><div><h4>Skills to build or demonstrate</h4><ul>' + gaps + '</ul></div><div><h4>Projects / evidence to add</h4><ul>' + projects + '</ul></div></div></div>';
       }
     });
   </script>

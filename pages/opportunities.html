@@ -3,77 +3,172 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <title>Opportunities / Jobs & Internships — CareerSetu AI</title>
+
   <link rel="stylesheet" href="../css/style.css">
   <link rel="stylesheet" href="../css/dashboard.css">
   <link rel="stylesheet" href="../css/responsive.css">
 
-  <!-- CareerSetu Universal Core (Instant 0ms Load) -->
+  <!-- CareerSetu Universal Core -->
   <script src="../js/careersetu-core.js"></script>
+
   <!-- Optional Background Firebase SDK -->
   <script defer src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script defer src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
   <script defer src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 
   <style>
-    /* ===== INTERNSHALA-STYLE OPPORTUNITIES PAGE ===== */
 
-    /* Top Search Hero */
+    /* =========================================================
+       GLOBAL RESET
+    ========================================================= */
+
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+    }
+
+    html {
+      width: 100%;
+      max-width: 100%;
+      overflow-x: hidden;
+      scroll-behavior: smooth;
+    }
+
+    body {
+      width: 100%;
+      max-width: 100%;
+      margin: 0;
+      overflow-x: hidden;
+    }
+
+
+    /* =========================================================
+       MAIN APP LAYOUT
+    ========================================================= */
+
+    .app-layout {
+      width: 100%;
+      min-height: 100vh;
+      display: flex;
+      overflow: visible !important;
+    }
+
+    .app-main {
+      min-width: 0;
+      width: auto;
+      flex: 1;
+      overflow: visible !important;
+    }
+
+    .page-content {
+      width: 100%;
+      min-width: 0;
+      max-width: 100%;
+      overflow: visible !important;
+    }
+
+
+    /* =========================================================
+       SEARCH HERO
+    ========================================================= */
+
     .opp-search-hero {
-      background: linear-gradient(135deg, #006BFF 0%, #4f46e5 100%);
+      width: 100%;
+      max-width: 100%;
+
+      background: linear-gradient(
+        135deg,
+        #006BFF 0%,
+        #4f46e5 100%
+      );
+
       padding: 1.5rem 1.75rem;
       border-radius: 14px;
       margin-bottom: 1.25rem;
     }
+
     .opp-search-hero h2 {
-      color: #fff;
+      margin: 0 0 0.75rem;
+      color: #ffffff;
       font-size: 1.3rem;
       font-weight: 700;
-      margin-bottom: 0.75rem;
+      line-height: 1.35;
     }
-    .opp-search-hero h2 span { color: #93c5fd; }
+
+    .opp-search-hero h2 span {
+      color: #93c5fd;
+    }
+
+
+    /* =========================================================
+       SEARCH BAR
+    ========================================================= */
+
     .opp-search-bar {
+      width: 100%;
       display: flex;
       gap: 0.6rem;
       flex-wrap: wrap;
     }
+
     .opp-search-bar input,
     .opp-search-bar select {
-      flex: 1;
-      min-width: 160px;
+      flex: 1 1 180px;
+      min-width: 0;
+      width: 100%;
       padding: 0.65rem 1rem;
       border: none;
       border-radius: 8px;
       font-size: 0.9rem;
       outline: none;
-      background: #fff;
+      background: #ffffff;
       color: #0f172a;
+      box-sizing: border-box;
     }
+
+    .opp-search-bar input::placeholder {
+      color: #94a3b8;
+    }
+
     .opp-search-btn {
+      flex: 0 0 auto;
       padding: 0.65rem 1.5rem;
       background: #18B06A;
-      color: #fff;
+      color: #ffffff;
       border: none;
       border-radius: 8px;
       font-size: 0.9rem;
       font-weight: 700;
       cursor: pointer;
       white-space: nowrap;
-      transition: background 0.18s;
+      transition: background 0.18s, transform 0.15s;
     }
-    .opp-search-btn:hover { background: #15a05f; }
 
-    /* Category tabs (Internship / Jobs / Govt) */
+    .opp-search-btn:hover {
+      background: #15a05f;
+      transform: translateY(-1px);
+    }
+
+
+    /* =========================================================
+       TYPE TABS
+    ========================================================= */
+
     .opp-type-tabs {
       display: flex;
       gap: 0;
       border-radius: 10px;
       overflow: hidden;
       border: 1.5px solid #e2e8f0;
-      background: #fff;
+      background: #ffffff;
       margin-bottom: 1.1rem;
       width: fit-content;
+      max-width: 100%;
     }
+
     .opp-type-tab {
       padding: 0.55rem 1.2rem;
       font-size: 0.88rem;
@@ -82,505 +177,64 @@
       background: transparent;
       color: #475569;
       cursor: pointer;
-      transition: all 0.15s;
+      transition: background 0.15s, color 0.15s;
       border-right: 1.5px solid #e2e8f0;
+      white-space: nowrap;
     }
-    .opp-type-tab:last-child { border-right: none; }
+
+    .opp-type-tab:last-child {
+      border-right: none;
+    }
+
     .opp-type-tab.active {
       background: #006BFF;
-      color: #fff;
-    }
-    .opp-type-tab:hover:not(.active) { background: #f1f5f9; }
-
-    /* Main 2-col layout */
-    .opp-layout {
-      display: grid;
-      grid-template-columns: 260px 1fr;
-      gap: 1.25rem;
-      align-items: start;
+      color: #ffffff;
     }
 
-    /* ===== LEFT FILTER SIDEBAR ===== */
-    .filter-sidebar {
-      background: #fff;
-      border: 1.5px solid #e2e8f0;
-      border-radius: 12px;
-      padding: 1.1rem;
-      position: sticky;
-      top: 1rem;
-    }
-    .filter-sidebar-title {
-      font-size: 0.95rem;
-      font-weight: 700;
-      color: #0f172a;
-      margin-bottom: 1rem;
-      padding-bottom: 0.6rem;
-      border-bottom: 1.5px solid #f1f5f9;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    .filter-clear-all {
-      font-size: 0.78rem;
-      color: #006BFF;
-      cursor: pointer;
-      font-weight: 600;
-    }
-    .filter-section {
-      margin-bottom: 1.1rem;
-      padding-bottom: 1rem;
-      border-bottom: 1px solid #f1f5f9;
-    }
-    .filter-section:last-child { border-bottom: none; margin-bottom: 0; }
-    .filter-section-label {
-      font-size: 0.8rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      color: #64748b;
-      margin-bottom: 0.65rem;
-    }
-    .filter-checkbox-item {
-      display: flex;
-      align-items: center;
-      gap: 0.55rem;
-      margin-bottom: 0.5rem;
-      font-size: 0.86rem;
-      color: #334155;
-      cursor: pointer;
-    }
-    .filter-checkbox-item input[type="checkbox"] {
-      width: 15px; height: 15px;
-      accent-color: #006BFF;
-      cursor: pointer;
-    }
-    .filter-toggle-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 0.5rem;
-    }
-    .filter-toggle-label {
-      font-size: 0.86rem;
-      color: #334155;
-      font-weight: 500;
-    }
-    .toggle-switch {
-      position: relative;
-      width: 38px; height: 20px;
-    }
-    .toggle-switch input { opacity: 0; width: 0; height: 0; }
-    .toggle-slider {
-      position: absolute;
-      cursor: pointer;
-      inset: 0;
-      background: #cbd5e1;
-      border-radius: 20px;
-      transition: 0.2s;
-    }
-    .toggle-slider:before {
-      content: '';
-      position: absolute;
-      width: 14px; height: 14px;
-      left: 3px; top: 3px;
-      background: #fff;
-      border-radius: 50%;
-      transition: 0.2s;
-    }
-    .toggle-switch input:checked + .toggle-slider { background: #006BFF; }
-    .toggle-switch input:checked + .toggle-slider:before { transform: translateX(18px); }
-
-    .filter-select {
-      width: 100%;
-      padding: 0.45rem 0.65rem;
-      border: 1.5px solid #e2e8f0;
-      border-radius: 7px;
-      font-size: 0.84rem;
-      color: #334155;
-      outline: none;
-      background: #f8fafc;
-    }
-    .stipend-range-wrap { display: flex; flex-direction: column; gap: 0.35rem; }
-    .stipend-range-wrap input[type="range"] {
-      width: 100%;
-      accent-color: #006BFF;
-    }
-    .stipend-labels { display: flex; justify-content: space-between; font-size: 0.77rem; color: #64748b; }
-    .apply-filter-btn {
-      width: 100%;
-      padding: 0.6rem;
-      background: #006BFF;
-      color: #fff;
-      border: none;
-      border-radius: 8px;
-      font-size: 0.88rem;
-      font-weight: 700;
-      cursor: pointer;
-      margin-top: 0.5rem;
-      transition: background 0.15s;
-    }
-    .apply-filter-btn:hover { background: #0057d1; }
-
-    /* ===== RIGHT: Listing Area ===== */
-    .listing-area { display: flex; flex-direction: column; gap: 0.85rem; }
-
-    /* Sort / Count Bar */
-    .listing-topbar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      background: #fff;
-      border: 1.5px solid #e2e8f0;
-      border-radius: 10px;
-      padding: 0.65rem 1rem;
-    }
-    .listing-count {
-      font-size: 0.88rem;
-      color: #475569;
-      font-weight: 500;
-    }
-    .listing-count strong { color: #0f172a; }
-    .sort-wrap { display: flex; align-items: center; gap: 0.5rem; font-size: 0.84rem; color: #64748b; }
-    .sort-wrap select {
-      padding: 0.3rem 0.65rem;
-      border: 1.5px solid #e2e8f0;
-      border-radius: 6px;
-      font-size: 0.84rem;
-      color: #334155;
-      outline: none;
-      background: #f8fafc;
-      cursor: pointer;
+    .opp-type-tab:hover:not(.active) {
+      background: #f1f5f9;
     }
 
-    /* Quick filter pills */
+
+    /* =========================================================
+       QUICK FILTERS
+    ========================================================= */
+
     .quick-filters {
       display: flex;
-      gap: 0.5rem;
+      align-items: center;
       flex-wrap: wrap;
+      gap: 0.5rem;
+      max-width: 100%;
     }
+
     .qf-pill {
       padding: 0.35rem 0.85rem;
       border: 1.5px solid #e2e8f0;
       border-radius: 20px;
       font-size: 0.82rem;
       color: #475569;
-      background: #fff;
+      background: #ffffff;
       cursor: pointer;
       font-weight: 500;
       transition: all 0.15s;
+      white-space: nowrap;
     }
-    .qf-pill.active, .qf-pill:hover {
+
+    .qf-pill.active,
+    .qf-pill:hover {
       border-color: #006BFF;
       color: #006BFF;
       background: #eff6ff;
     }
 
-    /* ===== INTERNSHALA-STYLE CARD ===== */
-    .int-card {
-      background: #fff;
-      border: 1.5px solid #e2e8f0;
-      border-radius: 12px;
-      padding: 1.1rem 1.25rem;
-      transition: box-shadow 0.18s, border-color 0.18s;
-      cursor: pointer;
-      position: relative;
-      overflow: hidden;
-    }
-    .int-card:hover {
-      box-shadow: 0 4px 20px rgba(0,107,255,0.10);
-      border-color: #93c5fd;
-    }
-    .int-card.actively-hiring::before {
-      content: '';
-      position: absolute;
-      left: 0; top: 0; bottom: 0;
-      width: 3.5px;
-      background: #18B06A;
-      border-radius: 12px 0 0 12px;
-    }
-    .int-card.ppo-badge::after {
-      content: 'PPO';
-      position: absolute;
-      top: 12px; right: 12px;
-      background: #fef9c3;
-      color: #a16207;
-      font-size: 0.7rem;
-      font-weight: 800;
-      padding: 2px 7px;
-      border-radius: 20px;
-      border: 1px solid #fde68a;
-      letter-spacing: 0.05em;
-    }
-    .int-card.gov-card::before {
-      background: #059669;
-    }
 
-    /* Card Top Row */
-    .int-card-top {
-      display: flex;
-      gap: 0.85rem;
-      align-items: flex-start;
-      margin-bottom: 0.75rem;
-    }
-    .int-company-logo {
-      width: 52px; height: 52px;
-      border-radius: 10px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.5rem;
-      flex-shrink: 0;
-      border: 1.5px solid #f1f5f9;
-    }
-    .int-card-info { flex: 1; }
-    .int-card-role {
-      font-size: 1.05rem;
-      font-weight: 700;
-      color: #0f172a;
-      margin-bottom: 0.15rem;
-      line-height: 1.3;
-    }
-    .int-card-company {
-      font-size: 0.87rem;
-      color: #006BFF;
-      font-weight: 600;
-      margin-bottom: 0.35rem;
-    }
-    .int-card-company a { color: inherit; text-decoration: none; }
-    .int-card-company a:hover { text-decoration: underline; }
+    /* =========================================================
+       ALERT
+    ========================================================= */
 
-    /* Meta row: location / duration / stipend */
-    .int-card-meta {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.85rem;
-      margin-bottom: 0.7rem;
-    }
-    .int-meta-item {
-      display: flex;
-      align-items: center;
-      gap: 0.3rem;
-      font-size: 0.84rem;
-      color: #475569;
-      font-weight: 500;
-    }
-    .int-meta-item .meta-icon { font-size: 0.95rem; }
-    .int-meta-item strong { color: #0f172a; }
-
-    /* Status badges inside card */
-    .int-card-badges {
-      display: flex;
-      gap: 0.45rem;
-      flex-wrap: wrap;
-      margin-bottom: 0.75rem;
-    }
-    .badge-green-light {
-      background: #dcfce7;
-      color: #15803d;
-      font-size: 0.75rem;
-      font-weight: 700;
-      padding: 2px 9px;
-      border-radius: 20px;
-    }
-    .badge-blue-light {
-      background: #dbeafe;
-      color: #1d4ed8;
-      font-size: 0.75rem;
-      font-weight: 700;
-      padding: 2px 9px;
-      border-radius: 20px;
-    }
-    .badge-amber-light {
-      background: #fef9c3;
-      color: #92400e;
-      font-size: 0.75rem;
-      font-weight: 700;
-      padding: 2px 9px;
-      border-radius: 20px;
-    }
-    .badge-purple-light {
-      background: #ede9fe;
-      color: #5b21b6;
-      font-size: 0.75rem;
-      font-weight: 700;
-      padding: 2px 9px;
-      border-radius: 20px;
-    }
-    .badge-match {
-      background: #ecfdf5;
-      color: #047857;
-      font-size: 0.75rem;
-      font-weight: 800;
-      padding: 2px 9px;
-      border-radius: 20px;
-      border: 1px solid #a7f3d0;
-    }
-
-    /* Skills row */
-    .int-skills-row {
-      display: flex;
-      gap: 0.4rem;
-      flex-wrap: wrap;
-      margin-bottom: 0.85rem;
-    }
-    .skill-chip {
-      background: #f1f5f9;
-      color: #475569;
-      font-size: 0.78rem;
-      font-weight: 600;
-      padding: 3px 10px;
-      border-radius: 20px;
-      border: 1px solid #e2e8f0;
-    }
-
-    /* Card bottom */
-    .int-card-bottom {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding-top: 0.75rem;
-      border-top: 1px solid #f1f5f9;
-      flex-wrap: wrap;
-      gap: 0.5rem;
-    }
-    .int-posted-time {
-      font-size: 0.8rem;
-      color: #94a3b8;
-    }
-    .int-posted-time span { color: #475569; font-weight: 600; }
-
-    /* Apply Now Button — Internshala Green */
-    .btn-apply-now {
-      padding: 0.5rem 1.35rem;
-      background: #18B06A;
-      color: #fff;
-      border: none;
-      border-radius: 7px;
-      font-size: 0.88rem;
-      font-weight: 700;
-      cursor: pointer;
-      transition: background 0.18s, transform 0.12s;
-      white-space: nowrap;
-    }
-    .btn-apply-now:hover { background: #15a05f; transform: translateY(-1px); }
-    .btn-apply-now:disabled {
-      background: #94a3b8;
-      cursor: not-allowed;
-      transform: none;
-    }
-    .btn-apply-now.applied {
-      background: #475569;
-    }
-    .btn-check-eligibility {
-      padding: 0.5rem 1.1rem;
-      background: transparent;
-      color: #006BFF;
-      border: 1.8px solid #006BFF;
-      border-radius: 7px;
-      font-size: 0.86rem;
-      font-weight: 700;
-      cursor: pointer;
-      transition: all 0.15s;
-    }
-    .btn-check-eligibility:hover {
-      background: #006BFF;
-      color: #fff;
-    }
-
-    /* Recommended Section */
-    .recommended-section {
-      background: #fff;
-      border: 1.5px solid #e2e8f0;
-      border-radius: 12px;
-      padding: 1.1rem 1.25rem;
-    }
-    .recommended-section h3 {
-      font-size: 0.95rem;
-      font-weight: 700;
-      color: #0f172a;
-      margin-bottom: 0.85rem;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
-    .rec-cards-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-      gap: 0.75rem;
-    }
-    .rec-mini-card {
-      border: 1.5px solid #e2e8f0;
-      border-radius: 10px;
-      padding: 0.85rem;
-      transition: border-color 0.15s, box-shadow 0.15s;
-      cursor: pointer;
-    }
-    .rec-mini-card:hover {
-      border-color: #93c5fd;
-      box-shadow: 0 2px 10px rgba(0,107,255,0.08);
-    }
-    .rec-mini-logo {
-      width: 36px; height: 36px;
-      border-radius: 8px;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 1.1rem;
-      margin-bottom: 0.5rem;
-      border: 1px solid #f1f5f9;
-    }
-    .rec-mini-role {
-      font-size: 0.85rem;
-      font-weight: 700;
-      color: #0f172a;
-      margin-bottom: 0.15rem;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-    .rec-mini-company { font-size: 0.78rem; color: #006BFF; font-weight: 600; margin-bottom: 0.35rem; }
-    .rec-mini-stipend { font-size: 0.78rem; color: #475569; }
-    .rec-mini-apply {
-      margin-top: 0.5rem;
-      width: 100%;
-      padding: 0.35rem;
-      background: #18B06A;
-      color: #fff;
-      border: none;
-      border-radius: 6px;
-      font-size: 0.78rem;
-      font-weight: 700;
-      cursor: pointer;
-      transition: background 0.15s;
-    }
-    .rec-mini-apply:hover { background: #15a05f; }
-
-    /* Pagination */
-    .pagination-row {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 0.4rem;
-      padding: 0.75rem 0;
-    }
-    .page-btn {
-      width: 34px; height: 34px;
-      border: 1.5px solid #e2e8f0;
-      border-radius: 7px;
-      background: #fff;
-      color: #475569;
-      font-size: 0.85rem;
-      font-weight: 600;
-      cursor: pointer;
-      display: flex; align-items: center; justify-content: center;
-      transition: all 0.15s;
-    }
-    .page-btn:hover, .page-btn.active {
-      border-color: #006BFF;
-      background: #006BFF;
-      color: #fff;
-    }
-
-    /* Alert Box */
     .opp-alert {
+      width: 100%;
       padding: 0.8rem 1rem;
       border-radius: 9px;
       font-size: 0.87rem;
@@ -588,806 +242,5456 @@
       color: #047857;
       border: 1px solid #a7f3d0;
       display: none;
+      margin-bottom: 0.85rem;
     }
-    .opp-alert.show { display: block; }
 
-    /* Bookmark / Save Button */
-    .btn-bookmark {
+    .opp-alert.show {
+      display: block;
+    }
+
+
+    /* =========================================================
+       MAIN TWO COLUMN
+    ========================================================= */
+
+    .opp-layout {
+      width: 100%;
+      min-width: 0;
+
+      display: grid;
+
+      grid-template-columns:
+        260px
+        minmax(0, 1fr);
+
+      gap: 1.25rem;
+
+      align-items: start;
+
+      overflow: visible !important;
+    }
+
+
+    /* =========================================================
+       FILTER SIDEBAR
+    ========================================================= */
+
+    .filter-sidebar {
+      width: 260px;
+      min-width: 260px;
+      max-width: 260px;
+
+      background: #ffffff;
+
+      border: 1.5px solid #e2e8f0;
+      border-radius: 12px;
+
+      padding: 1.1rem;
+
+      position: sticky !important;
+      top: 20px !important;
+
+      align-self: start !important;
+
+      height: max-content;
+
+      max-height: calc(100vh - 40px);
+
+      overflow-y: auto;
+      overflow-x: hidden;
+
+      z-index: 20;
+
+      box-shadow:
+        0 2px 8px rgba(15, 23, 42, 0.03);
+
+      scrollbar-width: thin;
+      scrollbar-color:
+        #cbd5e1
+        transparent;
+    }
+
+    .filter-sidebar::-webkit-scrollbar {
+      width: 5px;
+    }
+
+    .filter-sidebar::-webkit-scrollbar-track {
       background: transparent;
+    }
+
+    .filter-sidebar::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 20px;
+    }
+
+
+    /* =========================================================
+       FILTER TITLE
+    ========================================================= */
+
+    .filter-sidebar-title {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: #0f172a;
+
+      margin-bottom: 1rem;
+      padding-bottom: 0.6rem;
+
+      border-bottom: 1.5px solid #f1f5f9;
+
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+
+      gap: 8px;
+    }
+
+    .filter-clear-all {
+      font-size: 0.78rem;
+      color: #006BFF;
+      cursor: pointer;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+
+    /* =========================================================
+       FILTER SECTIONS
+    ========================================================= */
+
+    .filter-section {
+      margin-bottom: 1.1rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid #f1f5f9;
+    }
+
+    .filter-section:last-child {
+      border-bottom: none;
+      margin-bottom: 0;
+    }
+
+    .filter-section-label {
+      font-size: 0.8rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: #64748b;
+      margin-bottom: 0.65rem;
+      line-height: 1.35;
+    }
+
+
+    /* =========================================================
+       CHECKBOX
+    ========================================================= */
+
+    .filter-checkbox-item {
+      display: flex;
+      align-items: center;
+      gap: 0.55rem;
+
+      margin-bottom: 0.5rem;
+
+      font-size: 0.86rem;
+      color: #334155;
+
+      cursor: pointer;
+      min-width: 0;
+    }
+
+    .filter-checkbox-item input[type="checkbox"] {
+      width: 15px;
+      height: 15px;
+      min-width: 15px;
+      flex-shrink: 0;
+
+      accent-color: #006BFF;
+      cursor: pointer;
+    }
+
+    .filter-checkbox-item label {
+      min-width: 0;
+      cursor: pointer;
+      line-height: 1.35;
+    }
+
+
+    /* =========================================================
+       TOGGLE
+    ========================================================= */
+
+    .filter-toggle-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+
+      gap: 10px;
+      margin-bottom: 0.5rem;
+    }
+
+    .filter-toggle-label {
+      font-size: 0.86rem;
+      color: #334155;
+      font-weight: 500;
+      line-height: 1.3;
+    }
+
+    .toggle-switch {
+      position: relative;
+
+      width: 38px;
+      height: 20px;
+      min-width: 38px;
+
+      flex-shrink: 0;
+    }
+
+    .toggle-switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .toggle-slider {
+      position: absolute;
+      cursor: pointer;
+      inset: 0;
+
+      background: #cbd5e1;
+      border-radius: 20px;
+
+      transition: 0.2s;
+    }
+
+    .toggle-slider:before {
+      content: '';
+
+      position: absolute;
+
+      width: 14px;
+      height: 14px;
+
+      left: 3px;
+      top: 3px;
+
+      background: #ffffff;
+      border-radius: 50%;
+
+      transition: 0.2s;
+    }
+
+    .toggle-switch input:checked + .toggle-slider {
+      background: #006BFF;
+    }
+
+    .toggle-switch input:checked + .toggle-slider:before {
+      transform: translateX(18px);
+    }
+
+
+    /* =========================================================
+       SELECT
+    ========================================================= */
+
+    .filter-select {
+      width: 100%;
+      max-width: 100%;
+      min-width: 0;
+
+      padding: 0.45rem 0.65rem;
+
       border: 1.5px solid #e2e8f0;
       border-radius: 7px;
-      padding: 4px 8px;
-      font-size: 1rem;
+
+      font-size: 0.84rem;
+
+      color: #334155;
+
+      outline: none;
+
+      background: #f8fafc;
+
+      box-sizing: border-box;
+    }
+
+    .filter-select:focus {
+      border-color: #006BFF;
+
+      box-shadow:
+        0 0 0 3px rgba(0, 107, 255, 0.08);
+    }
+
+
+    /* =========================================================
+       STIPEND
+    ========================================================= */
+
+    .stipend-range-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+    }
+
+    .stipend-range-wrap input[type="range"] {
+      width: 100%;
+      max-width: 100%;
+      accent-color: #006BFF;
+    }
+
+    .stipend-labels {
+      display: flex;
+      justify-content: space-between;
+
+      gap: 5px;
+
+      font-size: 0.77rem;
+      color: #64748b;
+    }
+
+
+    /* =========================================================
+       APPLY FILTER
+    ========================================================= */
+
+    .apply-filter-btn {
+      width: 100%;
+
+      padding: 0.6rem;
+
+      background: #006BFF;
+      color: #ffffff;
+
+      border: none;
+      border-radius: 8px;
+
+      font-size: 0.88rem;
+      font-weight: 700;
+
       cursor: pointer;
-      line-height: 1;
-      transition: all 0.15s;
+
+      margin-top: 0.5rem;
+
+      transition:
+        background 0.15s,
+        transform 0.15s;
+    }
+
+    .apply-filter-btn:hover {
+      background: #0057d1;
+      transform: translateY(-1px);
+    }
+
+
+    /* =========================================================
+       LISTING
+    ========================================================= */
+
+    .listing-area {
+      width: 100%;
+      min-width: 0;
+      max-width: 100%;
+
+      display: flex;
+      flex-direction: column;
+
+      gap: 0.85rem;
+
+      overflow: visible !important;
+    }
+
+
+    /* =========================================================
+       TOP BAR
+    ========================================================= */
+
+    .listing-topbar {
+      width: 100%;
+      min-width: 0;
+
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+
+      gap: 15px;
+
+      background: #ffffff;
+
+      border: 1.5px solid #e2e8f0;
+      border-radius: 10px;
+
+      padding: 0.65rem 1rem;
+    }
+
+    .listing-count {
+      min-width: 0;
+
+      font-size: 0.88rem;
+      color: #475569;
+      font-weight: 500;
+
+      line-height: 1.4;
+    }
+
+    .listing-count strong {
+      color: #0f172a;
+    }
+
+    .sort-wrap {
+      display: flex;
+      align-items: center;
+
+      gap: 0.5rem;
+
+      font-size: 0.84rem;
+      color: #64748b;
+
+      white-space: nowrap;
+    }
+
+    .sort-wrap select {
+      padding: 0.3rem 0.65rem;
+
+      border: 1.5px solid #e2e8f0;
+      border-radius: 6px;
+
+      font-size: 0.84rem;
+      color: #334155;
+
+      outline: none;
+
+      background: #f8fafc;
+
+      cursor: pointer;
+
+      max-width: 180px;
+    }
+
+
+    /* =========================================================
+       CARDS
+    ========================================================= */
+
+    #cards-container {
+      width: 100%;
+      min-width: 0;
+      max-width: 100%;
+
+      display: flex;
+      flex-direction: column;
+
+      gap: 0.85rem;
+
+      overflow: visible !important;
+    }
+
+    .int-card {
+      width: 100%;
+      max-width: 100%;
+      min-width: 0;
+
+      background: #ffffff;
+
+      border: 1.5px solid #e2e8f0;
+      border-radius: 12px;
+
+      padding: 1.1rem 1.25rem;
+
+      transition:
+        box-shadow 0.18s,
+        border-color 0.18s,
+        transform 0.18s;
+
+      cursor: pointer;
+
+      position: relative;
+
+      overflow: hidden;
+
+      box-sizing: border-box;
+    }
+
+    .int-card:hover {
+      box-shadow:
+        0 4px 20px rgba(0, 107, 255, 0.10);
+
+      border-color: #93c5fd;
+
+      transform: translateY(-1px);
+    }
+
+    .int-card.actively-hiring::before {
+      content: '';
+
+      position: absolute;
+
+      left: 0;
+      top: 0;
+      bottom: 0;
+
+      width: 3.5px;
+
+      background: #18B06A;
+
+      border-radius: 12px 0 0 12px;
+    }
+
+    .int-card.gov-card::before {
+      background: #059669;
+    }
+
+    .int-card.ppo-badge::after {
+      content: 'PPO';
+
+      position: absolute;
+
+      top: 12px;
+      right: 12px;
+
+      background: #fef9c3;
+      color: #a16207;
+
+      font-size: 0.7rem;
+      font-weight: 800;
+
+      padding: 2px 7px;
+
+      border-radius: 20px;
+
+      border: 1px solid #fde68a;
+
+      letter-spacing: 0.05em;
+    }
+
+
+    /* =========================================================
+       CARD TOP
+    ========================================================= */
+
+    .int-card-top {
+      width: 100%;
+      min-width: 0;
+
+      display: flex;
+
+      gap: 0.85rem;
+
+      align-items: flex-start;
+
+      margin-bottom: 0.75rem;
+    }
+
+    .int-company-logo {
+      width: 52px;
+      height: 52px;
+
+      min-width: 52px;
+      flex: 0 0 52px;
+
+      border-radius: 10px;
+
+      display: flex;
+
+      align-items: center;
+      justify-content: center;
+
+      font-size: 1.5rem;
+
       flex-shrink: 0;
+
+      border: 1.5px solid #f1f5f9;
+    }
+
+    .int-card-info {
+      flex: 1 1 auto;
+      min-width: 0;
+    }
+
+    .int-card-role {
+      font-size: 1.05rem;
+
+      font-weight: 700;
+
+      color: #0f172a;
+
+      margin-bottom: 0.15rem;
+
+      line-height: 1.3;
+
+      overflow-wrap: anywhere;
+    }
+
+    .int-card-company {
+      font-size: 0.87rem;
+
+      color: #006BFF;
+
+      font-weight: 600;
+
+      margin-bottom: 0.35rem;
+
+      overflow-wrap: anywhere;
+    }
+
+    .int-card-company a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .int-card-company a:hover {
+      text-decoration: underline;
+    }
+
+
+    /* =========================================================
+       META
+    ========================================================= */
+
+    .int-card-meta {
+      width: 100%;
+      min-width: 0;
+
+      display: flex;
+
+      flex-wrap: wrap;
+
+      gap: 0.85rem;
+
+      margin-bottom: 0.7rem;
+    }
+
+    .int-meta-item {
+      display: flex;
+
+      align-items: center;
+
+      gap: 0.3rem;
+
+      font-size: 0.84rem;
+
+      color: #475569;
+
+      font-weight: 500;
+
+      min-width: 0;
+
+      overflow-wrap: anywhere;
+    }
+
+    .int-meta-item .meta-icon {
+      font-size: 0.95rem;
+      flex-shrink: 0;
+    }
+
+    .int-meta-item strong {
+      color: #0f172a;
+    }
+
+
+    /* =========================================================
+       BADGES
+    ========================================================= */
+
+    .int-card-badges {
+      width: 100%;
+
+      display: flex;
+
+      gap: 0.45rem;
+
+      flex-wrap: wrap;
+
+      margin-bottom: 0.75rem;
+    }
+
+    .badge-green-light,
+    .badge-blue-light,
+    .badge-amber-light,
+    .badge-purple-light,
+    .badge-match {
+      white-space: nowrap;
+    }
+
+    .badge-green-light {
+      background: #dcfce7;
+      color: #15803d;
+
+      font-size: 0.75rem;
+      font-weight: 700;
+
+      padding: 2px 9px;
+
+      border-radius: 20px;
+    }
+
+    .badge-blue-light {
+      background: #dbeafe;
+      color: #1d4ed8;
+
+      font-size: 0.75rem;
+      font-weight: 700;
+
+      padding: 2px 9px;
+
+      border-radius: 20px;
+    }
+
+    .badge-amber-light {
+      background: #fef9c3;
+      color: #92400e;
+
+      font-size: 0.75rem;
+      font-weight: 700;
+
+      padding: 2px 9px;
+
+      border-radius: 20px;
+    }
+
+    .badge-purple-light {
+      background: #ede9fe;
+      color: #5b21b6;
+
+      font-size: 0.75rem;
+      font-weight: 700;
+
+      padding: 2px 9px;
+
+      border-radius: 20px;
+    }
+
+    .badge-match {
+      background: #ecfdf5;
+      color: #047857;
+
+      font-size: 0.75rem;
+      font-weight: 800;
+
+      padding: 2px 9px;
+
+      border-radius: 20px;
+
+      border: 1px solid #a7f3d0;
+    }
+
+
+    /* =========================================================
+       SKILLS
+    ========================================================= */
+
+    .int-skills-row {
+      width: 100%;
+
+      display: flex;
+
+      gap: 0.4rem;
+
+      flex-wrap: wrap;
+
+      margin-bottom: 0.85rem;
+    }
+
+    .skill-chip {
+      background: #f1f5f9;
+      color: #475569;
+
+      font-size: 0.78rem;
+      font-weight: 600;
+
+      padding: 3px 10px;
+
+      border-radius: 20px;
+
+      border: 1px solid #e2e8f0;
+
+      max-width: 100%;
+
+      overflow-wrap: anywhere;
+    }
+
+
+    /* =========================================================
+       CARD BOTTOM
+    ========================================================= */
+
+    .int-card-bottom {
+      width: 100%;
+      min-width: 0;
+
+      display: flex;
+
+      justify-content: space-between;
+
+      align-items: center;
+
+      padding-top: 0.75rem;
+
+      border-top: 1px solid #f1f5f9;
+
+      flex-wrap: wrap;
+
+      gap: 0.5rem;
+    }
+
+    .int-posted-time {
+      font-size: 0.8rem;
+      color: #94a3b8;
+
+      min-width: 0;
+    }
+
+    .int-posted-time span {
+      color: #475569;
+      font-weight: 600;
+    }
+
+
+    /* =========================================================
+       BUTTONS
+    ========================================================= */
+
+    .btn-apply-now {
+      padding: 0.5rem 1.35rem;
+
+      background: #18B06A;
+      color: #ffffff;
+
+      border: none;
+
+      border-radius: 7px;
+
+      font-size: 0.88rem;
+      font-weight: 700;
+
+      cursor: pointer;
+
+      transition:
+        background 0.18s,
+        transform 0.12s;
+
+      white-space: nowrap;
+
+      flex-shrink: 0;
+    }
+
+    .btn-apply-now:hover {
+      background: #15a05f;
+      transform: translateY(-1px);
+    }
+
+    .btn-apply-now:disabled {
+      background: #94a3b8;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .btn-apply-now.applied {
+      background: #475569;
+    }
+
+    .btn-check-eligibility {
+      padding: 0.5rem 1.1rem;
+
+      background: transparent;
+      color: #006BFF;
+
+      border: 1.8px solid #006BFF;
+
+      border-radius: 7px;
+
+      font-size: 0.86rem;
+      font-weight: 700;
+
+      cursor: pointer;
+
+      transition: all 0.15s;
+    }
+
+    .btn-check-eligibility:hover {
+      background: #006BFF;
+      color: #ffffff;
+    }
+
+    .btn-bookmark {
+      background: transparent;
+
+      border: 1.5px solid #e2e8f0;
+
+      border-radius: 7px;
+
+      padding: 4px 8px;
+
+      font-size: 1rem;
+
+      cursor: pointer;
+
+      line-height: 1;
+
+      transition: all 0.15s;
+
+      flex-shrink: 0;
+
       color: #94a3b8;
     }
+
     .btn-bookmark:hover {
       border-color: #f59e0b;
       background: #fef3c7;
     }
+
     .btn-bookmark.saved {
       border-color: #f59e0b;
       background: #fef9c3;
     }
 
+
+    /* =========================================================
+       RECOMMENDED
+    ========================================================= */
+
+    .recommended-section {
+      width: 100%;
+      min-width: 0;
+
+      background: #ffffff;
+
+      border: 1.5px solid #e2e8f0;
+
+      border-radius: 12px;
+
+      padding: 1.1rem 1.25rem;
+    }
+
+    .recommended-section h3 {
+      font-size: 0.95rem;
+
+      font-weight: 700;
+
+      color: #0f172a;
+
+      margin-bottom: 0.85rem;
+
+      display: flex;
+
+      align-items: center;
+
+      gap: 0.5rem;
+    }
+
+    .rec-cards-grid {
+      width: 100%;
+
+      display: grid;
+
+      grid-template-columns:
+        repeat(auto-fill, minmax(220px, 1fr));
+
+      gap: 0.75rem;
+    }
+
+    .rec-mini-card {
+      min-width: 0;
+
+      border: 1.5px solid #e2e8f0;
+
+      border-radius: 10px;
+
+      padding: 0.85rem;
+
+      transition:
+        border-color 0.15s,
+        box-shadow 0.15s;
+
+      cursor: pointer;
+    }
+
+    .rec-mini-card:hover {
+      border-color: #93c5fd;
+
+      box-shadow:
+        0 2px 10px rgba(0, 107, 255, 0.08);
+    }
+
+    .rec-mini-logo {
+      width: 36px;
+      height: 36px;
+
+      border-radius: 8px;
+
+      display: flex;
+
+      align-items: center;
+      justify-content: center;
+
+      font-size: 1.1rem;
+
+      margin-bottom: 0.5rem;
+
+      border: 1px solid #f1f5f9;
+    }
+
+    .rec-mini-role {
+      font-size: 0.85rem;
+
+      font-weight: 700;
+
+      color: #0f172a;
+
+      margin-bottom: 0.15rem;
+
+      white-space: nowrap;
+
+      overflow: hidden;
+
+      text-overflow: ellipsis;
+    }
+
+    .rec-mini-company {
+      font-size: 0.78rem;
+
+      color: #006BFF;
+
+      font-weight: 600;
+
+      margin-bottom: 0.35rem;
+    }
+
+    .rec-mini-stipend {
+      font-size: 0.78rem;
+      color: #475569;
+    }
+
+    .rec-mini-apply {
+      margin-top: 0.5rem;
+
+      width: 100%;
+
+      padding: 0.35rem;
+
+      background: #18B06A;
+
+      color: #ffffff;
+
+      border: none;
+
+      border-radius: 6px;
+
+      font-size: 0.78rem;
+
+      font-weight: 700;
+
+      cursor: pointer;
+
+      transition: background 0.15s;
+    }
+
+    .rec-mini-apply:hover {
+      background: #15a05f;
+    }
+
+
+    /* =========================================================
+       PAGINATION
+    ========================================================= */
+
+    .pagination-row {
+      width: 100%;
+
+      display: flex;
+
+      justify-content: center;
+
+      align-items: center;
+
+      gap: 0.4rem;
+
+      padding: 0.85rem 0;
+
+      flex-wrap: wrap;
+    }
+
+    .page-btn {
+      width: 36px;
+      height: 36px;
+
+      border: 1.5px solid #e2e8f0;
+
+      border-radius: 8px;
+
+      background: #ffffff;
+
+      color: #475569;
+
+      font-size: 0.85rem;
+
+      font-weight: 600;
+
+      cursor: pointer;
+
+      display: flex;
+
+      align-items: center;
+
+      justify-content: center;
+
+      transition: all 0.15s;
+    }
+
+    .page-btn:hover:not(:disabled) {
+      border-color: #006BFF;
+
+      background: #eff6ff;
+
+      color: #006BFF;
+    }
+
+    .page-btn.active {
+      border-color: #006BFF;
+
+      background: #006BFF;
+
+      color: #ffffff;
+    }
+
+    .page-btn:disabled {
+      opacity: 0.45;
+
+      cursor: not-allowed;
+    }
+
+
+    /* =========================================================
+       DESKTOP
+    ========================================================= */
+
+    @media (min-width: 1201px) {
+
+      .opp-layout {
+        grid-template-columns:
+          260px
+          minmax(0, 1fr);
+
+        gap: 20px;
+      }
+
+      .filter-sidebar {
+        width: 260px;
+        min-width: 260px;
+        max-width: 260px;
+
+        position: sticky !important;
+
+        top: 20px !important;
+      }
+    }
+
+
+    /* =========================================================
+       LAPTOP
+    ========================================================= */
+
+    @media (max-width: 1200px) and (min-width: 901px) {
+
+      .opp-layout {
+        grid-template-columns:
+          235px
+          minmax(0, 1fr);
+
+        gap: 16px;
+      }
+
+      .filter-sidebar {
+        width: 235px;
+        min-width: 235px;
+        max-width: 235px;
+
+        position: sticky !important;
+
+        top: 20px !important;
+      }
+
+      .int-card {
+        padding: 15px 16px;
+      }
+
+      .int-card-role {
+        font-size: 1rem;
+      }
+    }
+
+
+    /* =========================================================
+       TABLET
+    ========================================================= */
+
     @media (max-width: 900px) {
-      .opp-layout { grid-template-columns: 1fr; }
-      .filter-sidebar { position: static; }
+
+      .opp-layout {
+        width: 100%;
+
+        display: flex;
+
+        flex-direction: column;
+
+        gap: 14px;
+
+        overflow: visible !important;
+      }
+
+      .filter-sidebar {
+        width: 100% !important;
+
+        min-width: 0 !important;
+
+        max-width: 100% !important;
+
+        position: relative !important;
+
+        top: auto !important;
+
+        left: auto !important;
+
+        height: auto !important;
+
+        max-height: none !important;
+
+        overflow: visible !important;
+
+        order: 1;
+      }
+
+      .listing-area {
+        width: 100% !important;
+
+        min-width: 0 !important;
+
+        max-width: 100% !important;
+
+        order: 2;
+      }
+
+      .listing-topbar {
+        flex-wrap: wrap;
+      }
+
+      .quick-filters {
+        width: 100%;
+      }
     }
-    @media (max-width: 640px) {
-      .rec-cards-grid { grid-template-columns: 1fr 1fr; }
-      .int-card-top { flex-wrap: wrap; }
+
+
+    /* =========================================================
+       MOBILE
+    ========================================================= */
+
+    @media (max-width: 600px) {
+
+      html,
+      body {
+        overflow-x: hidden !important;
+      }
+
+      .page-content {
+        width: 100% !important;
+
+        min-width: 0 !important;
+
+        max-width: 100% !important;
+
+        padding-left: 12px !important;
+
+        padding-right: 12px !important;
+
+        overflow-x: hidden !important;
+      }
+
+      .opp-search-hero {
+        padding: 16px 14px;
+
+        border-radius: 12px;
+
+        margin-bottom: 12px;
+      }
+
+      .opp-search-hero h2 {
+        font-size: 1.05rem;
+
+        line-height: 1.4;
+      }
+
+      .opp-search-bar {
+        width: 100%;
+
+        display: flex;
+
+        flex-direction: column;
+
+        gap: 8px;
+      }
+
+      .opp-search-bar input,
+      .opp-search-bar select,
+      .opp-search-btn {
+        width: 100% !important;
+
+        min-width: 0 !important;
+
+        max-width: 100% !important;
+
+        flex: none;
+
+        box-sizing: border-box;
+      }
+
+      .opp-type-tabs {
+        width: 100%;
+
+        max-width: 100%;
+
+        display: grid;
+
+        grid-template-columns:
+          repeat(2, 1fr);
+
+        margin-bottom: 10px;
+
+        border-radius: 9px;
+      }
+
+      .opp-type-tab {
+        width: 100%;
+
+        padding: 8px 5px;
+
+        font-size: 10px;
+
+        border-right: 1px solid #e2e8f0;
+
+        border-bottom: 1px solid #e2e8f0;
+
+        white-space: normal;
+      }
+
+      .opp-type-tab:nth-child(2n) {
+        border-right: none;
+      }
+
+      .opp-type-tab:nth-last-child(-n + 2) {
+        border-bottom: none;
+      }
+
+      .quick-filters {
+        width: 100%;
+
+        display: flex;
+
+        flex-wrap: wrap;
+
+        gap: 6px;
+      }
+
+      .qf-pill {
+        font-size: 9px;
+
+        padding: 5px 8px;
+      }
+
+      .opp-layout {
+        width: 100% !important;
+
+        display: flex !important;
+
+        flex-direction: column !important;
+
+        gap: 12px !important;
+      }
+
+      .filter-sidebar {
+        width: 100% !important;
+
+        min-width: 0 !important;
+
+        max-width: 100% !important;
+
+        position: relative !important;
+
+        top: auto !important;
+
+        left: auto !important;
+
+        height: auto !important;
+
+        max-height: none !important;
+
+        overflow: visible !important;
+
+        padding: 13px !important;
+
+        border-radius: 11px;
+
+        order: 1;
+      }
+
+      .filter-sidebar-title {
+        font-size: 0.9rem;
+
+        margin-bottom: 12px;
+      }
+
+      .filter-section {
+        margin-bottom: 12px;
+
+        padding-bottom: 11px;
+      }
+
+      .filter-section-label {
+        font-size: 0.72rem;
+      }
+
+      .filter-checkbox-item {
+        font-size: 0.78rem;
+
+        gap: 7px;
+      }
+
+      .filter-toggle-label {
+        font-size: 0.78rem;
+      }
+
+      .filter-select {
+        font-size: 0.78rem;
+
+        padding: 8px;
+      }
+
+      .apply-filter-btn {
+        font-size: 0.8rem;
+
+        padding: 9px;
+      }
+
+      .listing-area {
+        width: 100% !important;
+
+        min-width: 0 !important;
+
+        max-width: 100% !important;
+
+        order: 2;
+      }
+
+      .listing-topbar {
+        width: 100%;
+
+        padding: 9px;
+
+        display: flex;
+
+        flex-direction: column;
+
+        align-items: stretch;
+
+        gap: 8px;
+      }
+
+      .listing-count {
+        font-size: 0.74rem;
+      }
+
+      .sort-wrap {
+        width: 100%;
+
+        display: flex;
+
+        justify-content: space-between;
+
+        font-size: 0.74rem;
+      }
+
+      .sort-wrap select {
+        flex: 1;
+
+        max-width: 160px;
+
+        font-size: 0.74rem;
+      }
+
+      #cards-container {
+        width: 100% !important;
+
+        min-width: 0 !important;
+
+        max-width: 100% !important;
+
+        gap: 9px;
+      }
+
+      .int-card {
+        width: 100% !important;
+
+        min-width: 0 !important;
+
+        max-width: 100% !important;
+
+        padding: 12px !important;
+
+        border-radius: 11px;
+      }
+
+      .int-card-top {
+        width: 100%;
+
+        gap: 9px;
+
+        align-items: flex-start;
+
+        margin-bottom: 8px;
+      }
+
+      .int-company-logo {
+        width: 40px;
+
+        height: 40px;
+
+        min-width: 40px;
+
+        flex-basis: 40px;
+
+        font-size: 1.15rem;
+
+        border-radius: 8px;
+      }
+
+      .int-card-info {
+        min-width: 0;
+      }
+
+      .int-card-role {
+        font-size: 12.5px;
+
+        line-height: 1.35;
+
+        margin-bottom: 2px;
+      }
+
+      .int-card-company {
+        font-size: 10px;
+
+        line-height: 1.35;
+      }
+
+      .int-card-meta {
+        width: 100%;
+
+        gap: 5px 8px;
+
+        margin-bottom: 8px;
+      }
+
+      .int-meta-item {
+        font-size: 9px;
+
+        line-height: 1.3;
+      }
+
+      .int-meta-item .meta-icon {
+        font-size: 9px;
+      }
+
+      .int-card-badges {
+        gap: 4px;
+
+        margin-bottom: 8px;
+      }
+
+      .badge-green-light,
+      .badge-blue-light,
+      .badge-amber-light,
+      .badge-purple-light,
+      .badge-match {
+        font-size: 8.5px;
+
+        padding: 3px 6px;
+      }
+
+      .int-skills-row {
+        gap: 4px;
+
+        margin-bottom: 8px;
+      }
+
+      .skill-chip {
+        font-size: 8.5px;
+
+        padding: 3px 6px;
+      }
+
+      .int-card-bottom {
+        width: 100%;
+
+        padding-top: 8px;
+
+        gap: 7px;
+
+        flex-wrap: wrap;
+      }
+
+      .int-posted-time {
+        font-size: 8.5px;
+
+        flex: 1;
+
+        min-width: 100px;
+      }
+
+      .btn-apply-now {
+        min-width: 82px;
+
+        padding: 7px 11px;
+
+        font-size: 9px;
+      }
+
+      .btn-check-eligibility {
+        padding: 7px 10px;
+
+        font-size: 9px;
+      }
+
+      .int-card.ppo-badge::after {
+        top: 9px;
+
+        right: 9px;
+
+        font-size: 8px;
+
+        padding: 2px 6px;
+      }
+
+      .recommended-section {
+        padding: 12px;
+
+        border-radius: 11px;
+      }
+
+      .recommended-section h3 {
+        font-size: 0.82rem;
+
+        line-height: 1.4;
+      }
+
+      .rec-cards-grid {
+        width: 100%;
+
+        grid-template-columns: 1fr;
+
+        gap: 8px;
+      }
+
+      .pagination-row {
+        gap: 5px;
+
+        padding: 10px 0;
+      }
+
+      .page-btn {
+        width: 32px;
+
+        height: 32px;
+
+        font-size: 0.72rem;
+      }
     }
+
+
+    /* =========================================================
+       SMALL MOBILE
+    ========================================================= */
+
+    @media (max-width: 380px) {
+
+      .page-content {
+        padding-left: 9px !important;
+
+        padding-right: 9px !important;
+      }
+
+      .opp-search-hero {
+        padding: 14px 11px;
+      }
+
+      .opp-search-hero h2 {
+        font-size: 0.95rem;
+      }
+
+      .opp-type-tab {
+        font-size: 9px;
+
+        padding: 7px 3px;
+      }
+
+      .filter-sidebar {
+        padding: 11px !important;
+      }
+
+      .int-card {
+        padding: 10px !important;
+      }
+
+      .int-card-role {
+        font-size: 11.5px;
+      }
+
+      .int-card-company {
+        font-size: 9.5px;
+      }
+
+      .int-meta-item {
+        font-size: 8.5px;
+      }
+
+      .int-card-bottom {
+        flex-direction: column;
+
+        align-items: stretch;
+      }
+
+      .int-posted-time {
+        width: 100%;
+
+        min-width: 0;
+      }
+
+      .btn-apply-now {
+        width: 100%;
+
+        max-width: 100%;
+      }
+
+      .btn-check-eligibility {
+        width: 100%;
+
+        max-width: 100%;
+      }
+    }
+
+
+    /* =========================================================
+       OVERFLOW SAFETY
+    ========================================================= */
+
+    .opp-layout *,
+    .listing-area *,
+    .filter-sidebar * {
+      max-width: 100%;
+    }
+
+    .opp-layout img,
+    .opp-layout svg,
+    .opp-layout video {
+      max-width: 100%;
+    }
+
+
+    /* =========================================================
+       FINAL STICKY DESKTOP
+    ========================================================= */
+
+    @media (min-width: 901px) {
+
+      .opp-layout {
+        align-items: start !important;
+
+        overflow: visible !important;
+      }
+
+      .opp-layout > .filter-sidebar {
+        position: sticky !important;
+
+        top: 20px !important;
+
+        align-self: start !important;
+
+        grid-column: 1;
+
+        grid-row: 1;
+
+        height: max-content !important;
+
+        max-height: calc(100vh - 40px);
+
+        z-index: 50;
+      }
+
+      .opp-layout > .listing-area {
+        grid-column: 2;
+
+        grid-row: 1;
+
+        min-width: 0 !important;
+
+        overflow: visible !important;
+      }
+    }
+
+
+    /* =========================================================
+       MOBILE STICKY OFF
+    ========================================================= */
+
+    @media (max-width: 900px) {
+
+      .opp-layout > .filter-sidebar {
+        position: relative !important;
+
+        top: auto !important;
+
+        grid-column: auto !important;
+
+        grid-row: auto !important;
+
+        max-height: none !important;
+
+        overflow: visible !important;
+      }
+    }
+
+    /* =========================================================
+   FINAL — OPPORTUNITY CARDS SIDE BY SIDE
+========================================================= */
+
+#cards-container {
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  gap: 18px !important;
+}
+
+#cards-container .int-card {
+  width: 100% !important;
+  min-width: 0 !important;
+  max-width: 100% !important;
+  height: 100%;
+  margin: 0 !important;
+}
+
+
+/* Tablet */
+@media (max-width: 900px) and (min-width: 601px) {
+  #cards-container {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 14px !important;
+  }
+}
+
+
+/* Mobile */
+@media (max-width: 600px) {
+  #cards-container {
+    grid-template-columns: 1fr !important;
+    gap: 10px !important;
+  }
+
+  #cards-container .int-card {
+    height: auto !important;
+  }
+}
   </style>
 </head>
+
 <body>
 
-  <div class="app-layout">
-    <!-- Dark Navy Sidebar -->
-    <aside class="app-sidebar">
-      <div class="sidebar-brand">
-        <a href="../index.html" class="flex-align" style="gap: 0.5rem; text-decoration: none;">
-          <svg width="28" height="28" viewBox="0 0 64 64" fill="none">
-            <rect width="64" height="64" rx="14" fill="#4f46e5" />
-            <path d="M14 44 C22 28, 42 28, 50 44" stroke="#ffffff" stroke-width="4" stroke-linecap="round" />
-            <path d="M20 44 L20 35 M32 44 L32 30 M44 44 L44 35" stroke="#ffffff" stroke-width="3" stroke-linecap="round" />
-            <circle cx="32" cy="20" r="5" fill="#38bdf8" />
-          </svg>
-          <span class="brand-title">CareerSetu <span class="brand-badge">AI</span></span>
-        </a>
-      </div>
+<div class="app-layout">
 
-      <nav class="sidebar-nav">
-        <a href="dashboard.html" class="nav-item"><span class="nav-icon">📊</span> Dashboard</a>
-        <a href="profile.html" class="nav-item"><span class="nav-icon">👤</span> My Profile</a>
-        <a href="career.html" class="nav-item"><span class="nav-icon">🧭</span> My Career</a>
-        <a href="skill-gap.html" class="nav-item"><span class="nav-icon">📈</span> Skill Gap</a>
-        <a href="roadmap.html" class="nav-item"><span class="nav-icon">🗺️</span> Roadmap</a>
-        <a href="opportunities.html" class="nav-item active"><span class="nav-icon">💼</span> Opportunities</a>
-        <a href="resume.html" class="nav-item"><span class="nav-icon">📄</span> Resume AI</a>
-        <a href="interview.html" class="nav-item"><span class="nav-icon">🎙️</span> Mock Interview</a>
-        <a href="progress.html" class="nav-item"><span class="nav-icon">🎯</span> Progress</a>
-      </nav>
+  <!-- =====================================================
+       SIDEBAR
+  ====================================================== -->
 
-      <div class="sidebar-footer">
-        <div class="user-profile-summary">
-          <div class="user-avatar" id="sidebar-user-avatar">H</div>
-          <div class="user-info-text">
-            <p class="user-name-label" id="sidebar-user-name">Himanshu Sahani</p>
-            <p class="user-role-label" id="sidebar-user-email">himanshu@gmail.com</p>
-          </div>
-          <button id="logout-btn" class="btn btn-sm btn-secondary" title="Log Out" style="padding: 0.25rem 0.5rem; font-size: 0.75rem;">⏻</button>
-        </div>
-      </div>
-    </aside>
+  <aside class="app-sidebar">
 
-    <div class="app-main">
-      <header class="app-topbar">
-        <div class="flex-align">
-          <button class="mobile-menu-btn" id="mobile-menu-toggle">☰</button>
-          <div class="topbar-breadcrumbs">
-            <span>Opportunities</span>
-            <span>/</span>
-            <span class="text-primary" style="font-weight: 600;" id="track-breadcrumb">Jobs & Internships</span>
-          </div>
-        </div>
-        <a href="resume.html" class="btn btn-sm btn-outline">ATS Resume Optimizer →</a>
-      </header>
+    <div class="sidebar-brand">
 
-      <main class="page-content">
+      <a
+        href="index.html"
+        class="flex-align"
+        style="gap:0.5rem;text-decoration:none;"
+      >
 
-        <!-- Search Hero -->
-        <div class="opp-search-hero">
-          <h2>Find the best <span id="hero-track-text">tech</span> Internships & Jobs for you</h2>
-          <div class="opp-search-bar">
-            <input type="text" id="role-search" placeholder="🔍  e.g. Full Stack Developer, ML Intern…">
-            <select id="location-search">
-              <option value="">📍 All Locations</option>
-              <option value="remote">Work From Home / Remote</option>
-              <option value="bangalore">Bengaluru</option>
-              <option value="hyderabad">Hyderabad</option>
-              <option value="delhi">Delhi NCR</option>
-              <option value="mumbai">Mumbai</option>
-              <option value="pune">Pune</option>
-              <option value="chennai">Chennai</option>
-            </select>
-            <button class="opp-search-btn" onclick="applySearch()">🔍 Search</button>
-          </div>
-        </div>
+        <svg width="28" height="28" viewBox="0 0 64 64" fill="none">
 
-        <!-- Type Tabs -->
-        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.5rem; margin-bottom:0.85rem;">
-          <div class="opp-type-tabs" id="type-tabs">
-            <button class="opp-type-tab active" data-type="all">All</button>
-            <button class="opp-type-tab" data-type="internship">Internships</button>
-            <button class="opp-type-tab" data-type="job">Jobs</button>
-            <button class="opp-type-tab" data-type="gov">Govt / PSU</button>
-          </div>
-          <!-- Quick Pills -->
-          <div class="quick-filters">
-            <span class="qf-pill" id="pill-wfh" data-filter="wfh">🏠 Work From Home</span>
-            <span class="qf-pill" id="pill-parttime" data-filter="parttime">⏰ Part-Time</span>
-            <span class="qf-pill" id="pill-hiring" data-filter="hiring">🟢 Actively Hiring</span>
-            <span class="qf-pill" id="pill-ppo" data-filter="ppo">⭐ PPO</span>
-          </div>
-        </div>
+          <rect
+            width="64"
+            height="64"
+            rx="14"
+            fill="#4f46e5"
+          />
 
-        <!-- Alert Box -->
-        <div class="opp-alert" id="alert-box">🎉 <span id="alert-msg">Application submitted!</span></div>
+          <path
+            d="M14 44 C22 28, 42 28, 50 44"
+            stroke="#ffffff"
+            stroke-width="4"
+            stroke-linecap="round"
+          />
 
-        <!-- 2-col Layout -->
-        <div class="opp-layout">
+          <path
+            d="M20 44 L20 35 M32 44 L32 30 M44 44 L44 35"
+            stroke="#ffffff"
+            stroke-width="3"
+            stroke-linecap="round"
+          />
 
-          <!-- ===== LEFT FILTER SIDEBAR ===== -->
-          <aside class="filter-sidebar">
-            <div class="filter-sidebar-title">
-              Filters
-              <span class="filter-clear-all" onclick="clearAllFilters()">Clear all</span>
-            </div>
+          <circle
+            cx="32"
+            cy="20"
+            r="5"
+            fill="#38bdf8"
+          />
 
-            <div class="filter-section">
-              <div class="filter-section-label">Profile / Category</div>
-              <select class="filter-select" id="filter-profile">
-                <option value="">All Profiles</option>
-                <option value="ai">Artificial Intelligence / ML</option>
-                <option value="fullstack">Full Stack Development</option>
-                <option value="data">Data Science / Analytics</option>
-                <option value="backend">Backend Development</option>
-                <option value="frontend">Frontend Development</option>
-                <option value="cyber">Cybersecurity</option>
-                <option value="gov">Government / PSU</option>
-              </select>
-            </div>
+        </svg>
 
-            <div class="filter-section">
-              <div class="filter-section-label">Location</div>
-              <div class="filter-checkbox-item">
-                <input type="checkbox" id="loc-remote" value="remote">
-                <label for="loc-remote">Work From Home / Remote</label>
-              </div>
-              <div class="filter-checkbox-item">
-                <input type="checkbox" id="loc-blr" value="bangalore">
-                <label for="loc-blr">Bengaluru</label>
-              </div>
-              <div class="filter-checkbox-item">
-                <input type="checkbox" id="loc-hyd" value="hyderabad">
-                <label for="loc-hyd">Hyderabad</label>
-              </div>
-              <div class="filter-checkbox-item">
-                <input type="checkbox" id="loc-delhi" value="delhi">
-                <label for="loc-delhi">Delhi NCR</label>
-              </div>
-              <div class="filter-checkbox-item">
-                <input type="checkbox" id="loc-mum" value="mumbai">
-                <label for="loc-mum">Mumbai</label>
-              </div>
-              <div class="filter-checkbox-item">
-                <input type="checkbox" id="loc-pune" value="pune">
-                <label for="loc-pune">Pune</label>
-              </div>
-            </div>
+        <span class="brand-title">
+          CareerSetu
+          <span class="brand-badge">AI</span>
+        </span>
 
-            <div class="filter-section">
-              <div class="filter-section-label">Work Type</div>
-              <div class="filter-toggle-row">
-                <span class="filter-toggle-label">Work From Home</span>
-                <label class="toggle-switch">
-                  <input type="checkbox" id="toggle-wfh">
-                  <span class="toggle-slider"></span>
-                </label>
-              </div>
-              <div class="filter-toggle-row">
-                <span class="filter-toggle-label">Part-Time</span>
-                <label class="toggle-switch">
-                  <input type="checkbox" id="toggle-parttime">
-                  <span class="toggle-slider"></span>
-                </label>
-              </div>
-              <div class="filter-toggle-row">
-                <span class="filter-toggle-label">Actively Hiring</span>
-                <label class="toggle-switch">
-                  <input type="checkbox" id="toggle-hiring">
-                  <span class="toggle-slider"></span>
-                </label>
-              </div>
-            </div>
+      </a>
 
-            <div class="filter-section">
-              <div class="filter-section-label">Stipend / Salary (₹/month)</div>
-              <div class="stipend-range-wrap">
-                <input type="range" min="0" max="80000" step="2000" value="0" id="stipend-min" oninput="updateStipendLabel()">
-                <div class="stipend-labels">
-                  <span>₹0</span>
-                  <span id="stipend-min-label">Min: ₹0</span>
-                  <span>₹80k+</span>
-                </div>
-              </div>
-            </div>
-
-            <div class="filter-section">
-              <div class="filter-section-label">Duration</div>
-              <select class="filter-select" id="filter-duration">
-                <option value="">Any Duration</option>
-                <option value="1">1 Month</option>
-                <option value="2">2 Months</option>
-                <option value="3">3 Months</option>
-                <option value="6">6 Months</option>
-                <option value="12">12 Months</option>
-              </select>
-            </div>
-
-            <div class="filter-section">
-              <div class="filter-section-label">Starting From</div>
-              <input type="date" class="filter-select" id="filter-start-date" style="cursor:pointer;">
-            </div>
-
-            <button class="apply-filter-btn" onclick="applyFilters()">Apply Filters</button>
-          </aside>
-
-          <!-- ===== RIGHT LISTING AREA ===== -->
-          <div class="listing-area">
-
-            <!-- Sort / Count Bar -->
-            <div class="listing-topbar">
-              <div class="listing-count">Showing <strong id="count-shown">1–12</strong> of <strong id="count-total">48</strong> <span id="count-label">internships & jobs</span></div>
-              <div class="sort-wrap">
-                Sort by:
-                <select id="sort-select" onchange="applySort()">
-                  <option value="relevance">Relevance</option>
-                  <option value="latest">Latest First</option>
-                  <option value="stipend-high">Stipend: High to Low</option>
-                  <option value="stipend-low">Stipend: Low to High</option>
-                </select>
-              </div>
-            </div>
-
-            <!-- Cards Container -->
-            <div id="cards-container"></div>
-
-            <!-- Pagination -->
-            <div class="pagination-row">
-              <button class="page-btn active">1</button>
-              <button class="page-btn">2</button>
-              <button class="page-btn">3</button>
-              <button class="page-btn">4</button>
-              <button class="page-btn">…</button>
-            </div>
-
-            <!-- Recommended For You -->
-            <div class="recommended-section">
-              <h3>⭐ Recommended For You — Based on Your Profile</h3>
-              <div class="rec-cards-grid" id="recommended-grid"></div>
-            </div>
-
-          </div>
-        </div>
-      </main>
     </div>
+
+
+    <!-- SIDEBAR NAV -->
+
+    <nav class="sidebar-nav">
+
+      <a href="dashboard.html" class="nav-item">
+        <span class="nav-icon">📊</span>
+        Dashboard
+      </a>
+
+      <a href="profile.html" class="nav-item">
+        <span class="nav-icon">👤</span>
+        My Profile
+      </a>
+
+      <a href="career.html" class="nav-item">
+        <span class="nav-icon">🧭</span>
+        My Career
+      </a>
+
+      <a href="skill-gap.html" class="nav-item">
+        <span class="nav-icon">📈</span>
+        Skill Gap
+      </a>
+
+      <a href="roadmap.html" class="nav-item">
+        <span class="nav-icon">🗺️</span>
+        Roadmap
+      </a>
+
+      <a
+        href="opportunities.html"
+        class="nav-item active"
+      >
+        <span class="nav-icon">💼</span>
+        Opportunities
+      </a>
+
+      <a href="resume.html" class="nav-item">
+        <span class="nav-icon">📄</span>
+        Resume AI
+      </a>
+
+      <a href="interview.html" class="nav-item">
+        <span class="nav-icon">🎙️</span>
+        Mock Interview
+      </a>
+
+      <a href="progress.html" class="nav-item">
+        <span class="nav-icon">🎯</span>
+        Progress
+      </a>
+
+    </nav>
+
+
+    <!-- SIDEBAR FOOTER -->
+
+    <div class="sidebar-footer">
+
+      <div class="user-profile-summary">
+
+        <div
+          class="user-avatar"
+          id="sidebar-user-avatar"
+        >
+          H
+        </div>
+
+        <div class="user-info-text">
+
+          <p
+            class="user-name-label"
+            id="sidebar-user-name"
+          >
+            Himanshu Sahani
+          </p>
+
+          <p
+            class="user-role-label"
+            id="sidebar-user-email"
+          >
+            himanshu@gmail.com
+          </p>
+
+        </div>
+
+        <button
+          id="logout-btn"
+          class="btn btn-sm btn-secondary"
+          title="Log Out"
+          style="padding:0.25rem 0.5rem;font-size:0.75rem;"
+        >
+          ⏻
+        </button>
+
+      </div>
+
+    </div>
+
+  </aside>
+
+
+  <!-- =====================================================
+       MAIN
+  ====================================================== -->
+
+  <div class="app-main">
+
+    <!-- TOPBAR -->
+
+    <header class="app-topbar">
+
+      <div class="flex-align">
+
+        <button
+          class="mobile-menu-btn"
+          id="mobile-menu-toggle"
+        >
+          ☰
+        </button>
+
+        <div class="topbar-breadcrumbs">
+
+          <span>Opportunities</span>
+
+          <span>/</span>
+
+          <span
+            class="text-primary"
+            style="font-weight:600;"
+            id="track-breadcrumb"
+          >
+            Jobs & Internships
+          </span>
+
+        </div>
+
+      </div>
+
+      <a
+        href="resume.html"
+        class="btn btn-sm btn-outline"
+      >
+        ATS Resume Optimizer →
+      </a>
+
+    </header>
+
+
+    <!-- ===================================================
+         PAGE CONTENT
+    ==================================================== -->
+
+    <main class="page-content">
+
+
+      <!-- SEARCH HERO -->
+
+      <div class="opp-search-hero">
+
+        <h2>
+          Find the best
+          <span id="hero-track-text">tech</span>
+          Internships & Jobs for you
+        </h2>
+
+        <div class="opp-search-bar">
+
+          <input
+            type="text"
+            id="role-search"
+            placeholder="🔍  e.g. Full Stack Developer, ML Intern…"
+          >
+
+          <select id="location-search">
+
+            <option value="">
+              📍 All Locations
+            </option>
+
+            <option value="remote">
+              Work From Home / Remote
+            </option>
+
+            <option value="bangalore">
+              Bengaluru
+            </option>
+
+            <option value="hyderabad">
+              Hyderabad
+            </option>
+
+            <option value="delhi">
+              Delhi NCR
+            </option>
+
+            <option value="mumbai">
+              Mumbai
+            </option>
+
+            <option value="pune">
+              Pune
+            </option>
+
+            <option value="chennai">
+              Chennai
+            </option>
+
+          </select>
+
+          <button
+            class="opp-search-btn"
+            onclick="applySearch()"
+          >
+            🔍 Search
+          </button>
+
+        </div>
+
+      </div>
+
+
+      <!-- =================================================
+           TYPE TABS
+      ================================================== -->
+
+      <div
+        style="
+          display:flex;
+          justify-content:space-between;
+          align-items:center;
+          flex-wrap:wrap;
+          gap:0.5rem;
+          margin-bottom:0.85rem;
+        "
+      >
+
+        <div
+          class="opp-type-tabs"
+          id="type-tabs"
+        >
+
+          <button
+            class="opp-type-tab active"
+            data-type="all"
+          >
+            All
+          </button>
+
+          <button
+            class="opp-type-tab"
+            data-type="internship"
+          >
+            Internships
+          </button>
+
+          <button
+            class="opp-type-tab"
+            data-type="job"
+          >
+            Jobs
+          </button>
+
+          <button
+            class="opp-type-tab"
+            data-type="gov"
+          >
+            Govt / PSU
+          </button>
+
+        </div>
+
+
+        <!-- QUICK FILTERS -->
+
+        <div class="quick-filters">
+
+          <span
+            class="qf-pill"
+            id="pill-wfh"
+            data-filter="wfh"
+          >
+            🏠 Work From Home
+          </span>
+
+          <span
+            class="qf-pill"
+            id="pill-parttime"
+            data-filter="parttime"
+          >
+            ⏰ Part-Time
+          </span>
+
+          <span
+            class="qf-pill"
+            id="pill-hiring"
+            data-filter="hiring"
+          >
+            🟢 Actively Hiring
+          </span>
+
+          <span
+            class="qf-pill"
+            id="pill-ppo"
+            data-filter="ppo"
+          >
+            ⭐ PPO
+          </span>
+
+        </div>
+
+      </div>
+
+
+      <!-- ALERT -->
+
+      <div
+        class="opp-alert"
+        id="alert-box"
+      >
+        🎉
+        <span id="alert-msg">
+          Application submitted!
+        </span>
+      </div>
+
+
+      <!-- =================================================
+           MAIN TWO COLUMN
+      ================================================== -->
+
+      <div class="opp-layout">
+
+
+        <!-- =================================================
+             LEFT FILTER SIDEBAR
+        ================================================== -->
+
+        <aside class="filter-sidebar">
+
+          <div class="filter-sidebar-title">
+
+            Filters
+
+            <span
+              class="filter-clear-all"
+              onclick="clearAllFilters()"
+            >
+              Clear all
+            </span>
+
+          </div>
+
+
+          <!-- PROFILE -->
+
+          <div class="filter-section">
+
+            <div class="filter-section-label">
+              Profile / Category
+            </div>
+
+            <select
+              class="filter-select"
+              id="filter-profile"
+            >
+
+              <option value="">
+                All Profiles
+              </option>
+
+              <option value="ai">
+                Artificial Intelligence / ML
+              </option>
+
+              <option value="fullstack">
+                Full Stack Development
+              </option>
+
+              <option value="data">
+                Data Science / Analytics
+              </option>
+
+              <option value="backend">
+                Backend Development
+              </option>
+
+              <option value="frontend">
+                Frontend Development
+              </option>
+
+              <option value="cyber">
+                Cybersecurity
+              </option>
+
+              <option value="gov">
+                Government / PSU
+              </option>
+
+            </select>
+
+          </div>
+
+
+          <!-- LOCATION -->
+
+          <div class="filter-section">
+
+            <div class="filter-section-label">
+              Location
+            </div>
+
+            <div class="filter-checkbox-item">
+              <input
+                type="checkbox"
+                id="loc-remote"
+                value="remote"
+              >
+              <label for="loc-remote">
+                Work From Home / Remote
+              </label>
+            </div>
+
+            <div class="filter-checkbox-item">
+              <input
+                type="checkbox"
+                id="loc-blr"
+                value="bangalore"
+              >
+              <label for="loc-blr">
+                Bengaluru
+              </label>
+            </div>
+
+            <div class="filter-checkbox-item">
+              <input
+                type="checkbox"
+                id="loc-hyd"
+                value="hyderabad"
+              >
+              <label for="loc-hyd">
+                Hyderabad
+              </label>
+            </div>
+
+            <div class="filter-checkbox-item">
+              <input
+                type="checkbox"
+                id="loc-delhi"
+                value="delhi"
+              >
+              <label for="loc-delhi">
+                Delhi NCR
+              </label>
+            </div>
+
+            <div class="filter-checkbox-item">
+              <input
+                type="checkbox"
+                id="loc-mum"
+                value="mumbai"
+              >
+              <label for="loc-mum">
+                Mumbai
+              </label>
+            </div>
+
+            <div class="filter-checkbox-item">
+              <input
+                type="checkbox"
+                id="loc-pune"
+                value="pune"
+              >
+              <label for="loc-pune">
+                Pune
+              </label>
+            </div>
+
+          </div>
+
+
+          <!-- WORK TYPE -->
+
+          <div class="filter-section">
+
+            <div class="filter-section-label">
+              Work Type
+            </div>
+
+            <div class="filter-toggle-row">
+
+              <span class="filter-toggle-label">
+                Work From Home
+              </span>
+
+              <label class="toggle-switch">
+
+                <input
+                  type="checkbox"
+                  id="toggle-wfh"
+                >
+
+                <span class="toggle-slider"></span>
+
+              </label>
+
+            </div>
+
+
+            <div class="filter-toggle-row">
+
+              <span class="filter-toggle-label">
+                Part-Time
+              </span>
+
+              <label class="toggle-switch">
+
+                <input
+                  type="checkbox"
+                  id="toggle-parttime"
+                >
+
+                <span class="toggle-slider"></span>
+
+              </label>
+
+            </div>
+
+
+            <div class="filter-toggle-row">
+
+              <span class="filter-toggle-label">
+                Actively Hiring
+              </span>
+
+              <label class="toggle-switch">
+
+                <input
+                  type="checkbox"
+                  id="toggle-hiring"
+                >
+
+                <span class="toggle-slider"></span>
+
+              </label>
+
+            </div>
+
+          </div>
+
+
+          <!-- STIPEND -->
+
+          <div class="filter-section">
+
+            <div class="filter-section-label">
+              Stipend / Salary (₹/month)
+            </div>
+
+            <div class="stipend-range-wrap">
+
+              <input
+                type="range"
+                min="0"
+                max="80000"
+                step="2000"
+                value="0"
+                id="stipend-min"
+                oninput="updateStipendLabel()"
+              >
+
+              <div class="stipend-labels">
+
+                <span>₹0</span>
+
+                <span id="stipend-min-label">
+                  Min: ₹0
+                </span>
+
+                <span>₹80k+</span>
+
+              </div>
+
+            </div>
+
+          </div>
+
+
+          <!-- DURATION -->
+
+          <div class="filter-section">
+
+            <div class="filter-section-label">
+              Duration
+            </div>
+
+            <select
+              class="filter-select"
+              id="filter-duration"
+            >
+
+              <option value="">
+                Any Duration
+              </option>
+
+              <option value="1">
+                1 Month
+              </option>
+
+              <option value="2">
+                2 Months
+              </option>
+
+              <option value="3">
+                3 Months
+              </option>
+
+              <option value="6">
+                6 Months
+              </option>
+
+              <option value="12">
+                12 Months
+              </option>
+
+            </select>
+
+          </div>
+
+
+          <!-- START DATE -->
+
+          <div class="filter-section">
+
+            <div class="filter-section-label">
+              Starting From
+            </div>
+
+            <input
+              type="date"
+              class="filter-select"
+              id="filter-start-date"
+              style="cursor:pointer;"
+            >
+
+          </div>
+
+
+          <button
+            class="apply-filter-btn"
+            onclick="applyFilters()"
+          >
+            Apply Filters
+          </button>
+
+        </aside>
+
+
+        <!-- =================================================
+             RIGHT LISTING AREA
+        ================================================== -->
+
+        <div class="listing-area">
+
+
+          <!-- TOP BAR -->
+
+          <div class="listing-topbar">
+
+            <div class="listing-count">
+
+              Showing
+
+              <strong id="count-shown">
+                1–4
+              </strong>
+
+              of
+
+              <strong id="count-total">
+                12
+              </strong>
+
+              <span id="count-label">
+                internships & jobs
+              </span>
+
+            </div>
+
+
+            <div class="sort-wrap">
+
+              Sort by:
+
+              <select
+                id="sort-select"
+                onchange="applySort()"
+              >
+
+                <option value="relevance">
+                  Relevance
+                </option>
+
+                <option value="latest">
+                  Latest First
+                </option>
+
+                <option value="stipend-high">
+                  Stipend: High to Low
+                </option>
+
+                <option value="stipend-low">
+                  Stipend: Low to High
+                </option>
+
+              </select>
+
+            </div>
+
+          </div>
+
+
+          <!-- CARDS -->
+
+          <div id="cards-container"></div>
+
+
+          <!-- =================================================
+               FUNCTIONAL PAGINATION
+          ================================================== -->
+
+          <div
+            class="pagination-row"
+            id="pagination"
+          ></div>
+
+
+          <!-- =================================================
+               RECOMMENDED
+          ================================================== -->
+
+          <div class="recommended-section">
+
+            <h3>
+              ⭐ Recommended For You — Based on Your Profile
+            </h3>
+
+            <div
+              class="rec-cards-grid"
+              id="recommended-grid"
+            ></div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </main>
+
   </div>
 
-  <script>
-  // ==================== DATA ====================
-  var ALL_OPPORTUNITIES = [
-    // ===== AI / ML =====
-    {
-      id:1, type:'internship', track:'ai',
-      icon:'🤖', iconBg:'#eef2ff',
-      role:'AI / Machine Learning Engineer Intern',
-      company:'TechVentures AI Labs',
-      location:'Remote / Bengaluru', locTag:'remote,bangalore',
-      duration:'3 Months', stipend:30000,
-      stipendLabel:'₹30,000/month',
-      posted:'2 days ago', activeHiring:true, ppo:true, parttime:false,
-      match:94,
-      skills:['Python','PyTorch','Scikit-learn','FastAPI'],
-      badges:[{text:'Actively Hiring',cls:'badge-green-light'},{text:'PPO Opportunity',cls:'badge-purple-light'},{text:'94% Match',cls:'badge-match'}],
-      btnType:'apply'
-    },
-    {
-      id:2, type:'internship', track:'ai',
-      icon:'🧠', iconBg:'#f0fdf4',
-      role:'Deep Learning Research Intern',
-      company:'Google DeepMind — India',
-      location:'Hyderabad / Hybrid', locTag:'hyderabad',
-      duration:'6 Months', stipend:55000,
-      stipendLabel:'₹55,000/month',
-      posted:'1 day ago', activeHiring:true, ppo:false, parttime:false,
-      match:91,
-      skills:['TensorFlow','NLP','Python','Research'],
-      badges:[{text:'Actively Hiring',cls:'badge-green-light'},{text:'91% Match',cls:'badge-match'}],
-      btnType:'apply'
-    },
-    {
-      id:3, type:'job', track:'ai',
-      icon:'🚀', iconBg:'#fef3c7',
-      role:'Junior AI/ML Engineer',
-      company:'Infosys Topaz',
-      location:'Bengaluru / On-site', locTag:'bangalore',
-      duration:'Full-time', stipend:70000,
-      stipendLabel:'₹8–12 LPA',
-      posted:'3 days ago', activeHiring:true, ppo:false, parttime:false,
-      match:88,
-      skills:['Python','ML Ops','AWS SageMaker','SQL'],
-      badges:[{text:'0–1 Yr Exp',cls:'badge-blue-light'},{text:'88% Match',cls:'badge-match'}],
-      btnType:'apply'
-    },
-    // ===== FULL STACK =====
-    {
-      id:4, type:'job', track:'fullstack',
-      icon:'🌐', iconBg:'#ecfdf5',
-      role:'Junior Full Stack Web Developer',
-      company:'Apex Cloud Systems',
-      location:'Hyderabad / Hybrid', locTag:'hyderabad',
-      duration:'Full-time', stipend:65000,
-      stipendLabel:'₹7.5–11 LPA',
-      posted:'5 days ago', activeHiring:false, ppo:false, parttime:false,
-      match:91,
-      skills:['React','Node.js','JavaScript','PostgreSQL'],
-      badges:[{text:'0–1 Yr Exp',cls:'badge-blue-light'},{text:'91% Match',cls:'badge-match'}],
-      btnType:'apply'
-    },
-    {
-      id:5, type:'internship', track:'fullstack',
-      icon:'💻', iconBg:'#eff6ff',
-      role:'Full Stack Developer Intern',
-      company:'Razorpay',
-      location:'Bengaluru / Remote', locTag:'remote,bangalore',
-      duration:'3 Months', stipend:35000,
-      stipendLabel:'₹35,000/month',
-      posted:'Today', activeHiring:true, ppo:true, parttime:false,
-      match:90,
-      skills:['React','Express.js','MongoDB','TypeScript'],
-      badges:[{text:'Actively Hiring',cls:'badge-green-light'},{text:'PPO Opportunity',cls:'badge-purple-light'},{text:'90% Match',cls:'badge-match'}],
-      btnType:'apply'
-    },
-    {
-      id:6, type:'internship', track:'fullstack',
-      icon:'🎯', iconBg:'#fff7ed',
-      role:'Frontend React Developer Intern',
-      company:'Swiggy Tech',
-      location:'Bengaluru / Hybrid', locTag:'bangalore',
-      duration:'2 Months', stipend:28000,
-      stipendLabel:'₹28,000/month',
-      posted:'4 days ago', activeHiring:true, ppo:false, parttime:true,
-      match:85,
-      skills:['React','Next.js','Tailwind CSS','REST APIs'],
-      badges:[{text:'Actively Hiring',cls:'badge-green-light'},{text:'Part-Time OK',cls:'badge-amber-light'},{text:'85% Match',cls:'badge-match'}],
-      btnType:'apply'
-    },
-    // ===== DATA =====
-    {
-      id:7, type:'internship', track:'data',
-      icon:'📊', iconBg:'#fff7ed',
-      role:'Data Analytics & BI Intern',
-      company:'Unstop Enterprise Partners',
-      location:'Pune / Remote', locTag:'remote,pune',
-      duration:'3 Months', stipend:20000,
-      stipendLabel:'₹20,000/month',
-      posted:'1 week ago', activeHiring:false, ppo:false, parttime:false,
-      match:87,
-      skills:['SQL','Power BI','Python','Tableau'],
-      badges:[{text:'87% Match',cls:'badge-match'}],
-      btnType:'apply'
-    },
-    {
-      id:8, type:'job', track:'data',
-      icon:'📈', iconBg:'#fdf4ff',
-      role:'Data Analyst — Fresher',
-      company:'Flipkart Analytics',
-      location:'Bengaluru / Hybrid', locTag:'bangalore',
-      duration:'Full-time', stipend:55000,
-      stipendLabel:'₹6–9 LPA',
-      posted:'3 days ago', activeHiring:true, ppo:false, parttime:false,
-      match:83,
-      skills:['SQL','Python','Excel','Pandas'],
-      badges:[{text:'Actively Hiring',cls:'badge-green-light'},{text:'83% Match',cls:'badge-match'}],
-      btnType:'apply'
-    },
-    // ===== GOVT / PSU =====
-    {
-      id:9, type:'gov', track:'gov',
-      icon:'🏛️', iconBg:'#f0fdf4',
-      role:'Scientific Officer / Project Associate',
-      company:'C-DAC & NIC — Govt. of India',
-      location:'Pan India', locTag:'',
-      duration:'Permanent', stipend:60000,
-      stipendLabel:'Pay Scale Level 7 (₹44,900+)',
-      posted:'5 days ago', activeHiring:true, ppo:false, parttime:false,
-      match:0,
-      skills:['B.Tech / MCA','Linux Systems','Data Networks'],
-      badges:[{text:'Official PSU',cls:'badge-blue-light'},{text:'Gazetted Post',cls:'badge-green-light'}],
-      btnType:'eligibility'
-    },
-    {
-      id:10, type:'gov', track:'gov',
-      icon:'⚡', iconBg:'#fffbeb',
-      role:'Graduate Apprentice Engineer',
-      company:'NTPC Limited',
-      location:'All India', locTag:'',
-      duration:'1 Year', stipend:15000,
-      stipendLabel:'₹15,000/month stipend',
-      posted:'2 days ago', activeHiring:true, ppo:false, parttime:false,
-      match:0,
-      skills:['B.Tech CSE/IT','Programming','Systems'],
-      badges:[{text:'Apprenticeship Act',cls:'badge-amber-light'},{text:'Actively Hiring',cls:'badge-green-light'}],
-      btnType:'eligibility'
-    },
-    // ===== CYBER =====
-    {
-      id:11, type:'internship', track:'cyber',
-      icon:'🔐', iconBg:'#fef2f2',
-      role:'Cybersecurity Analyst Intern',
-      company:'Quick Heal Technologies',
-      location:'Pune / Remote', locTag:'remote,pune',
-      duration:'3 Months', stipend:18000,
-      stipendLabel:'₹18,000/month',
-      posted:'6 days ago', activeHiring:true, ppo:false, parttime:false,
-      match:80,
-      skills:['Linux','Kali','Wireshark','Python'],
-      badges:[{text:'Actively Hiring',cls:'badge-green-light'},{text:'80% Match',cls:'badge-match'}],
-      btnType:'apply'
-    },
-    {
-      id:12, type:'job', track:'backend',
-      icon:'⚙️', iconBg:'#f0f9ff',
-      role:'Backend Node.js Developer',
-      company:'Paytm',
-      location:'Noida / Delhi NCR', locTag:'delhi',
-      duration:'Full-time', stipend:75000,
-      stipendLabel:'₹9–14 LPA',
-      posted:'Today', activeHiring:true, ppo:false, parttime:false,
-      match:82,
-      skills:['Node.js','MongoDB','Redis','Docker'],
-      badges:[{text:'Actively Hiring',cls:'badge-green-light'},{text:'82% Match',cls:'badge-match'}],
-      btnType:'apply'
-    }
-  ];
+</div>
 
-  var appliedIds = {};
-  var savedIds = {};
-  var activeType = 'all';
-  var activePills = {};
-  var userTrack = '';
 
-  // ==================== RENDER CARDS ====================
-  function renderCards(list) {
-    var container = document.getElementById('cards-container');
-    if (!list.length) {
-      container.innerHTML = '<div style="text-align:center;padding:3rem;color:#94a3b8;font-size:0.95rem;">😕 No opportunities found matching your filters.<br>Try adjusting the filters or search query.</div>';
-      return;
-    }
-    container.innerHTML = list.map(function(opp) {
+<script>
+
+/* =========================================================
+   OPPORTUNITIES DATA
+========================================================= */
+
+var ALL_OPPORTUNITIES = [
+
+  /* ================= AI / ML ================= */
+
+  {
+    id: 1,
+    type: 'internship',
+    track: 'ai',
+
+    icon: '🤖',
+    iconBg: '#eef2ff',
+
+    role: 'AI / Machine Learning Engineer Intern',
+    company: 'TechVentures AI Labs',
+
+    location: 'Remote / Bengaluru',
+    locTag: 'remote,bangalore',
+
+    duration: '3 Months',
+    stipend: 30000,
+    stipendLabel: '₹30,000/month',
+
+    posted: '2 days ago',
+
+    activeHiring: true,
+    ppo: true,
+    parttime: false,
+
+    match: 94,
+
+    skills: [
+      'Python',
+      'PyTorch',
+      'Scikit-learn',
+      'FastAPI'
+    ],
+
+    badges: [
+      {
+        text: 'Actively Hiring',
+        cls: 'badge-green-light'
+      },
+      {
+        text: 'PPO Opportunity',
+        cls: 'badge-purple-light'
+      },
+      {
+        text: '94% Match',
+        cls: 'badge-match'
+      }
+    ],
+
+    btnType: 'apply'
+  },
+
+
+  {
+    id: 2,
+    type: 'internship',
+    track: 'ai',
+
+    icon: '🧠',
+    iconBg: '#f0fdf4',
+
+    role: 'Deep Learning Research Intern',
+    company: 'Google DeepMind — India',
+
+    location: 'Hyderabad / Hybrid',
+    locTag: 'hyderabad',
+
+    duration: '6 Months',
+    stipend: 55000,
+    stipendLabel: '₹55,000/month',
+
+    posted: '1 day ago',
+
+    activeHiring: true,
+    ppo: false,
+    parttime: false,
+
+    match: 91,
+
+    skills: [
+      'TensorFlow',
+      'NLP',
+      'Python',
+      'Research'
+    ],
+
+    badges: [
+      {
+        text: 'Actively Hiring',
+        cls: 'badge-green-light'
+      },
+      {
+        text: '91% Match',
+        cls: 'badge-match'
+      }
+    ],
+
+    btnType: 'apply'
+  },
+
+
+  {
+    id: 3,
+    type: 'job',
+    track: 'ai',
+
+    icon: '🚀',
+    iconBg: '#fef3c7',
+
+    role: 'Junior AI/ML Engineer',
+    company: 'Infosys Topaz',
+
+    location: 'Bengaluru / On-site',
+    locTag: 'bangalore',
+
+    duration: 'Full-time',
+    stipend: 70000,
+    stipendLabel: '₹8–12 LPA',
+
+    posted: '3 days ago',
+
+    activeHiring: true,
+    ppo: false,
+    parttime: false,
+
+    match: 88,
+
+    skills: [
+      'Python',
+      'ML Ops',
+      'AWS SageMaker',
+      'SQL'
+    ],
+
+    badges: [
+      {
+        text: '0–1 Yr Exp',
+        cls: 'badge-blue-light'
+      },
+      {
+        text: '88% Match',
+        cls: 'badge-match'
+      }
+    ],
+
+    btnType: 'apply'
+  },
+
+
+  /* ================= FULL STACK ================= */
+
+  {
+    id: 4,
+    type: 'job',
+    track: 'fullstack',
+
+    icon: '🌐',
+    iconBg: '#ecfdf5',
+
+    role: 'Junior Full Stack Web Developer',
+    company: 'Apex Cloud Systems',
+
+    location: 'Hyderabad / Hybrid',
+    locTag: 'hyderabad',
+
+    duration: 'Full-time',
+    stipend: 65000,
+    stipendLabel: '₹7.5–11 LPA',
+
+    posted: '5 days ago',
+
+    activeHiring: false,
+    ppo: false,
+    parttime: false,
+
+    match: 91,
+
+    skills: [
+      'React',
+      'Node.js',
+      'JavaScript',
+      'PostgreSQL'
+    ],
+
+    badges: [
+      {
+        text: '0–1 Yr Exp',
+        cls: 'badge-blue-light'
+      },
+      {
+        text: '91% Match',
+        cls: 'badge-match'
+      }
+    ],
+
+    btnType: 'apply'
+  },
+
+
+  {
+    id: 5,
+    type: 'internship',
+    track: 'fullstack',
+
+    icon: '💻',
+    iconBg: '#eff6ff',
+
+    role: 'Full Stack Developer Intern',
+    company: 'Razorpay',
+
+    location: 'Bengaluru / Remote',
+    locTag: 'remote,bangalore',
+
+    duration: '3 Months',
+    stipend: 35000,
+    stipendLabel: '₹35,000/month',
+
+    posted: 'Today',
+
+    activeHiring: true,
+    ppo: true,
+    parttime: false,
+
+    match: 90,
+
+    skills: [
+      'React',
+      'Express.js',
+      'MongoDB',
+      'TypeScript'
+    ],
+
+    badges: [
+      {
+        text: 'Actively Hiring',
+        cls: 'badge-green-light'
+      },
+      {
+        text: 'PPO Opportunity',
+        cls: 'badge-purple-light'
+      },
+      {
+        text: '90% Match',
+        cls: 'badge-match'
+      }
+    ],
+
+    btnType: 'apply'
+  },
+
+
+  {
+    id: 6,
+    type: 'internship',
+    track: 'fullstack',
+
+    icon: '🎯',
+    iconBg: '#fff7ed',
+
+    role: 'Frontend React Developer Intern',
+    company: 'Swiggy Tech',
+
+    location: 'Bengaluru / Hybrid',
+    locTag: 'bangalore',
+
+    duration: '2 Months',
+    stipend: 28000,
+    stipendLabel: '₹28,000/month',
+
+    posted: '4 days ago',
+
+    activeHiring: true,
+    ppo: false,
+    parttime: true,
+
+    match: 85,
+
+    skills: [
+      'React',
+      'Next.js',
+      'Tailwind CSS',
+      'REST APIs'
+    ],
+
+    badges: [
+      {
+        text: 'Actively Hiring',
+        cls: 'badge-green-light'
+      },
+      {
+        text: 'Part-Time OK',
+        cls: 'badge-amber-light'
+      },
+      {
+        text: '85% Match',
+        cls: 'badge-match'
+      }
+    ],
+
+    btnType: 'apply'
+  },
+
+
+  /* ================= DATA ================= */
+
+  {
+    id: 7,
+    type: 'internship',
+    track: 'data',
+
+    icon: '📊',
+    iconBg: '#fff7ed',
+
+    role: 'Data Analytics & BI Intern',
+    company: 'Unstop Enterprise Partners',
+
+    location: 'Pune / Remote',
+    locTag: 'remote,pune',
+
+    duration: '3 Months',
+    stipend: 20000,
+    stipendLabel: '₹20,000/month',
+
+    posted: '1 week ago',
+
+    activeHiring: false,
+    ppo: false,
+    parttime: false,
+
+    match: 87,
+
+    skills: [
+      'SQL',
+      'Power BI',
+      'Python',
+      'Tableau'
+    ],
+
+    badges: [
+      {
+        text: '87% Match',
+        cls: 'badge-match'
+      }
+    ],
+
+    btnType: 'apply'
+  },
+
+
+  {
+    id: 8,
+    type: 'job',
+    track: 'data',
+
+    icon: '📈',
+    iconBg: '#fdf4ff',
+
+    role: 'Data Analyst — Fresher',
+    company: 'Flipkart Analytics',
+
+    location: 'Bengaluru / Hybrid',
+    locTag: 'bangalore',
+
+    duration: 'Full-time',
+    stipend: 55000,
+    stipendLabel: '₹6–9 LPA',
+
+    posted: '3 days ago',
+
+    activeHiring: true,
+    ppo: false,
+    parttime: false,
+
+    match: 83,
+
+    skills: [
+      'SQL',
+      'Python',
+      'Excel',
+      'Pandas'
+    ],
+
+    badges: [
+      {
+        text: 'Actively Hiring',
+        cls: 'badge-green-light'
+      },
+      {
+        text: '83% Match',
+        cls: 'badge-match'
+      }
+    ],
+
+    btnType: 'apply'
+  },
+
+
+  /* ================= GOVT / PSU ================= */
+
+  {
+    id: 9,
+    type: 'gov',
+    track: 'gov',
+
+    icon: '🏛️',
+    iconBg: '#f0fdf4',
+
+    role: 'Scientific Officer / Project Associate',
+    company: 'C-DAC & NIC — Govt. of India',
+
+    location: 'Pan India',
+    locTag: '',
+
+    duration: 'Permanent',
+    stipend: 60000,
+    stipendLabel: 'Pay Scale Level 7 (₹44,900+)',
+
+    posted: '5 days ago',
+
+    activeHiring: true,
+    ppo: false,
+    parttime: false,
+
+    match: 0,
+
+    skills: [
+      'B.Tech / MCA',
+      'Linux Systems',
+      'Data Networks'
+    ],
+
+    badges: [
+      {
+        text: 'Official PSU',
+        cls: 'badge-blue-light'
+      },
+      {
+        text: 'Gazetted Post',
+        cls: 'badge-green-light'
+      }
+    ],
+
+    btnType: 'eligibility'
+  },
+
+
+  {
+    id: 10,
+    type: 'gov',
+    track: 'gov',
+
+    icon: '⚡',
+    iconBg: '#fffbeb',
+
+    role: 'Graduate Apprentice Engineer',
+    company: 'NTPC Limited',
+
+    location: 'All India',
+    locTag: '',
+
+    duration: '1 Year',
+    stipend: 15000,
+    stipendLabel: '₹15,000/month stipend',
+
+    posted: '2 days ago',
+
+    activeHiring: true,
+    ppo: false,
+    parttime: false,
+
+    match: 0,
+
+    skills: [
+      'B.Tech CSE/IT',
+      'Programming',
+      'Systems'
+    ],
+
+    badges: [
+      {
+        text: 'Apprenticeship Act',
+        cls: 'badge-amber-light'
+      },
+      {
+        text: 'Actively Hiring',
+        cls: 'badge-green-light'
+      }
+    ],
+
+    btnType: 'eligibility'
+  },
+
+
+  /* ================= CYBER ================= */
+
+  {
+    id: 11,
+    type: 'internship',
+    track: 'cyber',
+
+    icon: '🔐',
+    iconBg: '#fef2f2',
+
+    role: 'Cybersecurity Analyst Intern',
+    company: 'Quick Heal Technologies',
+
+    location: 'Pune / Remote',
+    locTag: 'remote,pune',
+
+    duration: '3 Months',
+    stipend: 18000,
+    stipendLabel: '₹18,000/month',
+
+    posted: '6 days ago',
+
+    activeHiring: true,
+    ppo: false,
+    parttime: false,
+
+    match: 80,
+
+    skills: [
+      'Linux',
+      'Kali',
+      'Wireshark',
+      'Python'
+    ],
+
+    badges: [
+      {
+        text: 'Actively Hiring',
+        cls: 'badge-green-light'
+      },
+      {
+        text: '80% Match',
+        cls: 'badge-match'
+      }
+    ],
+
+    btnType: 'apply'
+  },
+
+
+  {
+    id: 12,
+    type: 'job',
+    track: 'backend',
+
+    icon: '⚙️',
+    iconBg: '#f0f9ff',
+
+    role: 'Backend Node.js Developer',
+    company: 'Paytm',
+
+    location: 'Noida / Delhi NCR',
+    locTag: 'delhi',
+
+    duration: 'Full-time',
+    stipend: 75000,
+    stipendLabel: '₹9–14 LPA',
+
+    posted: 'Today',
+
+    activeHiring: true,
+    ppo: false,
+    parttime: false,
+
+    match: 82,
+
+    skills: [
+      'Node.js',
+      'MongoDB',
+      'Redis',
+      'Docker'
+    ],
+
+    badges: [
+      {
+        text: 'Actively Hiring',
+        cls: 'badge-green-light'
+      },
+      {
+        text: '82% Match',
+        cls: 'badge-match'
+      }
+    ],
+
+    btnType: 'apply'
+  }
+
+];
+
+
+/* =========================================================
+   GLOBAL STATE
+========================================================= */
+
+var appliedIds = {};
+var savedIds = {};
+
+var activeType = 'all';
+
+var activePills = {};
+
+var userTrack = '';
+
+/*
+  PAGINATION
+  4 cards per page
+  12 opportunities = 3 pages
+*/
+var currentPage = 1;
+
+var ITEMS_PER_PAGE = 4;
+
+
+/* =========================================================
+   RENDER CARDS
+========================================================= */
+
+function renderCards(list) {
+
+  var container =
+    document.getElementById('cards-container');
+
+
+  if (!list.length) {
+
+    container.innerHTML =
+      '<div style="' +
+      'text-align:center;' +
+      'padding:3rem;' +
+      'color:#94a3b8;' +
+      'font-size:0.95rem;' +
+      '">' +
+
+      '😕 No opportunities found matching your filters.' +
+
+      '<br>' +
+
+      'Try adjusting the filters or search query.' +
+
+      '</div>';
+
+    return;
+  }
+
+
+  container.innerHTML =
+    list.map(function(opp) {
+
       return buildCard(opp);
+
     }).join('');
-    // Attach apply events
-    container.querySelectorAll('.btn-apply-now').forEach(function(btn) {
+
+
+  /* APPLY BUTTONS */
+
+  container
+    .querySelectorAll('.btn-apply-now')
+    .forEach(function(btn) {
+
       btn.addEventListener('click', function(e) {
+
         e.stopPropagation();
-        var id = parseInt(this.getAttribute('data-id'));
-        if (appliedIds[id]) return;
-        appliedIds[id] = true;
-        this.textContent = '✓ Applied!';
-        this.classList.add('applied');
-        this.disabled = true;
-        showAlert('Application for <strong>' + this.getAttribute('data-title') + '</strong> submitted & tracked in Dashboard! 🎉');
-      });
-    });
-    container.querySelectorAll('.btn-check-eligibility').forEach(function(btn) {
-      btn.addEventListener('click', function(e) {
-        e.stopPropagation();
-        showAlert('Eligibility check opened! Please visit the official website link for <strong>' + this.getAttribute('data-title') + '</strong>.');
-      });
-    });
-    // Bookmark / Save events
-    container.querySelectorAll('.btn-bookmark').forEach(function(btn) {
-      btn.addEventListener('click', function(e) {
-        e.stopPropagation();
-        var id = parseInt(this.getAttribute('data-id'));
-        savedIds[id] = !savedIds[id];
-        if (savedIds[id]) {
-          this.innerHTML = '&#128278;';
-          this.classList.add('saved');
-          this.title = 'Saved';
-          showAlert('Opportunity saved! View saved listings from your Dashboard.');
-        } else {
-          this.innerHTML = '&#128396;';
-          this.classList.remove('saved');
-          this.title = 'Save for later';
+
+        var id =
+          parseInt(
+            this.getAttribute('data-id')
+          );
+
+        if (appliedIds[id]) {
+          return;
         }
+
+
+        appliedIds[id] = true;
+
+
+        this.textContent =
+          '✓ Applied!';
+
+        this.classList.add('applied');
+
+        this.disabled = true;
+
+
+        showAlert(
+          'Application for <strong>' +
+          this.getAttribute('data-title') +
+          '</strong> submitted & tracked in Dashboard! 🎉'
+        );
+
       });
+
     });
+
+
+  /* ELIGIBILITY BUTTONS */
+
+  container
+    .querySelectorAll('.btn-check-eligibility')
+    .forEach(function(btn) {
+
+      btn.addEventListener('click', function(e) {
+
+        e.stopPropagation();
+
+
+        showAlert(
+          'Eligibility check opened! Please visit the official website link for <strong>' +
+          this.getAttribute('data-title') +
+          '</strong>.'
+        );
+
+      });
+
+    });
+
+
+  /* BOOKMARK */
+
+  container
+    .querySelectorAll('.btn-bookmark')
+    .forEach(function(btn) {
+
+      btn.addEventListener('click', function(e) {
+
+        e.stopPropagation();
+
+
+        var id =
+          parseInt(
+            this.getAttribute('data-id')
+          );
+
+
+        savedIds[id] =
+          !savedIds[id];
+
+
+        if (savedIds[id]) {
+
+          this.innerHTML =
+            '&#128278;';
+
+          this.classList.add('saved');
+
+          this.title = 'Saved';
+
+
+          showAlert(
+            'Opportunity saved! View saved listings from your Dashboard.'
+          );
+
+        } else {
+
+          this.innerHTML =
+            '&#128396;';
+
+          this.classList.remove('saved');
+
+          this.title =
+            'Save for later';
+
+        }
+
+      });
+
+    });
+
+}
+
+
+/* =========================================================
+   BUILD CARD
+========================================================= */
+
+function buildCard(opp) {
+
+  var cardClass =
+    'int-card' +
+
+    (
+      opp.activeHiring
+        ? ' actively-hiring'
+        : ''
+    ) +
+
+    (
+      opp.ppo
+        ? ' ppo-badge'
+        : ''
+    ) +
+
+    (
+      opp.type === 'gov'
+        ? ' gov-card'
+        : ''
+    );
+
+
+  var badgesHtml =
+    opp.badges.map(function(b) {
+
+      return (
+        '<span class="' +
+        b.cls +
+        '">' +
+        b.text +
+        '</span>'
+      );
+
+    }).join('');
+
+
+  var skillsHtml =
+    opp.skills.map(function(s) {
+
+      return (
+        '<span class="skill-chip">' +
+        s +
+        '</span>'
+      );
+
+    }).join('');
+
+
+  var durationIcon =
+    opp.type === 'job'
+      ? '💼'
+      : '🕐';
+
+
+  var durationLabel =
+    opp.type === 'job'
+      ? 'Full-Time Job'
+      : opp.duration;
+
+
+  var btn = '';
+
+
+  if (opp.btnType === 'apply') {
+
+    var isApplied =
+      appliedIds[opp.id];
+
+
+    btn =
+      '<button ' +
+
+      'class="btn-apply-now' +
+      (isApplied ? ' applied' : '') +
+      '"' +
+
+      'data-id="' +
+      opp.id +
+      '"' +
+
+      'data-title="' +
+      opp.role +
+      '"' +
+
+      (
+        isApplied
+          ? 'disabled'
+          : ''
+      ) +
+
+      '>' +
+
+      (
+        isApplied
+          ? '✓ Applied!'
+          : 'Apply now'
+      ) +
+
+      '</button>';
+
+  } else {
+
+    btn =
+      '<button ' +
+
+      'class="btn-check-eligibility"' +
+
+      'data-id="' +
+      opp.id +
+      '"' +
+
+      'data-title="' +
+      opp.role +
+      '"' +
+
+      '>' +
+
+      'Check Eligibility &amp; Apply' +
+
+      '</button>';
   }
 
-  function buildCard(opp) {
-    var cardClass = 'int-card' + (opp.activeHiring ? ' actively-hiring' : '') + (opp.ppo ? ' ppo-badge' : '') + (opp.type === 'gov' ? ' gov-card' : '');
-    var badgesHtml = opp.badges.map(function(b) {
-      return '<span class="' + b.cls + '">' + b.text + '</span>';
-    }).join('');
-    var skillsHtml = opp.skills.map(function(s) {
-      return '<span class="skill-chip">' + s + '</span>';
-    }).join('');
-    var durationIcon = opp.type === 'job' ? '💼' : '🕐';
-    var durationLabel = opp.type === 'job' ? 'Full-Time Job' : opp.duration;
-    var btn = '';
-    if (opp.btnType === 'apply') {
-      var isApplied = appliedIds[opp.id];
-      btn = '<button class="btn-apply-now' + (isApplied?' applied':'') + '" data-id="' + opp.id + '" data-title="' + opp.role + '" ' + (isApplied?'disabled':'') + '>' + (isApplied ? '✓ Applied!' : 'Apply now') + '</button>';
-    } else {
-      btn = '<button class="btn-check-eligibility" data-id="' + opp.id + '" data-title="' + opp.role + '">Check Eligibility &amp; Apply</button>';
+
+  var isSaved =
+    savedIds[opp.id];
+
+
+  var bmk =
+    '<button ' +
+
+    'class="btn-bookmark' +
+    (isSaved ? ' saved' : '') +
+    '"' +
+
+    'data-id="' +
+    opp.id +
+    '"' +
+
+    'title="' +
+    (
+      isSaved
+        ? 'Saved'
+        : 'Save for later'
+    ) +
+    '"' +
+
+    '>' +
+
+    (
+      isSaved
+        ? '&#128278;'
+        : '&#128396;'
+    ) +
+
+    '</button>';
+
+
+  return [
+
+    '<div class="' +
+    cardClass +
+    '">',
+
+    '  <div class="int-card-top">',
+
+    '    <div ' +
+    'class="int-company-logo" ' +
+    'style="background:' +
+    opp.iconBg +
+    ';">' +
+
+    opp.icon +
+
+    '</div>',
+
+
+    '    <div class="int-card-info" style="flex:1;min-width:0;">',
+
+
+    '      <div style="' +
+    'display:flex;' +
+    'justify-content:space-between;' +
+    'align-items:flex-start;' +
+    'gap:0.5rem;' +
+    '">',
+
+
+    '        <div class="int-card-role">' +
+    opp.role +
+    '</div>',
+
+
+    '        ' +
+    bmk,
+
+
+    '      </div>',
+
+
+    '      <div class="int-card-company">' +
+
+    '<a href="#">' +
+
+    opp.company +
+
+    '</a>' +
+
+    '</div>',
+
+
+    '      <div class="int-card-meta">',
+
+
+    '        <div class="int-meta-item">' +
+
+    '<span class="meta-icon">📍</span>' +
+
+    opp.location +
+
+    '</div>',
+
+
+    '        <div class="int-meta-item">' +
+
+    '<span class="meta-icon">' +
+    durationIcon +
+    '</span>' +
+
+    durationLabel +
+
+    '</div>',
+
+
+    '        <div class="int-meta-item">' +
+
+    '<span class="meta-icon">💰</span>' +
+
+    '<strong>' +
+    opp.stipendLabel +
+    '</strong>' +
+
+    '</div>',
+
+
+    '      </div>',
+
+
+    '    </div>',
+
+    '  </div>',
+
+
+    '  <div class="int-card-badges">' +
+
+    badgesHtml +
+
+    '</div>',
+
+
+    '  <div class="int-skills-row">' +
+
+    skillsHtml +
+
+    '</div>',
+
+
+    '  <div class="int-card-bottom">',
+
+
+    '    <div class="int-posted-time">' +
+
+    '🕐 Posted ' +
+
+    '<span>' +
+    opp.posted +
+    '</span>' +
+
+    '</div>',
+
+
+    '    ' +
+
+    btn,
+
+
+    '  </div>',
+
+
+    '</div>'
+
+  ].join('');
+}
+
+
+/* =========================================================
+   GET FILTERED LIST
+========================================================= */
+
+function getFilteredList() {
+
+  var roleQ =
+    (
+      document.getElementById('role-search').value ||
+      ''
+    ).toLowerCase();
+
+
+  var locQ =
+    (
+      document.getElementById('location-search').value ||
+      ''
+    ).toLowerCase();
+
+
+  var stipendMin =
+    parseInt(
+      document.getElementById('stipend-min').value
+    ) || 0;
+
+
+  var durFilter =
+    document.getElementById('filter-duration').value;
+
+
+  var profileFilter =
+    document.getElementById('filter-profile').value;
+
+
+  var wfhToggle =
+    document.getElementById('toggle-wfh').checked;
+
+
+  var parttimeToggle =
+    document.getElementById('toggle-parttime').checked;
+
+
+  var hiringToggle =
+    document.getElementById('toggle-hiring').checked;
+
+
+  /* LOCATION CHECKBOXES */
+
+  var locChecked = [];
+
+
+  [
+    'loc-remote',
+    'loc-blr',
+    'loc-hyd',
+    'loc-delhi',
+    'loc-mum',
+    'loc-pune'
+  ].forEach(function(id) {
+
+    var el =
+      document.getElementById(id);
+
+    if (el && el.checked) {
+
+      locChecked.push(el.value);
+
     }
-    var isSaved = savedIds[opp.id];
-    var bmk = '<button class="btn-bookmark' + (isSaved?' saved':'') + '" data-id="' + opp.id + '" title="' + (isSaved?'Saved':'Save for later') + '">' + (isSaved?'&#128278;':'&#128396;') + '</button>';
-    return [
-      '<div class="' + cardClass + '">',
-      '  <div class="int-card-top">',
-      '    <div class="int-company-logo" style="background:' + opp.iconBg + '">' + opp.icon + '</div>',
-      '    <div class="int-card-info" style="flex:1;min-width:0;">',
-      '      <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:0.5rem;">',
-      '        <div class="int-card-role">' + opp.role + '</div>',
-      '        ' + bmk,
-      '      </div>',
-      '      <div class="int-card-company"><a href="#">' + opp.company + '</a></div>',
-      '      <div class="int-card-meta">',
-      '        <div class="int-meta-item"><span class="meta-icon">📍</span> ' + opp.location + '</div>',
-      '        <div class="int-meta-item"><span class="meta-icon">' + durationIcon + '</span> ' + durationLabel + '</div>',
-      '        <div class="int-meta-item"><span class="meta-icon">💰</span> <strong>' + opp.stipendLabel + '</strong></div>',
-      '      </div>',
-      '    </div>',
-      '  </div>',
-      '  <div class="int-card-badges">' + badgesHtml + '</div>',
-      '  <div class="int-skills-row">' + skillsHtml + '</div>',
-      '  <div class="int-card-bottom">',
-      '    <div class="int-posted-time">🕐 Posted <span>' + opp.posted + '</span></div>',
-      '    ' + btn,
-      '  </div>',
-      '</div>'
-    ].join('');
-  }
 
-  // ==================== FILTERS ====================
-  function getFilteredList() {
-    var roleQ = (document.getElementById('role-search').value || '').toLowerCase();
-    var locQ = (document.getElementById('location-search').value || '').toLowerCase();
-    var stipendMin = parseInt(document.getElementById('stipend-min').value) || 0;
-    var durFilter = document.getElementById('filter-duration').value;
-    var profileFilter = document.getElementById('filter-profile').value;
-    var wfhToggle = document.getElementById('toggle-wfh').checked;
-    var parttimeToggle = document.getElementById('toggle-parttime').checked;
-    var hiringToggle = document.getElementById('toggle-hiring').checked;
-    // Location checkboxes
-    var locChecked = [];
-    ['loc-remote','loc-blr','loc-hyd','loc-delhi','loc-mum','loc-pune'].forEach(function(id) {
-      var el = document.getElementById(id);
-      if (el && el.checked) locChecked.push(el.value);
-    });
+  });
 
-    return ALL_OPPORTUNITIES.filter(function(opp) {
-      // Type tab
-      if (activeType !== 'all' && opp.type !== activeType) return false;
-      // Profile/Category filter
-      if (profileFilter && opp.track !== profileFilter) return false;
-      // Role search
-      if (roleQ && opp.role.toLowerCase().indexOf(roleQ) === -1 && opp.company.toLowerCase().indexOf(roleQ) === -1 && opp.skills.join(' ').toLowerCase().indexOf(roleQ) === -1) return false;
-      // Location dropdown
-      if (locQ && opp.locTag && opp.locTag.indexOf(locQ) === -1) return false;
-      // Location checkboxes (OR logic — show if any checked location matches)
+
+  return ALL_OPPORTUNITIES.filter(
+    function(opp) {
+
+
+      /* TYPE */
+
+      if (
+        activeType !== 'all' &&
+        opp.type !== activeType
+      ) {
+        return false;
+      }
+
+
+      /* PROFILE */
+
+      if (
+        profileFilter &&
+        opp.track !== profileFilter
+      ) {
+        return false;
+      }
+
+
+      /* SEARCH */
+
+      if (roleQ) {
+
+        var role =
+          opp.role.toLowerCase();
+
+        var company =
+          opp.company.toLowerCase();
+
+        var skills =
+          opp.skills
+            .join(' ')
+            .toLowerCase();
+
+
+        if (
+          role.indexOf(roleQ) === -1 &&
+          company.indexOf(roleQ) === -1 &&
+          skills.indexOf(roleQ) === -1
+        ) {
+          return false;
+        }
+
+      }
+
+
+      /* LOCATION DROPDOWN */
+
+      if (
+        locQ &&
+        opp.locTag &&
+        opp.locTag.indexOf(locQ) === -1
+      ) {
+        return false;
+      }
+
+
+      /* LOCATION CHECKBOXES */
+
       if (locChecked.length > 0) {
-        var matchesAny = locChecked.some(function(loc) {
-          return opp.locTag && opp.locTag.indexOf(loc) !== -1;
-        });
-        if (!matchesAny) return false;
+
+        var matchesAny =
+          locChecked.some(function(loc) {
+
+            return (
+              opp.locTag &&
+              opp.locTag.indexOf(loc) !== -1
+            );
+
+          });
+
+
+        if (!matchesAny) {
+          return false;
+        }
+
       }
-      // Stipend min
-      if (opp.stipend < stipendMin) return false;
-      // Duration
+
+
+      /* STIPEND */
+
+      if (
+        opp.stipend < stipendMin
+      ) {
+        return false;
+      }
+
+
+      /* DURATION */
+
       if (durFilter) {
-        var months = parseInt(durFilter);
-        if (opp.type !== 'job' && opp.duration !== months + ' Month' && opp.duration !== months + ' Months') return false;
+
+        var months =
+          parseInt(durFilter);
+
+
+        if (
+          opp.type !== 'job' &&
+          opp.duration !==
+            months + ' Month' &&
+          opp.duration !==
+            months + ' Months'
+        ) {
+
+          return false;
+
+        }
+
       }
-      // Work type toggles
-      if (wfhToggle && opp.locTag && opp.locTag.indexOf('remote') === -1) return false;
-      if (parttimeToggle && !opp.parttime) return false;
-      if (hiringToggle && !opp.activeHiring) return false;
-      // Quick pills
-      if (activePills['wfh'] && opp.locTag && opp.locTag.indexOf('remote') === -1) return false;
-      if (activePills['parttime'] && !opp.parttime) return false;
-      if (activePills['hiring'] && !opp.activeHiring) return false;
-      if (activePills['ppo'] && !opp.ppo) return false;
+
+
+      /* WFH */
+
+      if (
+        wfhToggle &&
+        (!opp.locTag ||
+        opp.locTag.indexOf('remote') === -1)
+      ) {
+        return false;
+      }
+
+
+      /* PART TIME */
+
+      if (
+        parttimeToggle &&
+        !opp.parttime
+      ) {
+        return false;
+      }
+
+
+      /* ACTIVE HIRING */
+
+      if (
+        hiringToggle &&
+        !opp.activeHiring
+      ) {
+        return false;
+      }
+
+
+      /* QUICK WFH */
+
+      if (
+        activePills['wfh'] &&
+        (!opp.locTag ||
+        opp.locTag.indexOf('remote') === -1)
+      ) {
+        return false;
+      }
+
+
+      /* QUICK PART TIME */
+
+      if (
+        activePills['parttime'] &&
+        !opp.parttime
+      ) {
+        return false;
+      }
+
+
+      /* QUICK HIRING */
+
+      if (
+        activePills['hiring'] &&
+        !opp.activeHiring
+      ) {
+        return false;
+      }
+
+
+      /* QUICK PPO */
+
+      if (
+        activePills['ppo'] &&
+        !opp.ppo
+      ) {
+        return false;
+      }
+
+
       return true;
-    });
-  }
 
-  function applyFilters() {
-    var list = getFilteredList();
-    applySortToList(list);
-    updateCount(list.length);
-  }
-
-  function applySearch() { applyFilters(); }
-
-  function applySort() { applyFilters(); }
-
-  function applySortToList(list) {
-    var sortVal = document.getElementById('sort-select').value;
-    if (sortVal === 'latest') {
-      var order = {'Today':0,'1 day ago':1,'2 days ago':2,'3 days ago':3,'4 days ago':4,'5 days ago':5,'6 days ago':6,'1 week ago':7};
-      list.sort(function(a,b){ return (order[a.posted]||9) - (order[b.posted]||9); });
-    } else if (sortVal === 'stipend-high') {
-      list.sort(function(a,b){ return b.stipend - a.stipend; });
-    } else if (sortVal === 'stipend-low') {
-      list.sort(function(a,b){ return a.stipend - b.stipend; });
-    } else {
-      list.sort(function(a,b){ return b.match - a.match; });
     }
-    renderCards(list);
+  );
+}
+
+
+/* =========================================================
+   APPLY FILTERS
+========================================================= */
+
+function applyFilters(resetPage) {
+
+  /*
+    Default:
+    reset page = true
+
+    Pagination:
+    reset page = false
+  */
+
+  if (resetPage !== false) {
+
+    currentPage = 1;
+
   }
 
-  function updateCount(n) {
-    document.getElementById('count-shown').textContent = n > 0 ? '1–' + Math.min(n,12) : '0';
-    document.getElementById('count-total').textContent = n;
-  }
 
-  function clearAllFilters() {
-    document.getElementById('role-search').value = '';
-    document.getElementById('location-search').value = '';
-    document.getElementById('stipend-min').value = 0;
-    document.getElementById('filter-duration').value = '';
-    document.getElementById('filter-profile').value = '';
-    document.getElementById('toggle-wfh').checked = false;
-    document.getElementById('toggle-parttime').checked = false;
-    document.getElementById('toggle-hiring').checked = false;
-    document.getElementById('filter-start-date').value = '';
-    document.querySelectorAll('.qf-pill').forEach(function(p){ p.classList.remove('active'); });
-    activePills = {};
-    updateStipendLabel();
-    applyFilters();
-  }
+  var list =
+    getFilteredList();
 
-  function updateStipendLabel() {
-    var val = document.getElementById('stipend-min').value;
-    document.getElementById('stipend-min-label').textContent = 'Min: ₹' + (parseInt(val)).toLocaleString('en-IN');
-  }
 
-  function showAlert(msg) {
-    var box = document.getElementById('alert-box');
-    document.getElementById('alert-msg').innerHTML = msg;
-    box.classList.add('show');
-    box.scrollIntoView({ behavior:'smooth', block:'nearest' });
-    setTimeout(function(){ box.classList.remove('show'); }, 5000);
-  }
+  applySortToList(list);
 
-  // ==================== RECOMMENDED ====================
-  function renderRecommended(track) {
-    var map = {
-      'Full Stack Developer': [4,5,6],
-      'AI/ML Engineer': [1,2,3],
-      'Data Analyst': [7,8],
-      'Cybersecurity': [11,12],
-      'PSU/Govt Jobs': [9,10],
+}
+
+
+/* =========================================================
+   SEARCH
+========================================================= */
+
+function applySearch() {
+
+  currentPage = 1;
+
+  applyFilters(false);
+
+}
+
+
+/* =========================================================
+   SORT
+========================================================= */
+
+function applySort() {
+
+  currentPage = 1;
+
+  applyFilters(false);
+
+}
+
+
+/* =========================================================
+   SORT + PAGINATION
+========================================================= */
+
+function applySortToList(list) {
+
+  var sortVal =
+    document.getElementById('sort-select').value;
+
+
+  /* =======================================================
+     LATEST
+  ======================================================== */
+
+  if (sortVal === 'latest') {
+
+    var order = {
+
+      'Today': 0,
+
+      '1 day ago': 1,
+
+      '2 days ago': 2,
+
+      '3 days ago': 3,
+
+      '4 days ago': 4,
+
+      '5 days ago': 5,
+
+      '6 days ago': 6,
+
+      '1 week ago': 7
+
     };
-    var ids = map[track] || [1,4,7,9,11,12];
-    var recs = ALL_OPPORTUNITIES.filter(function(o){ return ids.indexOf(o.id) !== -1; }).slice(0,6);
-    var grid = document.getElementById('recommended-grid');
-    grid.innerHTML = recs.map(function(opp) {
-      return [
-        '<div class="rec-mini-card">',
-        '  <div class="rec-mini-logo" style="background:' + opp.iconBg + '">' + opp.icon + '</div>',
-        '  <div class="rec-mini-role" title="' + opp.role + '">' + opp.role + '</div>',
-        '  <div class="rec-mini-company">' + opp.company + '</div>',
-        '  <div class="rec-mini-stipend">💰 ' + opp.stipendLabel + '</div>',
-        '  <button class="rec-mini-apply" data-id="' + opp.id + '" data-title="' + opp.role + '">Apply now</button>',
-        '</div>'
-      ].join('');
-    }).join('');
-    grid.querySelectorAll('.rec-mini-apply').forEach(function(btn) {
-      btn.addEventListener('click', function() {
-        var title = this.getAttribute('data-title');
-        this.textContent = '✓ Applied!';
-        this.style.background = '#475569';
-        showAlert('Application for <strong>' + title + '</strong> submitted! 🎉');
-      });
+
+
+    list.sort(function(a, b) {
+
+      var aOrder =
+        Object.prototype.hasOwnProperty.call(
+          order,
+          a.posted
+        )
+          ? order[a.posted]
+          : 99;
+
+
+      var bOrder =
+        Object.prototype.hasOwnProperty.call(
+          order,
+          b.posted
+        )
+          ? order[b.posted]
+          : 99;
+
+
+      return aOrder - bOrder;
+
     });
+
   }
 
-  // ==================== INIT ====================
-  document.addEventListener('DOMContentLoaded', async function() {
-    if (!window.CareerSetu || !CareerSetu.checkAuthGuard()) return;
+
+  /* =======================================================
+     STIPEND HIGH
+  ======================================================== */
+
+  else if (
+    sortVal === 'stipend-high'
+  ) {
+
+    list.sort(function(a, b) {
+
+      return b.stipend - a.stipend;
+
+    });
+
+  }
+
+
+  /* =======================================================
+     STIPEND LOW
+  ======================================================== */
+
+  else if (
+    sortVal === 'stipend-low'
+  ) {
+
+    list.sort(function(a, b) {
+
+      return a.stipend - b.stipend;
+
+    });
+
+  }
+
+
+  /* =======================================================
+     RELEVANCE
+  ======================================================== */
+
+  else {
+
+    list.sort(function(a, b) {
+
+      return b.match - a.match;
+
+    });
+
+  }
+
+
+  /* =======================================================
+     PAGINATION CALCULATION
+  ======================================================== */
+
+  var totalItems =
+    list.length;
+
+
+  var totalPages =
+    Math.ceil(
+      totalItems / ITEMS_PER_PAGE
+    );
+
+
+  /*
+    Safety:
+    if current page goes above total pages
+  */
+
+  if (
+    totalPages > 0 &&
+    currentPage > totalPages
+  ) {
+
+    currentPage =
+      totalPages;
+
+  }
+
+
+  if (totalPages === 0) {
+
+    currentPage = 1;
+
+  }
+
+
+  var startIndex =
+    (currentPage - 1) *
+    ITEMS_PER_PAGE;
+
+
+  var endIndex =
+    Math.min(
+      startIndex + ITEMS_PER_PAGE,
+      totalItems
+    );
+
+
+  var pageItems =
+    list.slice(
+      startIndex,
+      endIndex
+    );
+
+
+  /* RENDER ONLY CURRENT PAGE */
+
+  renderCards(pageItems);
+
+
+  /* UPDATE COUNT */
+
+  updateCount(
+    totalItems,
+    startIndex,
+    endIndex
+  );
+
+
+  /* RENDER PAGINATION */
+
+  renderPagination(
+    totalPages
+  );
+
+}
+
+
+/* =========================================================
+   UPDATE COUNT
+========================================================= */
+
+function updateCount(
+  totalItems,
+  startIndex,
+  endIndex
+) {
+
+  var shown =
+    document.getElementById('count-shown');
+
+
+  var total =
+    document.getElementById('count-total');
+
+
+  if (totalItems === 0) {
+
+    shown.textContent = '0';
+
+  } else {
+
+    shown.textContent =
+      (startIndex + 1) +
+      '–' +
+      endIndex;
+
+  }
+
+
+  total.textContent =
+    totalItems;
+
+}
+
+
+/* =========================================================
+   PAGINATION
+========================================================= */
+
+function renderPagination(totalPages) {
+
+  var pagination =
+    document.getElementById('pagination');
+
+
+  if (!pagination) {
+    return;
+  }
+
+
+  pagination.innerHTML = '';
+
+
+  /*
+    If there is only one page,
+    don't show pagination.
+  */
+
+  if (totalPages <= 1) {
+
+    return;
+
+  }
+
+
+  /* =======================================================
+     PREVIOUS BUTTON
+  ======================================================== */
+
+  var prevBtn =
+    document.createElement('button');
+
+
+  prevBtn.className =
+    'page-btn';
+
+
+  prevBtn.innerHTML =
+    '‹';
+
+
+  prevBtn.title =
+    'Previous Page';
+
+
+  prevBtn.disabled =
+    currentPage === 1;
+
+
+  prevBtn.addEventListener(
+    'click',
+    function() {
+
+      if (currentPage > 1) {
+
+        currentPage--;
+
+        applyFilters(false);
+
+        scrollToJobs();
+
+      }
+
+    }
+  );
+
+
+  pagination.appendChild(
+    prevBtn
+  );
+
+
+  /* =======================================================
+     PAGE NUMBERS
+  ======================================================== */
+
+  for (
+    var page = 1;
+    page <= totalPages;
+    page++
+  ) {
+
+    var pageBtn =
+      document.createElement('button');
+
+
+    pageBtn.className =
+      'page-btn';
+
+
+    if (
+      page === currentPage
+    ) {
+
+      pageBtn.classList.add(
+        'active'
+      );
+
+    }
+
+
+    pageBtn.textContent =
+      page;
+
+
+    pageBtn.setAttribute(
+      'aria-label',
+      'Page ' + page
+    );
+
+
+    pageBtn.addEventListener(
+      'click',
+      (function(targetPage) {
+
+        return function() {
+
+          currentPage =
+            targetPage;
+
+
+          applyFilters(false);
+
+
+          scrollToJobs();
+
+        };
+
+      })(page)
+    );
+
+
+    pagination.appendChild(
+      pageBtn
+    );
+
+  }
+
+
+  /* =======================================================
+     NEXT BUTTON
+  ======================================================== */
+
+  var nextBtn =
+    document.createElement('button');
+
+
+  nextBtn.className =
+    'page-btn';
+
+
+  nextBtn.innerHTML =
+    '›';
+
+
+  nextBtn.title =
+    'Next Page';
+
+
+  nextBtn.disabled =
+    currentPage === totalPages;
+
+
+  nextBtn.addEventListener(
+    'click',
+    function() {
+
+      if (
+        currentPage < totalPages
+      ) {
+
+        currentPage++;
+
+        applyFilters(false);
+
+        scrollToJobs();
+
+      }
+
+    }
+  );
+
+
+  pagination.appendChild(
+    nextBtn
+  );
+
+}
+
+
+/* =========================================================
+   SCROLL TO JOB LIST
+========================================================= */
+
+function scrollToJobs() {
+
+  var cards =
+    document.getElementById(
+      'cards-container'
+    );
+
+
+  if (!cards) {
+    return;
+  }
+
+
+  var top =
+    cards.getBoundingClientRect().top +
+    window.scrollY -
+    90;
+
+
+  window.scrollTo({
+
+    top: Math.max(0, top),
+
+    behavior: 'smooth'
+
+  });
+
+}
+
+
+/* =========================================================
+   CLEAR ALL FILTERS
+========================================================= */
+
+function clearAllFilters() {
+
+  document.getElementById(
+    'role-search'
+  ).value = '';
+
+
+  document.getElementById(
+    'location-search'
+  ).value = '';
+
+
+  document.getElementById(
+    'stipend-min'
+  ).value = 0;
+
+
+  document.getElementById(
+    'filter-duration'
+  ).value = '';
+
+
+  document.getElementById(
+    'filter-profile'
+  ).value = '';
+
+
+  document.getElementById(
+    'toggle-wfh'
+  ).checked = false;
+
+
+  document.getElementById(
+    'toggle-parttime'
+  ).checked = false;
+
+
+  document.getElementById(
+    'toggle-hiring'
+  ).checked = false;
+
+
+  document.getElementById(
+    'filter-start-date'
+  ).value = '';
+
+
+  /* LOCATION CHECKBOXES */
+
+  [
+    'loc-remote',
+    'loc-blr',
+    'loc-hyd',
+    'loc-delhi',
+    'loc-mum',
+    'loc-pune'
+  ].forEach(function(id) {
+
+    var el =
+      document.getElementById(id);
+
+    if (el) {
+
+      el.checked = false;
+
+    }
+
+  });
+
+
+  /* QUICK PILLS */
+
+  document
+    .querySelectorAll('.qf-pill')
+    .forEach(function(p) {
+
+      p.classList.remove(
+        'active'
+      );
+
+    });
+
+
+  activePills = {};
+
+
+  activeType = 'all';
+
+
+  document
+    .querySelectorAll('.opp-type-tab')
+    .forEach(function(tab) {
+
+      tab.classList.remove(
+        'active'
+      );
+
+    });
+
+
+  var allTab =
+    document.querySelector(
+      '.opp-type-tab[data-type="all"]'
+    );
+
+
+  if (allTab) {
+
+    allTab.classList.add(
+      'active'
+    );
+
+  }
+
+
+  updateStipendLabel();
+
+
+  currentPage = 1;
+
+
+  applyFilters(false);
+
+}
+
+
+/* =========================================================
+   STIPEND LABEL
+========================================================= */
+
+function updateStipendLabel() {
+
+  var val =
+    document.getElementById(
+      'stipend-min'
+    ).value;
+
+
+  document.getElementById(
+    'stipend-min-label'
+  ).textContent =
+    'Min: ₹' +
+    parseInt(val).toLocaleString(
+      'en-IN'
+    );
+
+}
+
+
+/* =========================================================
+   ALERT
+========================================================= */
+
+function showAlert(msg) {
+
+  var box =
+    document.getElementById(
+      'alert-box'
+    );
+
+
+  document.getElementById(
+    'alert-msg'
+  ).innerHTML =
+    msg;
+
+
+  box.classList.add(
+    'show'
+  );
+
+
+  box.scrollIntoView({
+
+    behavior: 'smooth',
+
+    block: 'nearest'
+
+  });
+
+
+  setTimeout(
+    function() {
+
+      box.classList.remove(
+        'show'
+      );
+
+    },
+    5000
+  );
+
+}
+
+
+/* =========================================================
+   RECOMMENDED
+========================================================= */
+
+function renderRecommended(track) {
+
+  var map = {
+
+    'Full Stack Developer': [
+      4,
+      5,
+      6
+    ],
+
+    'AI/ML Engineer': [
+      1,
+      2,
+      3
+    ],
+
+    'Data Analyst': [
+      7,
+      8
+    ],
+
+    'Cybersecurity': [
+      11,
+      12
+    ],
+
+    'PSU/Govt Jobs': [
+      9,
+      10
+    ]
+
+  };
+
+
+  var ids =
+    map[track] ||
+    [
+      1,
+      4,
+      7,
+      9,
+      11,
+      12
+    ];
+
+
+  var recs =
+    ALL_OPPORTUNITIES
+      .filter(function(o) {
+
+        return ids.indexOf(
+          o.id
+        ) !== -1;
+
+      })
+      .slice(0, 6);
+
+
+  var grid =
+    document.getElementById(
+      'recommended-grid'
+    );
+
+
+  grid.innerHTML =
+    recs.map(function(opp) {
+
+      return [
+
+        '<div class="rec-mini-card">',
+
+        '  <div class="rec-mini-logo" ' +
+        'style="background:' +
+        opp.iconBg +
+        '">' +
+
+        opp.icon +
+
+        '</div>',
+
+
+        '  <div class="rec-mini-role" ' +
+        'title="' +
+        opp.role +
+        '">' +
+
+        opp.role +
+
+        '</div>',
+
+
+        '  <div class="rec-mini-company">' +
+
+        opp.company +
+
+        '</div>',
+
+
+        '  <div class="rec-mini-stipend">' +
+
+        '💰 ' +
+
+        opp.stipendLabel +
+
+        '</div>',
+
+
+        '  <button ' +
+        'class="rec-mini-apply" ' +
+        'data-id="' +
+        opp.id +
+        '" ' +
+        'data-title="' +
+        opp.role +
+        '">' +
+
+        'Apply now' +
+
+        '</button>',
+
+
+        '</div>'
+
+      ].join('');
+
+    }).join('');
+
+
+  /* RECOMMENDED APPLY */
+
+  grid
+    .querySelectorAll(
+      '.rec-mini-apply'
+    )
+    .forEach(function(btn) {
+
+      btn.addEventListener(
+        'click',
+        function(e) {
+
+          e.stopPropagation();
+
+
+          var id =
+            parseInt(
+              this.getAttribute(
+                'data-id'
+              )
+            );
+
+
+          var title =
+            this.getAttribute(
+              'data-title'
+            );
+
+
+          appliedIds[id] =
+            true;
+
+
+          this.textContent =
+            '✓ Applied!';
+
+
+          this.style.background =
+            '#475569';
+
+
+          this.disabled =
+            true;
+
+
+          showAlert(
+            'Application for <strong>' +
+            title +
+            '</strong> submitted! 🎉'
+          );
+
+        }
+      );
+
+    });
+
+}
+
+
+/* =========================================================
+   DOM READY
+========================================================= */
+
+document.addEventListener(
+  'DOMContentLoaded',
+  async function() {
+
+
+    /* =====================================================
+       AUTH
+    ====================================================== */
+
+    if (
+      !window.CareerSetu ||
+      !CareerSetu.checkAuthGuard()
+    ) {
+
+      return;
+
+    }
+
+
+    /* USER PROFILE */
+
     CareerSetu.renderUserProfileWidget();
 
-    // Load user profile for track
+
+    /* =====================================================
+       LOAD USER PROFILE
+    ====================================================== */
+
     try {
-      var profile = await CareerSetu.getUserData('profiles');
-      if (profile && profile.targetCareer) {
-        userTrack = profile.targetCareer;
-        document.getElementById('track-breadcrumb').textContent = userTrack + ' Opportunities';
-        document.getElementById('hero-track-text').textContent = userTrack.split('/')[0].trim().toLowerCase();
-        // Preselect track filter
+
+      var profile =
+        await CareerSetu.getUserData(
+          'profiles'
+        );
+
+
+      if (
+        profile &&
+        profile.targetCareer
+      ) {
+
+        userTrack =
+          profile.targetCareer;
+
+
+        document.getElementById(
+          'track-breadcrumb'
+        ).textContent =
+          userTrack +
+          ' Opportunities';
+
+
+        document.getElementById(
+          'hero-track-text'
+        ).textContent =
+          userTrack
+            .split('/')[0]
+            .trim()
+            .toLowerCase();
+
+
+        /* TRACK MAP */
+
         var trackMap = {
-          'Full Stack Developer':'fullstack','AI/ML Engineer':'ai','Data Analyst':'data',
-          'Cybersecurity':'cyber','PSU/Govt Jobs':'gov'
+
+          'Full Stack Developer':
+            'fullstack',
+
+          'AI/ML Engineer':
+            'ai',
+
+          'Data Analyst':
+            'data',
+
+          'Cybersecurity':
+            'cyber',
+
+          'PSU/Govt Jobs':
+            'gov'
+
         };
-        if (trackMap[userTrack]) {
-          document.getElementById('filter-profile').value = trackMap[userTrack];
+
+
+        if (
+          trackMap[userTrack]
+        ) {
+
+          document.getElementById(
+            'filter-profile'
+          ).value =
+            trackMap[userTrack];
+
         }
+
       }
-    } catch(e) {}
 
-    // Render recommended
-    renderRecommended(userTrack || 'Full Stack Developer');
+    } catch (e) {
 
-    // Initial render (all sorted by relevance)
-    applyFilters();
+      console.log(
+        'Profile load skipped:',
+        e
+      );
 
-    // Type tab events
-    document.querySelectorAll('.opp-type-tab').forEach(function(tab) {
-      tab.addEventListener('click', function() {
-        document.querySelectorAll('.opp-type-tab').forEach(function(t){ t.classList.remove('active'); });
-        this.classList.add('active');
-        activeType = this.getAttribute('data-type');
-        applyFilters();
-      });
-    });
-
-    // Quick pill events
-    document.querySelectorAll('.qf-pill').forEach(function(pill) {
-      pill.addEventListener('click', function() {
-        var filter = this.getAttribute('data-filter');
-        this.classList.toggle('active');
-        activePills[filter] = this.classList.contains('active');
-        // Sync with sidebar toggles
-        if (filter === 'wfh') document.getElementById('toggle-wfh').checked = activePills[filter];
-        if (filter === 'parttime') document.getElementById('toggle-parttime').checked = activePills[filter];
-        if (filter === 'hiring') document.getElementById('toggle-hiring').checked = activePills[filter];
-        applyFilters();
-      });
-    });
-
-    // Sync sidebar toggles with pills
-    ['wfh','parttime','hiring'].forEach(function(key) {
-      var togId = 'toggle-' + key;
-      document.getElementById(togId).addEventListener('change', function() {
-        activePills[key] = this.checked;
-        var pill = document.getElementById('pill-' + key);
-        if (pill) pill.classList.toggle('active', this.checked);
-        applyFilters();
-      });
-    });
-
-    // Search on Enter
-    document.getElementById('role-search').addEventListener('keydown', function(e) {
-      if (e.key === 'Enter') applyFilters();
-    });
-
-    // Location dropdown
-    document.getElementById('location-search').addEventListener('change', applyFilters);
-
-    // Profile/category filter
-    document.getElementById('filter-profile').addEventListener('change', applyFilters);
-
-    // Location checkboxes — live filter
-    ['loc-remote','loc-blr','loc-hyd','loc-delhi','loc-mum','loc-pune'].forEach(function(id) {
-      var el = document.getElementById(id);
-      if (el) el.addEventListener('change', applyFilters);
-    });
-
-    // Stipend range — live filter
-    document.getElementById('stipend-min').addEventListener('input', applyFilters);
-
-    // Duration dropdown
-    document.getElementById('filter-duration').addEventListener('change', applyFilters);
-
-    // Logout
-    var logoutBtn = document.getElementById('logout-btn');
-    if (logoutBtn) {
-      logoutBtn.addEventListener('click', function() {
-        if (window.CareerSetu && CareerSetu.logout) CareerSetu.logout();
-        window.location.href = 'login.html';
-      });
     }
+
+
+    /* =====================================================
+       RECOMMENDED
+    ====================================================== */
+
+    renderRecommended(
+      userTrack ||
+      'Full Stack Developer'
+    );
+
+
+    /* =====================================================
+       INITIAL RENDER
+    ====================================================== */
+
+    currentPage = 1;
+
+    applyFilters(false);
+
+
+    /* =====================================================
+       TYPE TABS
+    ====================================================== */
+
+    document
+      .querySelectorAll(
+        '.opp-type-tab'
+      )
+      .forEach(function(tab) {
+
+        tab.addEventListener(
+          'click',
+          function() {
+
+            document
+              .querySelectorAll(
+                '.opp-type-tab'
+              )
+              .forEach(function(t) {
+
+                t.classList.remove(
+                  'active'
+                );
+
+              });
+
+
+            this.classList.add(
+              'active'
+            );
+
+
+            activeType =
+              this.getAttribute(
+                'data-type'
+              );
+
+
+            currentPage = 1;
+
+
+            applyFilters(false);
+
+          }
+        );
+
+      });
+
+
+    /* =====================================================
+       QUICK PILLS
+    ====================================================== */
+
+    document
+      .querySelectorAll(
+        '.qf-pill'
+      )
+      .forEach(function(pill) {
+
+        pill.addEventListener(
+          'click',
+          function() {
+
+            var filter =
+              this.getAttribute(
+                'data-filter'
+              );
+
+
+            this.classList.toggle(
+              'active'
+            );
+
+
+            activePills[filter] =
+              this.classList.contains(
+                'active'
+              );
+
+
+            /* SYNC SIDEBAR */
+
+            if (
+              filter === 'wfh'
+            ) {
+
+              document.getElementById(
+                'toggle-wfh'
+              ).checked =
+                activePills[filter];
+
+            }
+
+
+            if (
+              filter === 'parttime'
+            ) {
+
+              document.getElementById(
+                'toggle-parttime'
+              ).checked =
+                activePills[filter];
+
+            }
+
+
+            if (
+              filter === 'hiring'
+            ) {
+
+              document.getElementById(
+                'toggle-hiring'
+              ).checked =
+                activePills[filter];
+
+            }
+
+
+            currentPage = 1;
+
+
+            applyFilters(false);
+
+          }
+        );
+
+      });
+
+
+    /* =====================================================
+       SIDEBAR TOGGLE SYNC
+    ====================================================== */
+
+    [
+      'wfh',
+      'parttime',
+      'hiring'
+    ].forEach(function(key) {
+
+
+      var togId =
+        'toggle-' +
+        key;
+
+
+      var toggle =
+        document.getElementById(
+          togId
+        );
+
+
+      if (!toggle) {
+        return;
+      }
+
+
+      toggle.addEventListener(
+        'change',
+        function() {
+
+
+          activePills[key] =
+            this.checked;
+
+
+          var pill =
+            document.getElementById(
+              'pill-' +
+              key
+            );
+
+
+          if (pill) {
+
+            pill.classList.toggle(
+              'active',
+              this.checked
+            );
+
+          }
+
+
+          currentPage = 1;
+
+
+          applyFilters(false);
+
+        }
+      );
+
+    });
+
+
+    /* =====================================================
+       SEARCH ENTER
+    ====================================================== */
+
+    document
+      .getElementById(
+        'role-search'
+      )
+      .addEventListener(
+        'keydown',
+        function(e) {
+
+          if (
+            e.key === 'Enter'
+          ) {
+
+            currentPage = 1;
+
+            applyFilters(false);
+
+          }
+
+        }
+      );
+
+
+    /* =====================================================
+       LOCATION DROPDOWN
+    ====================================================== */
+
+    document
+      .getElementById(
+        'location-search'
+      )
+      .addEventListener(
+        'change',
+        function() {
+
+          currentPage = 1;
+
+          applyFilters(false);
+
+        }
+      );
+
+
+    /* =====================================================
+       PROFILE FILTER
+    ====================================================== */
+
+    document
+      .getElementById(
+        'filter-profile'
+      )
+      .addEventListener(
+        'change',
+        function() {
+
+          currentPage = 1;
+
+          applyFilters(false);
+
+        }
+      );
+
+
+    /* =====================================================
+       LOCATION CHECKBOXES
+    ====================================================== */
+
+    [
+      'loc-remote',
+      'loc-blr',
+      'loc-hyd',
+      'loc-delhi',
+      'loc-mum',
+      'loc-pune'
+    ].forEach(function(id) {
+
+      var el =
+        document.getElementById(
+          id
+        );
+
+
+      if (el) {
+
+        el.addEventListener(
+          'change',
+          function() {
+
+            currentPage = 1;
+
+            applyFilters(false);
+
+          }
+        );
+
+      }
+
+    });
+
+
+    /* =====================================================
+       STIPEND
+    ====================================================== */
+
+    document
+      .getElementById(
+        'stipend-min'
+      )
+      .addEventListener(
+        'input',
+        function() {
+
+          updateStipendLabel();
+
+          currentPage = 1;
+
+          applyFilters(false);
+
+        }
+      );
+
+
+    /* =====================================================
+       DURATION
+    ====================================================== */
+
+    document
+      .getElementById(
+        'filter-duration'
+      )
+      .addEventListener(
+        'change',
+        function() {
+
+          currentPage = 1;
+
+          applyFilters(false);
+
+        }
+      );
+
+
+    /* =====================================================
+       START DATE
+       
+       Existing field preserved.
+       No new date logic added because the
+       existing opportunity data does not contain
+       actual start-date values.
+    ====================================================== */
+
+
+    /* =====================================================
+       LOGOUT
+    ====================================================== */
+
+    var logoutBtn =
+      document.getElementById(
+        'logout-btn'
+      );
+
+
+    if (logoutBtn) {
+
+      logoutBtn.addEventListener(
+        'click',
+        function() {
+
+
+          if (
+            window.CareerSetu &&
+            CareerSetu.logout
+          ) {
+
+            CareerSetu.logout();
+
+          }
+
+
+          window.location.href =
+            'login.html';
+
+        }
+      );
+
+    }
+
   });
-  </script>
+
+</script>
+
 </body>
 </html>
